@@ -1,0 +1,25 @@
+---
+# https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+
+redis:
+  architecture: standalone
+
+  master:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  replica:
+    persistence:
+      enabled: false
+
+  sysctl:
+    enabled: true
+    command: ["sh", "-c", "echo never >/host-sys/kernel/mm/transparent_hugepage/enabled"]
+    mountHostSys: true
