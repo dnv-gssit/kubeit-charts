@@ -1,0 +1,18 @@
+apiVersion: v1
+entries:
+  kubeit-redis-chart:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-03-22T23:34:53.963660029Z"
+    dependencies:
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 16.2.0
+    description: KubeIT Redis chart
+    digest: e57ed7905517fe8f24c3003366c8771e200d2eff589a259db5342dbfe295c1ec
+    name: kubeit-redis-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-redis-chart-0.1.1/kubeit-redis-chart-0.1.1.tgz
+    version: 0.1.1
+generated: "2022-03-22T23:34:53.963668929Z"
