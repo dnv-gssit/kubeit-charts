@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  kubeit-deployment-chart:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-04-13T23:16:48.296384634Z"
+    description: KubeIT workload deployment chart
+    digest: 653677da049add37ba4655e1a0f22d807f48255a8ed06ccfa863fd0d9b19c944
+    name: kubeit-deployment-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-deployment-chart-1.0.0/kubeit-deployment-chart-1.0.0.tgz
+    version: 1.0.0
   kubeit-redis-chart:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -15,4 +26,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-redis-chart-0.1.1/kubeit-redis-chart-0.1.1.tgz
     version: 0.1.1
-generated: "2022-03-22T23:34:53.963668929Z"
+generated: "2022-04-13T23:16:48.296388934Z"
