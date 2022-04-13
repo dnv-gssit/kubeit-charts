@@ -1,0 +1,26 @@
+---
+# Global values for all environments
+keyVaultSecrets:
+  tenantId: ""
+
+# Only defined per application!
+# ArgoCD Image Updater Variables
+# argoCDImageUpdater:                         # Required: Define the line to enable the ArgoCD Image Updater
+#     updaterRepository:                      # Required: Define the repository and image name used for the updater, Cluster Admins have to configure the registry first
+#     updaterVersionConstraint:               # Required: Define the semantic version image constraint to use desired image versions, more info https://github.com/Masterminds/semver#checking-version-constraints
+#     updaterGitBranch:                       # Required: Define the name of the branch where Image Updater is going to commit image updates, default - application branch
+#     updaterAllowTags:                       # Optional: Define the tags that should be considered by the Image Updater following the regexp function
+#     updaterIgnoreTags:                      # Optional: Define the tags that should be ignored by the Image Updater following the glob-like patterns, more info https://golang.org/pkg/path/filepath/#Match
+#     updaterStrategy: [semver, latest, name] # Optional: Define the strategy used by the Image Updater, more info https://argocd-image-updater.readthedocs.io/en/stable/configuration/images/#update-strategies
+#     updaterGitSecret: namespace/secret      # Optional: Override the default ArgoCD credentials used for repository authentication <namespace>/<secret> - namespace and secret name.
+#     updaterPullSecret:                      # Optional: Override the default secret used in the registry configuration made by Cluster Admin Team, more info https://argocd-image-updater.readthedocs.io/en/stable/configuration/images/#specifying-pull-secrets
+# Example below
+# argoCDImageUpdater:
+#     updaterRepository: "voakpglobalsvcprodacrwe.azurecr.io/alpinetest"
+#     updaterVersionConstraint: ">1.1"
+#     updaterStrategy: "latest"
+#     updaterGitBranch: "feature/image-updater"
+#     updaterGitSecret: "argocd/argocd-repo-key"
+#     updaterAllowTags: "^v1.0.[0-9a-zA-Z]+$"
+#     updaterIgnoreTags: "1.4"
+#     updaterPullSecret: "pullsecret:argocd/tenant-pull-secret"
