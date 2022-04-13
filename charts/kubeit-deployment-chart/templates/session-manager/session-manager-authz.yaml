@@ -1,0 +1,24 @@
+{{- if .Values.sessionManagerDeployment }}
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: session-manager-{{ .Values.app }}
+spec:
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces:
+        - istio-system
+        requestPrincipals:
+        - '*'
+  - from:
+    - source:
+        namespaces:
+        - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      app: {{ $.Values.app }}
+      version: {{ $.Values.version }}
+{{- end }}

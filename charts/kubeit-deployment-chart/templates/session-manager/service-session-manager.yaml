@@ -1,0 +1,25 @@
+{{- if .Values.sessionManagerDeployment }}
+{{- range $i, $host := .Values.defaultRouting.hosts }}
+{{ $namePostfix := $host | replace "." "-" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-manager-{{ $namePostfix }}
+  labels:
+    app.kubernetes.io/name: session-manager-{{ $namePostfix }}
+    app.kubernetes.io/instance: session-manager-{{ $namePostfix }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+    app: {{ required "app is required" $.Values.app }}
+    tenant: {{ $.Values.tenantName }}
+spec:
+  ports:
+    - port: {{ required "service.port must be specified" $.Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: {{ $.Values.app }}
+    app: {{ $.Values.app }}
+{{- end }}
+{{- end }}
