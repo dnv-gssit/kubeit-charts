@@ -1,0 +1,134 @@
+# Reference ArgoCD application definition - https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/application.yaml
+{{- range $app := .Values.applications }}
+{{- if has $.Values.env $app.env }}
+{{- if has $.Values.region $app.region }}
+{{- if has $.Values.clusterColour $app.clusterColour }}
+
+# https://github.com/argoproj/argo-cd/issues/2789#issuecomment-966139413
+{{- $helmValuesPath := "" }}
+{{- if hasKey ($app.chart | default dict) "name" }}
+{{- $helmValuesPath = printf "%s/%s" "/tmp" (lower (regexReplaceAll "\\/+|\\:+" $.Values.repoURL "_")) }}
+{{- else }}
+{{- $helmValuesPath = ".."  }}
+{{- end }}
+
+# ArgoCD Image Updater Values Loader
+{{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
+{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $.Values.env $.Values.env }}
+{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $.Values.env $.Values.region $.Values.region }}
+{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $.Values.env $.Values.region $.Values.clusterColour }}
+{{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
+# ArgoCD Image Updater Variables
+{{- $enableUpdater := "" }}
+{{- $updaterRepo := "" }}
+{{- $updaterConstraint := "" }}
+{{- $updaterStrategy := "" }}
+{{- $updaterPullSecret := "" }}
+{{- $updaterAllowTags := "" }}
+{{- $updaterIgnoreTags := "" }}
+{{- $updaterGitBranch := "" }}
+{{- $updaterGitSecret := "" }}
+# ArgoCD Image Updater Logic
+{{ range $valuesList }}
+{{ range $.Files.Lines . }}
+{{- if eq (contains "argoCDImageUpdater" . ) true }}
+{{ $enableUpdater = true }}
+{{- else if eq (contains "updaterRepository" . ) true }}
+{{ $updaterRepo = "" | regexReplaceAll "\"" . | replace "updaterRepository:" "" | trim }}
+{{- else if eq (contains "updaterVersionConstraint" .) true }}
+{{ $updaterConstraint = "" | regexReplaceAll "\"" . | replace "updaterVersionConstraint:" "" | trim }}
+{{- else if eq (contains "updaterAllowTags" .) true }}
+{{ $updaterAllowTags = "" | regexReplaceAll "\"" . | replace "updaterAllowTags:" "" | trim }}
+{{- else if eq (contains "updaterIgnoreTags" .) true }}
+{{ $updaterIgnoreTags = . | replace "updaterIgnoreTags:" "" | trim }}
+{{- else if eq (contains "updaterGitBranch" .) true }}
+{{ $updaterGitBranch = "" | regexReplaceAll "\"" . | replace "updaterGitBranch:" "" | trim }}
+{{- else if eq (contains "gitSecretName" .) true }}
+{{ $updaterGitSecret = "" | regexReplaceAll "\"" . | replace "gitSecretName:" "" | trim }}
+{{- else if eq (contains "updaterStrategy" .) true }}
+{{ $updaterStrategy = "" | regexReplaceAll "\"" . | replace "updaterStrategy:" "" | trim }}
+{{- else if eq (contains "updaterPullSecret" .) true }}
+{{ $updaterPullSecret = "" | regexReplaceAll "\"" . | replace "updaterPullSecret:" "" | trim }}
+{{- else if eq (contains "updaterGitSecret" .) true }}
+{{ $updaterGitSecret = "" | regexReplaceAll "\"" . | replace "updaterGitSecret:" "" | trim }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $app.name }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
+    {{- if $enableUpdater }}
+    argocd-image-updater.argoproj.io/write-back-method: {{ if $updaterGitSecret }}{{ toYaml ( printf "git:secret:%s" $updaterGitSecret ) }}{{- else -}}{{ default "git:repocreds" }}{{- end }}
+    argocd-image-updater.argoproj.io/git-branch: {{ $updaterGitBranch | default $.Values.targetRevision }}
+    argocd-image-updater.argoproj.io/image-list: {{ if $updaterConstraint }}{{  toYaml (printf "alias=%s:%s" $updaterRepo $updaterConstraint) }}{{- else -}}{{ $updaterRepo }}{{- end }}
+    argocd-image-updater.argoproj.io/alias.allow-tags: {{ if $updaterAllowTags }}{{ toYaml (printf "regexp:%s" $updaterAllowTags) }}{{- else -}}{{ default "any" }}{{- end }}
+    argocd-image-updater.argoproj.io/alias.ignore-tags: {{ $updaterIgnoreTags | default "none" }}
+    argocd-image-updater.argoproj.io/alias.update-strategy: {{ $updaterStrategy | default "semver" }}
+    {{- if $updaterPullSecret }}
+    argocd-image-updater.argoproj.io/alias.pull-secret: {{ $updaterPullSecret }}
+    {{- end }}
+    {{- end }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: "{{ $app.namespace }}"
+    server: 'https://kubernetes.default.svc'
+  project: "{{ $.Values.tenantName }}"
+  source:
+    path: {{ ($app.chart | default dict ).path | default "kubeit-deployment-chart" }}
+    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.repoURL }}"
+    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.targetRevision }}"
+    {{- if hasKey ($app.chart | default dict) "name"  }}
+    chart: {{ $app.chart.name }}
+    {{- end }}
+    helm:
+      ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
+      skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
+      valueFiles:
+        - {{ $helmValuesPath }}/argoApps/values.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/global.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/appGlobal.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/{{ $.Values.env }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
+      values: |
+        defaultRouting:
+          kubeitDefaultHosts:
+            dnsDomain: "{{ $.Values.dnsDomain }}"
+            tenantMultiRegion: "{{ $.Values.tenantMultiRegion }}"
+        kubeit:
+          region: "{{ $.Values.region }}"
+          namespace: "{{ $app.namespace }}"
+          clusterSubdomain: "{{ $.Values.clusterSubdomain }}"
+          clusterColour: "{{ $.Values.clusterColour }}"
+          ingressType: "{{ $.Values.ingressType }}"
+          shortRegion: "{{ $.Values.shortRegion }}"
+          tenantName: "{{ $.Values.tenantName }}"
+          environmentName: "{{ $.Values.env }}"
+          tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: {{ $app.selfHeal | default "true" }}
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=false
+      - PrunePropagationPolicy=foreground
+      - PruneLast=false
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

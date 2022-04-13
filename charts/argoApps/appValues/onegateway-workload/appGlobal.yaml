@@ -1,0 +1,40 @@
+---
+# Application name
+app: onegateway-workload    # Required
+
+# Workload info
+workload:
+  type: onegateway      # Required - standard or onegateway
+  state: stateless      # Required - stateful or stateless, for stateless mounting extra volumes is blocked (besides keyvault)
+
+image:
+  repository: "voakpglobalsvcprodacrwe.azurecr.io/test/ancris3/ancris3"
+  tag: "main-20210805.6"
+  containerPort: 8050
+
+additionalPodLabels:
+  session-management: frontend
+  session-manager-name: onegateway-sessionmanager
+
+defaultRouting:
+  catchAll: true
+  kubeitDefaultHosts:
+    enabled: false
+  hosts:
+    - "ancris3.kubeit.dnv.com"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 2Gi
+  limits:
+    cpu: 500m
+    memory: 6Gi
+
+requestAuthentication:
+  enabled: true
+  jwtRules:
+    - issuer: "https://login.veracity.com/a68572e3-63ce-4bc1-acdc-b64943502e9d/v2.0/"
+      jwksUri: "https://login.veracity.com/te/a68572e3-63ce-4bc1-acdc-b64943502e9d/b2c_1a_signinwithadfsidp/discovery/v2.0/keys"
+      audiences: [83054ebf-1d7b-43f5-82ad-b2bde84d7b75]
+      forwardOriginalToken: true

@@ -1,0 +1,4 @@
+---
+defaultRouting:
+  hosts:
+    - "ancris3.dev.kubeit.dnv.com"

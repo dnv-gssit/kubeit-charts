@@ -1,0 +1,47 @@
+---
+# Application name
+app: standard-workload    # Required
+
+# Workload info
+workload:
+  type: standard      # Required - standard or onegateway
+  state: stateful     # Required - stateful or stateless, for stateless mounting extra volumes is blocked (besides keyvault)
+
+image:
+  repository: "paulbouwer/hello-kubernetes"
+  tag: "1.10"
+  containerPort: 8080
+
+# service:
+#   port: 8080
+
+defaultRouting:
+  enabled: true
+  kubeitDefaultHosts:
+    hostsPrefix: "www"      # Application will be available under: https://${hostsPrefix}-${tenantName}.${env}.kubeit.dnv.com/, instead of https://${app}-${tenantName}.${env}.kubeit.dnv.com/
+  rewriteUrlPrefix:
+    enabled: false
+  allHosts: false
+  redirectOnNoTrailingSlash: false
+  catchAll: true
+
+authorizationPolicy:
+  enabled: false
+requestAuthentication:
+  enabled: false
+
+# TODO: add volumes
+# volumes:
+
+# Be Aware! Security contexts configuration is specific to Docker Image, if your workload is not spinning up try disabling settings below and after check what needs to be changed.
+securityContext:
+  fsGroup: 1000
+  runAsUser: 1000
+  runAsNonRoot: true
+
+containerSecurityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true

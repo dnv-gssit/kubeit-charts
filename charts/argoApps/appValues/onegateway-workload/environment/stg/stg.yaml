@@ -1,0 +1,4 @@
+---
+defaultRouting:
+  hosts:
+    - "ancris3-tenant2.stg.kubeit.dnv.com"

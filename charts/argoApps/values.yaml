@@ -1,0 +1,58 @@
+---
+applications:
+  # - name: ""                          # Required: tenant_app_name - name of the app, must be the same as folder name in appValues directory
+  #   namespace: ""                     # Required: tenant_namespace - name of the namespace provided during KubeIT onboarding process
+  #   env: []                           # Required: dev, stg, prod - on which environments application will be deployed
+  #   region: []                        # Required: westeurope, eastus2 - on which regions application will be deployed
+  #   clusterColour: []                 # Required: blue, green - on which clusters application will be deployed
+  #   syncWave: "1"                     # Optional - if applications need to be deployed in specific order you can specify in which wave, more info: https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/
+  #   selfHeal: false                   # Optional - set to false if you want ArgoCD to not override your manual changes on the cluster, true by default
+  #   chart:                            # Optional - if application will not be deployed using provided kubeit-deployment-chart
+  #     repoURL: ""                     # Optional - helm repo url
+  #     name: ""                        # Optional - name of the helm chart in helm repo, if repoURL is pointing on git repo please don't provide chart name
+  #     targetRevision: ""              # Optional - version of the chart from helm repo or branch/tag of git repo
+  #     path: ""                        # Optional - if git repo was provided as repoURL, provide path to the helm chart in git repo
+  #     ignoreMissingValueFiles: false  # Optional - set to true if you want to ignore missing values files (define only required ones), false by default
+  #     skipCrds: false                 # Optional - set to true if you want to skip CRDs deployment by Helm, false by default
+  - name: standard-workload
+    namespace: standard
+    env:
+      - dev
+      - stg
+      - prod
+    region:
+      - westeurope
+      - eastus2
+    clusterColour:
+      - blue
+      - green
+  - name: onegateway-workload
+    namespace: onegateway
+    env:
+      - dev
+      - stg
+    region:
+      - westeurope
+    clusterColour:
+      - blue
+  - name: onegateway-sessionmanager
+    namespace: onegateway
+    env:
+      - dev
+      - stg
+    region:
+      - westeurope
+    clusterColour:
+      - blue
+  - name: onegateway-redis
+    namespace: onegateway
+    chart:
+      ignoreMissingValueFiles: true
+      path: "kubeit-redis-chart"
+    env:
+      - dev
+      - stg
+    region:
+      - westeurope
+    clusterColour:
+      - blue

@@ -1,0 +1,88 @@
+---
+# Application name
+app: onegateway-sessionmanager    # Required
+
+# Workload info
+workload:
+  type: onegateway      # Required - standard or onegateway
+  state: stateless      # Required - stateful or stateless, for stateless mounting extra volumes is blocked (besides keyvault)
+
+sessionManagerDeployment: true
+
+image:
+  repository: "voakpglobalsvcprodacrwe.azurecr.io/test/ancris3/sessionmanager"
+  tag: "07102021"
+  containerPort: 8000
+
+defaultRouting:
+  enabled: true
+  kubeitDefaultHosts:
+    enabled: false
+  rewriteUrlPrefix:
+    enabled: false
+  urlPrefixes:
+    - session
+  allHosts: false
+  retries:
+    enabled: true
+    settings:
+      attempts: 3
+      perTryTimeout: 15s
+
+requestAuthentication:
+  enabled: false
+
+authorizationPolicy:
+  enabled: false
+
+initContainersExtra:
+  - name: wait-for-redis
+    image: owncloudci/wait-for
+    args:
+      - "-it"
+      - "onegateway-redis-master:6379"
+      - "-t"
+      - "30"
+
+health:
+  livenessProbe:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - apk add redis; redis-cli -x -h $REDIS_HOST -a $REDIS_PASSWORD ping
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+env:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://*:8000
+  SESSION_MANAGER_ID: ancris3
+  AUTHORITY: https://login.veracity.com/te/dnvglb2cprod.onmicrosoft.com/B2C_1A_SignInWithADFSIdp/v2.0
+  SCOPE: https://dnvglb2cprod.onmicrosoft.com/83054ebf-1d7b-43f5-82ad-b2bde84d7b75/user_impersonation
+  CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: ancris3-session-manager
+        key: client-secret
+  REDIS_HOST: onegateway-redis-master
+  REDIS_PORT: 6379
+  REDIS_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: onegateway-redis
+        key: redis-password
+  LOGIN_LANDING_URL: "/"
+  LOGOUT_ENDPOINT: https://www.veracity.com/auth/logout
+  REPLY_URL_SUFFIX: veracity
+
+keyVaultSecrets:
+  enabled: true
+  tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"
+  keyVaults:
+    - keyVaultName: "VoAKP-PROD-KV-GL-WE"
+      secrets:
+        - keyVaultSecretName: ancris3-client-secret
+          k8sSecret: enabled
+          k8sSecretName: ancris3-session-manager
+          k8sSecretKey: client-secret
