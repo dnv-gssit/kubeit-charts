@@ -2,9 +2,7 @@
 remote: origin
 target-branch: main
 chart-dirs:
-  - charts/kubeit-app-of-apps
-  - charts/kubeit-deployment-chart
-  - charts/kubeit-redis-chart
+  - charts
 chart-repos:
   - kubeit-charts=https://dnv-gssit.github.io/kubeit-charts
 helm-extra-args: --timeout 600s
