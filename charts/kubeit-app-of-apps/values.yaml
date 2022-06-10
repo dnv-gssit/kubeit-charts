@@ -2,9 +2,11 @@
 applications:
   # - name: ""                          # Required: tenant_app_name - name of the app, must be the same as folder name in appValues directory
   #   namespace: ""                     # Required: tenant_namespace - name of the namespace provided during KubeIT onboarding process
-  #   env: []                           # Required: dev, stg, prod - on which environments application will be deployed
-  #   region: []                        # Required: westeurope, eastus2 - on which regions application will be deployed
-  #   clusterColour: []                 # Required: blue, green - on which clusters application will be deployed
+  #   containerOS: ""                   # Required: linux, windows - define container OS to deploy on supported network plugin
+  #   environments: []                  # Required: dev, stg, prod - on which environments application will be deployed
+  #     region: []                      # Required: westeurope, eastus2 - on which regions application will be deployed
+  #     clusterColour: []               # Required: blue, green - on which clusters application will be deployed
+  #     namespaces: []                  # Required: one of the values provided to the cluster administration team during bootstrapping, namespace(s) where the application is going to be deployed
   #   syncWave: "1"                     # Optional - if applications need to be deployed in specific order you can specify in which wave, more info: https://argo-cd.readthedocs.io/en/stable/user-guide/sync-waves/
   #   selfHeal: false                   # Optional - set to false if you want ArgoCD to not override your manual changes on the cluster, true by default
   #   chart:                            # Optional - if application will not be deployed using provided kubeit-deployment-chart
@@ -15,44 +17,162 @@ applications:
   #     ignoreMissingValueFiles: false  # Optional - set to true if you want to ignore missing values files (define only required ones), false by default
   #     skipCrds: false                 # Optional - set to true if you want to skip CRDs deployment by Helm, false by default
   - name: standard-workload
-    namespace: standard
-    env:
-      - dev
-      - stg
-      - prod
-    region:
-      - westeurope
-      - eastus2
-    clusterColour:
-      - blue
-      - green
+    containerOS: linux
+    environments:
+        - nonprod:
+          namespaces:
+          - standard
+          - standard-nonprod
+          region:
+            - westeurope
+            - eastus2
+            - southeastasia
+          clusterColour:
+            - blue
+            - green
+        - prod:
+          namespaces:
+            - standard
+            - standard-prod
+          region:
+            - westeurope
+            - eastus2
+            - southeastasia
+          clusterColour:
+            - blue
+            - green
+        - name: auxilliary
+          namespaces:
+          - standard
+          - standard-auxilliary
+          region:
+            - westeurope
+            - eastus2
+            - southeastasia
+          clusterColour:
+            - blue
+            - green
   - name: onegateway-workload
-    namespace: onegateway
-    env:
-      - dev
-      - stg
-    region:
-      - westeurope
-    clusterColour:
-      - blue
+    containerOS: linux
+    environments:
+        - nonprod:
+          namespaces:
+            - onegateway
+            - onegateway-nonprod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - prod:
+          namespaces:
+            - onegateway
+            - onegateway-prod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - name: auxilliary
+          namespaces:
+          - onegateway
+          - onegateway-auxilliary
+          region:
+            - westeurope
+          clusterColour:
+            - blue
   - name: onegateway-sessionmanager
-    namespace: onegateway
-    env:
-      - dev
-      - stg
-    region:
-      - westeurope
-    clusterColour:
-      - blue
+    containerOS: linux
+    environments:
+        - nonprod:
+          namespaces:
+            - onegateway
+            - onegateway-nonprod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - prod:
+          namespaces:
+            - onegateway
+            - onegateway-prod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - name: auxilliary
+          namespaces:
+          - onegateway
+          - onegateway-auxilliary
+          region:
+            - westeurope
+          clusterColour:
+            - blue
   - name: onegateway-redis
-    namespace: onegateway
     chart:
       ignoreMissingValueFiles: true
       path: "kubeit-redis-chart"
-    env:
-      - dev
-      - stg
-    region:
-      - westeurope
-    clusterColour:
-      - blue
+    containerOS: linux
+    environments:
+        - nonprod:
+          namespaces:
+            - onegateway
+            - onegateway-nonprod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - prod:
+          namespaces:
+            - onegateway
+            - onegateway-prod
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
+        - name: auxilliary
+          namespaces:
+          - onegateway
+          - onegateway-auxilliary
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+  - name: win-standard-workload
+    containerOS: linux
+    environments:
+        - nonprod:
+          namespaces:
+            - win-standard-workload
+            - win-standard-workload-nonprod
+          region:
+            - westeurope
+            - eastus2
+            - southeastasia
+          clusterColour:
+            - blue
+            - green
+        - prod:
+          namespaces:
+            - win-standard-workload
+            - win-standard-workload-prod
+          region:
+            - westeurope
+            - eastus2
+            - southeastasia
+          clusterColour:
+            - blue
+            - green
+        - name: auxilliary
+          namespaces:
+          - win-standard-workload
+          - win-standard-workload-auxilliary
+          region:
+            - westeurope
+          clusterColour:
+            - blue
+            - green
