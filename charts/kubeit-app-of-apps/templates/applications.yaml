@@ -7,6 +7,15 @@
 {{- if has $.Values.region $environment.region }}
 {{- if has $.Values.clusterColour $environment.clusterColour }}
 {{- if not ( and ( contains "kubenet" $.Values.networkPlugin ) ( contains "windows" $app.containerOS ) ) }}
+
+# https://docs.microsoft.com/en-us/azure/devops/organizations/settings/naming-restrictions?view=azure-devops
+{{- $envDirectory := "" }}
+{{- if eq $.Values.env "aux" }}
+{{ $envDirectory = "auxiliary" }}
+{{- else }}
+{{ $envDirectory = $.Values.env }}
+{{- end }}
+
 # https://github.com/argoproj/argo-cd/issues/2789#issuecomment-966139413
 {{- $helmValuesPath := "" }}
 {{- if hasKey ($app.chart | default dict) "name" }}
@@ -97,10 +106,10 @@ spec:
         - {{ $helmValuesPath }}/argoApps/values.yaml
         - {{ $helmValuesPath }}/argoApps/appValues/global.yaml
         - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/appGlobal.yaml
-        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/{{ $.Values.env }}.yaml
-        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
-        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $.Values.env }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
-        - {{ $helmValuesPath }}/argoApps/appValues//{{ $app.name }}/environment/{{ $.Values.env }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
+        - {{ $helmValuesPath }}/argoApps/appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
       values: |
         defaultRouting:
           kubeitDefaultHosts:

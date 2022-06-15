@@ -3,7 +3,8 @@ applications:
   # - name: ""                          # Required: tenant_app_name - name of the app, must be the same as folder name in appValues directory
   #   namespace: ""                     # Required: tenant_namespace - name of the namespace provided during KubeIT onboarding process
   #   containerOS: ""                   # Required: linux, windows - define container OS to deploy on supported network plugin
-  #   environments: []                  # Required: dev, stg, prod - on which environments application will be deployed
+  #   environments: []                  # Required: List of the environments with parameters for controlling where apps will be deployed
+  #     name: []                        # Required: aux, nonprod, prod - on which environments application will be deployed
   #     region: []                      # Required: westeurope, eastus2 - on which regions application will be deployed
   #     clusterColour: []               # Required: blue, green - on which clusters application will be deployed
   #     namespaces: []                  # Required: one of the values provided to the cluster administration team during bootstrapping, namespace(s) where the application is going to be deployed
@@ -19,7 +20,7 @@ applications:
   - name: standard-workload
     containerOS: linux
     environments:
-        - nonprod:
+        - name: nonprod
           namespaces:
           - standard
           - standard-nonprod
@@ -30,7 +31,7 @@ applications:
           clusterColour:
             - blue
             - green
-        - prod:
+        - name: prod
           namespaces:
             - standard
             - standard-prod
@@ -41,10 +42,10 @@ applications:
           clusterColour:
             - blue
             - green
-        - name: auxilliary
+        - name: aux
           namespaces:
           - standard
-          - standard-auxilliary
+          - standard-aux
           region:
             - westeurope
             - eastus2
@@ -55,7 +56,7 @@ applications:
   - name: onegateway-workload
     containerOS: linux
     environments:
-        - nonprod:
+        - name: nonprod
           namespaces:
             - onegateway
             - onegateway-nonprod
@@ -64,7 +65,7 @@ applications:
           clusterColour:
             - blue
             - green
-        - prod:
+        - name: prod
           namespaces:
             - onegateway
             - onegateway-prod
@@ -73,10 +74,10 @@ applications:
           clusterColour:
             - blue
             - green
-        - name: auxilliary
+        - name: aux
           namespaces:
           - onegateway
-          - onegateway-auxilliary
+          - onegateway-aux
           region:
             - westeurope
           clusterColour:
@@ -84,7 +85,7 @@ applications:
   - name: onegateway-sessionmanager
     containerOS: linux
     environments:
-        - nonprod:
+        - name: nonprod
           namespaces:
             - onegateway
             - onegateway-nonprod
@@ -93,7 +94,7 @@ applications:
           clusterColour:
             - blue
             - green
-        - prod:
+        - name: prod
           namespaces:
             - onegateway
             - onegateway-prod
@@ -102,10 +103,10 @@ applications:
           clusterColour:
             - blue
             - green
-        - name: auxilliary
+        - name: aux
           namespaces:
           - onegateway
-          - onegateway-auxilliary
+          - onegateway-aux
           region:
             - westeurope
           clusterColour:
@@ -116,7 +117,7 @@ applications:
       path: "kubeit-redis-chart"
     containerOS: linux
     environments:
-        - nonprod:
+        - name: nonprod
           namespaces:
             - onegateway
             - onegateway-nonprod
@@ -125,7 +126,7 @@ applications:
           clusterColour:
             - blue
             - green
-        - prod:
+        - name: prod
           namespaces:
             - onegateway
             - onegateway-prod
@@ -134,10 +135,10 @@ applications:
           clusterColour:
             - blue
             - green
-        - name: auxilliary
+        - name: aux
           namespaces:
           - onegateway
-          - onegateway-auxilliary
+          - onegateway-aux
           region:
             - westeurope
           clusterColour:
@@ -145,7 +146,7 @@ applications:
   - name: win-standard-workload
     containerOS: linux
     environments:
-        - nonprod:
+        - name: nonprod
           namespaces:
             - win-standard-workload
             - win-standard-workload-nonprod
@@ -156,7 +157,7 @@ applications:
           clusterColour:
             - blue
             - green
-        - prod:
+        - name: prod
           namespaces:
             - win-standard-workload
             - win-standard-workload-prod
@@ -167,10 +168,10 @@ applications:
           clusterColour:
             - blue
             - green
-        - name: auxilliary
+        - name: aux
           namespaces:
           - win-standard-workload
-          - win-standard-workload-auxilliary
+          - win-standard-workload-aux
           region:
             - westeurope
           clusterColour:
