@@ -274,9 +274,4 @@ debugEnvoyFilters: true
 kubeit:
   tenantPrefixEnabled: true
 
-# TODO: remove if not needed
-sessionManagerDeployment: false
-
 initContainersExtra: []
-
-# podIdentityName:
