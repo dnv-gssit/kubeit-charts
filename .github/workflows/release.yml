@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      - feature/migration-changes
+    paths:
+      - 'charts/**'
 
 jobs:
   release:
