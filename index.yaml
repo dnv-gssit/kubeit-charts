@@ -3,6 +3,16 @@ entries:
   kubeit-app-of-apps:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-06-27T22:16:08.762018233Z"
+    description: KubeIT ArgoCD app-of-apps chart
+    digest: 8af3a69904dac440b60fa7bb50419d746732884fd946ae9f043c036b3e3576cc
+    name: kubeit-app-of-apps
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-app-of-apps-0.1.4/kubeit-app-of-apps-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-06-22T06:59:24.171306314Z"
     description: KubeIT ArgoCD app-of-apps chart
     digest: 6054bd3c86edb9758acd41282c6a2da048d1a9a916fca3aacc00289410018309
@@ -34,6 +44,16 @@ entries:
   kubeit-deployment-chart:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-06-27T22:16:08.888371937Z"
+    description: KubeIT workload deployment chart
+    digest: d124552041236a5636976107b78e6e124c3698e41e05fcc793c21d2b9af4d8e3
+    name: kubeit-deployment-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-deployment-chart-1.0.5/kubeit-deployment-chart-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-04-13T23:16:48.296384634Z"
     description: KubeIT workload deployment chart
     digest: 653677da049add37ba4655e1a0f22d807f48255a8ed06ccfa863fd0d9b19c944
@@ -57,4 +77,15 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-redis-chart-0.1.1/kubeit-redis-chart-0.1.1.tgz
     version: 0.1.1
-generated: "2022-06-22T06:59:24.171321514Z"
+  kubeit-secrets-chart:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-06-27T22:16:09.008014233Z"
+    description: KubeIT secrets management chart
+    digest: 05499d04289e58e15b50bc501e79223f46d4f3f89a182460078458317486566d
+    name: kubeit-secrets-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.1/kubeit-secrets-chart-1.0.1.tgz
+    version: 1.0.1
+generated: "2022-06-27T22:16:09.008032334Z"
