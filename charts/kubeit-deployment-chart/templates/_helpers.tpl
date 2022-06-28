@@ -59,3 +59,4 @@ tenant: {{ $.Values.kubeit.tenantName }}
 state: stateful
 {{- end -}}
 {{- end -}}
+{{- end -}}
