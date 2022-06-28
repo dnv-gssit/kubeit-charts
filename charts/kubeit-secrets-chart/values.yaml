@@ -4,6 +4,7 @@ keyVaultSecrets:
   # tenantId:                                       # ID of the tenant with desired keyvault
   # keyVaults:
   #   - keyVaultName:                               # KeyVault name
+  #     keyVaultNamespace:                          # Namespace where secretproviderclass for the keyvault is going to be deployed
   #     secrets:
   #       - name:                                   # Name of the secret in globalKeyvaultName KeyVault
   #         k8sSecretEnabled: true                  # Optional - If set to true, creates Kubernetes secret in the application namespace
