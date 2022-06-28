@@ -3,5 +3,5 @@ apiVersion: v2
 name: kubeit-secrets-chart
 description: KubeIT secrets management chart
 type: application
-version: 1.0.1
+version: 1.0.3
 appVersion: 1.0.0
