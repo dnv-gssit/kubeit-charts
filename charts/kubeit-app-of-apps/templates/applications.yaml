@@ -3,11 +3,6 @@
 {{- range $environment := $app.environments }}
 {{- range $environment.namespaces }}
 
-{{- if eq $.Values.env $environment.name }}
-{{- if has $.Values.region $environment.region }}
-{{- if has $.Values.clusterColour $environment.clusterColour }}
-{{- if not ( and ( contains "kubenet" $.Values.networkPlugin ) ( contains "windows" $app.containerOS ) ) }}
-
 # https://docs.microsoft.com/en-us/azure/devops/organizations/settings/naming-restrictions?view=azure-devops
 {{- $envDirectory := "" }}
 {{- if eq $.Values.env "aux" }}
@@ -18,11 +13,8 @@
 
 # https://github.com/argoproj/argo-cd/issues/2789#issuecomment-966139413
 {{- $helmValuesPath := "" }}
-{{- if hasKey ($app.chart | default dict) "name" }}
-{{- $helmValuesPath = printf "%s/%s" "/tmp" (lower (regexReplaceAll "\\/+|\\:+" $.Values.repoURL "_")) }}
-{{- else }}
 {{- $helmValuesPath = ".."  }}
-{{- end }}
+
 # ArgoCD Image Updater Values Loader
 {{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
 {{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $.Values.env $.Values.env }}
@@ -140,10 +132,6 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 1m
-{{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
