@@ -67,6 +67,9 @@ spec:
         {{- if .Values.service.liveness.enabled }}
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
         {{- end }}
+        {{- with .Values.additionalPodAnnotations }}
+        {{ toYaml . | indent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: {{ include "platform-service.serviceAccountName" . }}
       securityContext:

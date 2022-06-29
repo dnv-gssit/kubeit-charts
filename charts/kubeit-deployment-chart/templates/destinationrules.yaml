@@ -19,5 +19,5 @@ spec:
       simple: {{ default "RANDOM" .Values.defaultRouting.loadBalancerPolicy }}
       {{- end}}
     tls:
-      mode: ISTIO_MUTUAL
+      mode: {{ .Values.defaultRouting.tls.mode }}
 {{- end}}

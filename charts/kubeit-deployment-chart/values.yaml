@@ -9,6 +9,9 @@ replicaCount: 1
 # sample extra label, you can add as many as you want
 additionalPodLabels: {}
   # saml-idp-forward-auth-filter: enabled
+# sample extra annotations
+additionalPodAnnotations: {}
+  # sidecar.istio.io/inject: "false"
 
 image:
   # registry: platformteam.azurecr.io (ignored if not specified)
@@ -133,6 +136,12 @@ defaultRouting:
 
   # route from all hosts (typically only common services)
   allHosts: false
+
+  # Istio tls modes
+  # Recommendation is to not change default TLS setup for the security reason
+  tls:
+    mode: ISTIO_MUTUAL
+
 
 # Specify network policies
 networkPolicy:
