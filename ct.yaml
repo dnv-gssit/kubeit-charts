@@ -1,0 +1,8 @@
+# Chart-testing configuration file
+remote: origin
+target-branch: main
+chart-dirs:
+  - charts
+chart-repos:
+  - kubeit-charts=https://dnv-gssit.github.io/kubeit-charts
+helm-extra-args: --timeout 600s
