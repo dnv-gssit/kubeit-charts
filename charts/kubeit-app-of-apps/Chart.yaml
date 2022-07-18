@@ -3,5 +3,9 @@ apiVersion: v2
 name: kubeit-app-of-apps
 description: KubeIT ArgoCD app-of-apps chart
 type: application
-version: 0.1.6
+version: 0.1.7
 appVersion: 0.1.0
+dependencies:
+  - name: kubeit-deployment-chart
+    version: 1.0.14
+    repository: "https://dnv-gssit.github.io/kubeit-charts/"

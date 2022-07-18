@@ -17,11 +17,8 @@
 {{- end }}
 
 # https://github.com/argoproj/argo-cd/issues/2789#issuecomment-966139413
-{{- $helmValuesPath := "" }}
-{{- if hasKey ($app.chart | default dict) "name" }}
-{{- $helmValuesPath = printf "%s/%s" "/tmp" (lower (regexReplaceAll "\\/+|\\:+" $.Values.repoURL "_")) }}
-{{- else }}
-{{- $helmValuesPath = ".."  }}
+{{- $helmValuesPath := "../.."  }}
+
 {{- end }}
 # ArgoCD Image Updater Values Loader
 {{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
@@ -115,7 +112,7 @@ spec:
           kubeitDefaultHosts:
             dnsDomain: "{{ $.Values.dnsDomain }}"
             tenantMultiRegion: "{{ $.Values.tenantMultiRegion }}"
-        kubeit:
+        kubeit-deployment-chart:
           region: "{{ $.Values.region }}"
           namespace: "{{ . }}"
           clusterSubdomain: "{{ $.Values.clusterSubdomain }}"
