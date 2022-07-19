@@ -1,0 +1,7 @@
+---
+repoURL: "git@ssh.dev.azure.com:v3/dnvgl-gssit/Kubernetes%20Platform/voa-tenant-app-example"
+targetRevision: "main"
+region: "westeurope"
+clusterColour: "blue"
+env: "prod"
+networkPlugin: "kubenet"

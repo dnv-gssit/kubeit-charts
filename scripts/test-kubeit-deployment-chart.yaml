@@ -1,0 +1,11 @@
+---
+kubeit:
+  region: "westeurope"
+  namespace: "onegateway"
+  dnsDomain: "kubeit.dnv.com"
+  clusterSubdomain: "stg001"
+  clusterColour: "blue"
+  ingressType: "internal"
+  shortRegion: "we"
+  tenantName: "tenant2"
+  environmentName: "stg"

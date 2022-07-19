@@ -99,13 +99,13 @@ spec:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
       skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
       valueFiles:
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/values.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/global.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/{{ $app.name }}/appGlobal.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
-        - {{ $helmValuesPath }}/kubeit-app-of-apps/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
+        - {{ $helmValuesPath }}/values.yaml
+        - {{ $helmValuesPath }}/appValues/global.yaml
+        - {{ $helmValuesPath }}/appValues/{{ $app.name }}/appGlobal.yaml
+        - {{ $helmValuesPath }}/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
+        - {{ $helmValuesPath }}/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
+        - {{ $helmValuesPath }}/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
+        - {{ $helmValuesPath }}/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
       values: |
         defaultRouting:
           kubeitDefaultHosts:
