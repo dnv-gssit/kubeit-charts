@@ -17,7 +17,7 @@
 {{- end }}
 
 # https://github.com/argoproj/argo-cd/issues/2789#issuecomment-966139413
-{{- $helmValuesPath := "../"  }}
+{{- $helmValuesPath := ".."  }}
 
 # ArgoCD Image Updater Values Loader
 {{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
