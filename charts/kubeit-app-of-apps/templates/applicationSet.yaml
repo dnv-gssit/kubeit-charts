@@ -1,0 +1,117 @@
+# Reference ArgoCD application definition - https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/application.yaml
+{{- range $app := .Values.applications }}
+{{- range $environment := $app.environments }}
+{{- range $environment.namespaces }}
+
+{{- if eq $.Values.env $environment.name }}
+{{- if has $.Values.region $environment.region }}
+{{- if has $.Values.clusterColour $environment.clusterColour }}
+{{- if not ( and ( contains "kubenet" $.Values.networkPlugin ) ( contains "windows" $app.containerOS ) ) }}
+
+# https://docs.microsoft.com/en-us/azure/devops/organizations/settings/naming-restrictions?view=azure-devops
+{{- $envDirectory := "" }}
+{{- if eq $.Values.env "aux" }}
+{{ $envDirectory = "auxiliary" }}
+{{- else }}
+{{ $envDirectory = $.Values.env }}
+{{- end }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $app.name }}-{{ . }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  generators:
+  - merge:
+      mergeKeys:
+        - unique
+      generators:
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/global.yaml"
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/{{ $app.name }}/appGlobal.yaml"
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
+        - git:
+            repoURL: {{ $.Values.valueFilesRepoUrl }}
+            revision: {{ $.Values.valueFilesRepoBranch }}
+            files:
+              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
+  template:
+    spec:
+      destination:
+        namespace: "{{ . }}"
+        server: 'https://kubernetes.default.svc'
+      project: "{{ $.Values.tenantName }}"
+      source:
+        path: {{ ($app.chart | default dict ).path | default "kubeit-deployment-chart" }}
+        repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.repoURL }}"
+        targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.targetRevision }}"
+        {{- if hasKey ($app.chart | default dict) "name"  }}
+        chart: {{ $app.chart.name }}
+        {{- end }}
+        helm:
+          ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
+          skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
+          values: |
+            defaultRouting:
+              kubeitDefaultHosts:
+                dnsDomain: "{{ $.Values.dnsDomain }}"
+                tenantMultiRegion: "{{ $.Values.tenantMultiRegion }}"
+            kubeit-deployment-chart:
+              region: "{{ $.Values.region }}"
+              namespace: "{{ . }}"
+              clusterSubdomain: "{{ $.Values.clusterSubdomain }}"
+              clusterColour: "{{ $.Values.clusterColour }}"
+              ingressType: "{{ $.Values.ingressType }}"
+              shortRegion: "{{ $.Values.shortRegion }}"
+              tenantName: "{{ $.Values.tenantName }}"
+              environmentName: "{{ $.Values.env }}"
+              tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+              {{kubeit-deployment-chart}}
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: {{ $app.selfHeal | default "true" }}
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=false
+          - PrunePropagationPolicy=foreground
+          - PruneLast=false
+        retry:
+          limit: 2
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 1m
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
