@@ -3,6 +3,16 @@ entries:
   kubeit-app-of-apps:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-08-11T20:01:17.929904084Z"
+    description: KubeIT ArgoCD app-of-apps chart
+    digest: e3e7d3caf6c57e140e2517bfd26ab4d2bed501f51d9f0e6123a55c11508ca0e3
+    name: kubeit-app-of-apps
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-app-of-apps-0.1.18/kubeit-app-of-apps-0.1.18.tgz
+    version: 0.1.18
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-08-11T19:50:19.021837689Z"
     description: KubeIT ArgoCD app-of-apps chart
     digest: 6c4fa040cad37392fe24b6e6b0611ecf48d3ec80547b5a7ef66a4d4b6ec7dcfc
@@ -348,4 +358,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.1/kubeit-secrets-chart-1.0.1.tgz
     version: 1.0.1
-generated: "2022-08-11T19:50:19.022078201Z"
+generated: "2022-08-11T20:01:17.930267487Z"
