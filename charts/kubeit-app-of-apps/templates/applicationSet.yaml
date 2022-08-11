@@ -34,33 +34,33 @@ spec:
         - unique
       generators:
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/global.yaml"
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/{{ $app.name }}/appGlobal.yaml"
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
         - git:
-            repoURL: {{ $.Values.valueFilesRepoUrl }}
-            revision: {{ $.Values.valueFilesRepoBranch }}
+            repoURL: {{ $app.valueFilesRepoUrl }}
+            revision: {{ $app.valueFilesRepoBranch }}
             files:
               - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
   template:
