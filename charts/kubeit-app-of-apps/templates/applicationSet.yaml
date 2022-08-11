@@ -78,6 +78,7 @@ spec:
           ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
           skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
           values: |
+            {{kubeitDeploymentChart}}
             defaultRouting:
               kubeitDefaultHosts:
                 dnsDomain: "{{ $.Values.dnsDomain }}"
@@ -92,7 +93,6 @@ spec:
               tenantName: "{{ $.Values.tenantName }}"
               environmentName: "{{ $.Values.env }}"
               tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
-              {{kubeitDeploymentChart}}
       syncPolicy:
         automated:
           prune: true
