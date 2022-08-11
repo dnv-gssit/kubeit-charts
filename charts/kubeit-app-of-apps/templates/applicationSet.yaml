@@ -15,6 +15,8 @@
 {{- else }}
 {{ $envDirectory = $.Values.env }}
 {{- end }}
+
+# Line 83 explaination - https://github.com/argoproj/applicationset/issues/553
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
@@ -78,7 +80,7 @@ spec:
           ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
           skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
           values: |
-            {{kubeitdeploymentchart}}
+            '{{"{{"}}kubeitdeploymentchart{{"}}"}}' 
             defaultRouting:
               kubeitDefaultHosts:
                 dnsDomain: "{{ $.Values.dnsDomain }}"
