@@ -21,7 +21,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ $app.name }}-{{ . }}
+  name: {{ $app.name }}-{{ . }}-appset
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
@@ -64,6 +64,8 @@ spec:
             files:
               - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
   template:
+    metadata:
+      name: {{ $app.name }}-{{ . }}
     spec:
       destination:
         namespace: "{{ . }}"
