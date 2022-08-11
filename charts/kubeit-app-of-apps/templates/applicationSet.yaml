@@ -92,7 +92,7 @@ spec:
               tenantName: "{{ $.Values.tenantName }}"
               environmentName: "{{ $.Values.env }}"
               tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
-              "{{kubeit-deployment-chart}}"
+              {{kubeitDeploymentChart}}
       syncPolicy:
         automated:
           prune: true
