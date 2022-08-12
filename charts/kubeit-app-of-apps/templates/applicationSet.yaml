@@ -37,32 +37,32 @@ spec:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/global.yaml"
+              - path: "chart/appValues/global.yaml"
         - git:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/{{ $app.name }}/appGlobal.yaml"
+              - path: "chart/appValues/{{ $app.name }}/appGlobal.yaml"
         - git:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
+              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
         - git:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
+              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
         - git:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
+              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
         - git:
             repoURL: {{ $app.valueFilesRepoUrl }}
             revision: {{ $app.valueFilesRepoBranch }}
             files:
-              - path: "appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
+              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
   template:
     metadata:
       name: {{ $app.name }}-{{ . }}
