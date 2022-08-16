@@ -29,40 +29,11 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   generators:
-  - merge:
-      mergeKeys:
-        - unique
-      generators:
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/global.yaml"
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/{{ $app.name }}/appGlobal.yaml"
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
-        - git:
-            repoURL: {{ $app.valueFilesRepoUrl }}
-            revision: {{ $app.valueFilesRepoBranch }}
-            files:
-              - path: "chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
+    - git:
+        repoURL: {{ $app.valueFilesRepoUrl }}
+        revision: {{ $app.valueFilesRepoBranch }}
+        files:
+          - path: "chart/appValues/{{ $app.name }}/appGlobal.yaml"
   template:
     metadata:
       name: {{ $app.name }}-{{ . }}
