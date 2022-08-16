@@ -142,7 +142,6 @@ defaultRouting:
   tls:
     mode: ISTIO_MUTUAL
 
-
 # Specify network policies
 networkPolicy:
   # Enable default network policy (set false and create your own if needed)
