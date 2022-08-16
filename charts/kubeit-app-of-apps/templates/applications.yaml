@@ -129,6 +129,7 @@ spec:
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
 
 {{ $allValues | toYaml | indent 8 }}
+
   syncPolicy:
     automated:
       prune: true
