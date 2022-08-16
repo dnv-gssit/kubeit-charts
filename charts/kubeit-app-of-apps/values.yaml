@@ -1,6 +1,6 @@
 ---
 globals:
-  valuesPath: "chart/appValues"         # Required: Provide path to directory with Helm values files
+  valuesPath: "../../../chart/appValues"  # Required: Provide path to directory with Helm values files, relative to the chart
   chart:
     ## https://github.com/dnv-gssit/kubeit-charts/releases
     # repoURL: "https://dnv-gssit.github.io/kubeit-charts/"

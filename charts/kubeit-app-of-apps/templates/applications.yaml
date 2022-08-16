@@ -101,11 +101,9 @@ spec:
       skipCrds: {{ ($app.chart | default dict ).skipCrds | default $.Values.globals.chart.skipCrds }}
       valueFiles:
         - "{{ $.Values.globals.valuesPath }}/global.yaml"
-        - "{{ $.Values.globals.valuesPath }}/{{ $app.name }}/appGlobal.yaml"
-        - "{{ $.Values.globals.valuesPath }}/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml"
-        - "{{ $.Values.globals.valuesPath }}/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml"
-        - "{{ $.Values.globals.valuesPath }}/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml"
-        - "{{ $.Values.globals.valuesPath }}/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml"
+        {{- range $valuesList }}
+        - "{{ . }}"
+        {{- end }}
       values: |
         app: {{ $app.name }}
         namespace: {{ . }}
