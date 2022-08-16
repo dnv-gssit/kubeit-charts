@@ -87,7 +87,8 @@ spec:
   project: "{{ $.Values.tenantName }}"
   source:
     repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.globals.chart.repoURL }}"
-    {{- if hasKey ($app.chart | default dict) "targetRevision" }}
+    {{- if and (hasKey ($app.chart | default dict) "targetRevision") (eq ($app.chart | default dict ).targetRevision "latest") }}
+    {{- else }}
     targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.globals.chart.targetRevision }}"
     {{- end }}
     {{- if hasKey ($app.chart | default dict) "name" }}
