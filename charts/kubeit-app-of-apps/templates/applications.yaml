@@ -18,9 +18,9 @@
 
 # ArgoCD Image Updater Values Loader
 {{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
-{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $.Values.env $.Values.env }}
-{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $.Values.env $.Values.region $.Values.region }}
-{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $.Values.env $.Values.region $.Values.clusterColour }}
+{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
 {{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
