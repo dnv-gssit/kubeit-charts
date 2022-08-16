@@ -70,7 +70,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $app.name }}-{{ . }}
+  name: {{ $.Values.tenantName }}-{{ $app.name }}-{{ . }}-{{ $.Values.clusterSubdomain }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
@@ -111,6 +111,7 @@ spec:
         - {{ $helmValuesPath }}/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
         - {{ $helmValuesPath }}/appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
       values: |
+        app: {{ $app.name }}
         defaultRouting:
           kubeitDefaultHosts:
             dnsDomain: "{{ $.Values.dnsDomain }}"
