@@ -1,4 +1,15 @@
 ---
+globals:
+  chart:
+    # repoURL: "https://dnv-gssit.github.io/kubeit-charts/"
+    # name: kubeit-deployment-chart
+    # targetRevision: 1.0.13
+    repoURL: "https://github.com/dnv-gssit/kubeit-charts.git"
+    path: charts/kubeit-deployment-chart
+    targetRevision: feature/migration_kubeit
+    ignoreMissingValueFiles: true
+    skipCrds: true
+
 applications:
   # - name: ""                          # Required: tenant_app_name - name of the app, must be the same as folder name in appValues directory
   #   namespace: ""                     # Required: tenant_namespace - name of the namespace provided during KubeIT onboarding process
@@ -20,160 +31,205 @@ applications:
   - name: standard-workload
     containerOS: linux
     environments:
-        - name: nonprod
-          namespaces:
+      - name: nonprod
+        namespaces:
+        - standard
+        - standard-nonprod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
           - standard
-          - standard-nonprod
-          region:
-            - westeurope
-            - eastus2
-            - southeastasia
-          clusterColour:
-            - blue
-            - green
-        - name: prod
-          namespaces:
-            - standard
-            - standard-prod
-          region:
-            - westeurope
-            - eastus2
-            - southeastasia
-          clusterColour:
-            - blue
-            - green
-        - name: aux
-          namespaces:
+          - standard-prod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
+        - standard
+        - standard-aux
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+          - aux011
+  - name: shared-secrets
+    containerOS: linux
+    environments:
+      - name: nonprod
+        namespaces:
+        - standard
+        - standard-nonprod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - standard
+          - standard-prod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
           - standard
           - standard-aux
-          region:
-            - westeurope
-            - eastus2
-            - southeastasia
-          clusterColour:
-            - blue
-            - green
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+          - aux011
   - name: onegateway-workload
     containerOS: linux
+    chart:
+      ignoreMissingValueFiles: true
     environments:
-        - name: nonprod
-          namespaces:
-            - onegateway
-            - onegateway-nonprod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: prod
-          namespaces:
-            - onegateway
-            - onegateway-prod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: aux
-          namespaces:
+      - name: nonprod
+        namespaces:
+          - onegateway
+          - onegateway-nonprod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - onegateway
+          - onegateway-prod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
           - onegateway
           - onegateway-aux
-          region:
-            - westeurope
-          clusterColour:
-            - blue
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - aux011
   - name: onegateway-sessionmanager
     containerOS: linux
+    chart:
+      ignoreMissingValueFiles: true
     environments:
-        - name: nonprod
-          namespaces:
-            - onegateway
-            - onegateway-nonprod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: prod
-          namespaces:
-            - onegateway
-            - onegateway-prod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: aux
-          namespaces:
+      - name: nonprod
+        namespaces:
+          - onegateway
+          - onegateway-nonprod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - onegateway
+          - onegateway-prod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
           - onegateway
           - onegateway-aux
-          region:
-            - westeurope
-          clusterColour:
-            - blue
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - aux011
   - name: onegateway-redis
     chart:
       ignoreMissingValueFiles: true
       path: "kubeit-redis-chart"
     containerOS: linux
     environments:
-        - name: nonprod
-          namespaces:
-            - onegateway
-            - onegateway-nonprod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: prod
-          namespaces:
-            - onegateway
-            - onegateway-prod
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
-        - name: aux
-          namespaces:
+      - name: nonprod
+        namespaces:
+          - onegateway
+          - onegateway-nonprod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - onegateway
+          - onegateway-prod
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
           - onegateway
           - onegateway-aux
-          region:
-            - westeurope
-          clusterColour:
-            - blue
+        region:
+          - westeurope
+        clusterColour:
+          - blue
   - name: win-standard-workload
     containerOS: linux
     environments:
-        - name: nonprod
-          namespaces:
-            - win-standard-workload
-            - win-standard-workload-nonprod
-          region:
-            - westeurope
-            - eastus2
-            - southeastasia
-          clusterColour:
-            - blue
-            - green
-        - name: prod
-          namespaces:
-            - win-standard-workload
-            - win-standard-workload-prod
-          region:
-            - westeurope
-            - eastus2
-            - southeastasia
-          clusterColour:
-            - blue
-            - green
-        - name: aux
-          namespaces:
+      - name: nonprod
+        namespaces:
+          - win-standard-workload
+          - win-standard-workload-nonprod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - win-standard-workload
+          - win-standard-workload-prod
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: aux
+        namespaces:
           - win-standard-workload
           - win-standard-workload-aux
-          region:
-            - westeurope
-          clusterColour:
-            - blue
-            - green
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+          - green
+          - aux011
