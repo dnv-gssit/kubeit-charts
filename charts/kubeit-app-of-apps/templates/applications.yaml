@@ -59,6 +59,12 @@
 {{- end }}
 {{- end }}
 
+# Create a map with Helm Values inline
+{{ $allValues := dict }}
+{{- range $filename := $valuesList -}}
+  {{ $allValues = mergeOverwrite $allValues ($.Files.Get . | fromYaml) }}
+{{- end -}}
+
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -121,6 +127,8 @@ spec:
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+
+{{ $allValues | toYaml | indent 8 }}
   syncPolicy:
     automated:
       prune: true
