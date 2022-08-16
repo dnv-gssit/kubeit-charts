@@ -93,15 +93,18 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: "{{ $.Values.tenantName }}"
   source:
-    path: {{ ($app.chart | default dict ).path | default "kubeit-deployment-chart" }}
-    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.repoURL }}"
-    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.targetRevision }}"
-    {{- if hasKey ($app.chart | default dict) "name"  }}
-    chart: {{ $app.chart.name }}
+    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.globals.chart.repoURL }}"
+    {{- if hasKey ($app.chart | default dict) "targetRevision" }}
+    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.globals.chart.targetRevision }}"
+    {{- end }}
+    {{- if hasKey ($app.chart | default dict) "name" }}
+    chart: "{{ $app.chart.name }}"
+    {{- else }}
+    path: "{{ ($app.chart | default dict ).path | default $.Values.globals.chart.path }}"
     {{- end }}
     helm:
-      ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
-      skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
+      ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
+      skipCrds: {{ ($app.chart | default dict ).skipCrds | default $.Values.globals.chart.skipCrds }}
       valueFiles:
         - {{ $helmValuesPath }}/values.yaml
         - {{ $helmValuesPath }}/appValues/global.yaml
