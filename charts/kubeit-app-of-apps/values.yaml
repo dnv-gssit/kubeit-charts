@@ -1,13 +1,15 @@
 ---
 globals:
   chart:
-    # https://github.com/dnv-gssit/kubeit-charts/releases
+    ## https://github.com/dnv-gssit/kubeit-charts/releases
     # repoURL: "https://dnv-gssit.github.io/kubeit-charts/"
     # name: kubeit-deployment-chart
     # targetRevision: 1.0.13
+    ## or
     # repoURL: "https://github.com/dnv-gssit/kubeit-charts.git"
     # path: charts/kubeit-deployment-chart
     # targetRevision: main
+    ### General
     # ignoreMissingValueFiles: true
     # skipCrds: true
 
