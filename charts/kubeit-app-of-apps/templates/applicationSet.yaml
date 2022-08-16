@@ -82,7 +82,7 @@ spec:
           ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default "false" }}
           skipCrds: {{ ($app.chart | default dict ).skipCrds | default "false" }}
           values: |-
-            {{kubeitdeploymentchart}}
+            '{{"{{"}}kubeitdeploymentchart{{"}}"}}'
             defaultRouting:
               kubeitDefaultHosts:
                 dnsDomain: "{{ $.Values.dnsDomain }}"
