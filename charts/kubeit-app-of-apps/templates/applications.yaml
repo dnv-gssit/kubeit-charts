@@ -86,6 +86,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: "{{ $.Values.tenantName }}"
   source:
+<<<<<<< HEAD
     repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.globals.chart.repoURL }}"
     {{- if hasKey ($app.chart | default dict) "targetRevision" }}
     targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.globals.chart.targetRevision }}"
@@ -94,6 +95,14 @@ spec:
     chart: "{{ $app.chart.name }}"
     {{- else }}
     path: "{{ ($app.chart | default dict ).path | default $.Values.globals.chart.path }}"
+=======
+    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.repoURL }}"
+    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.targetRevision }}"
+    {{- if hasKey ($app.chart | default dict) "name"  }}
+    chart: {{ $app.chart.name }}
+    {{- else }}
+    path: {{ ($app.chart | default dict ).path | default "kubeit-deployment-chart" }}
+>>>>>>> 0dca9e668778f737b3a183221e504990f014c3e4
     {{- end }}
     helm:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
