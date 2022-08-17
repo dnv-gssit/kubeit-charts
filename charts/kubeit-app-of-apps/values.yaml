@@ -1,6 +1,7 @@
 ---
 globals:
   chart:
+    path: kubeit-charts/charts/kubeit-deployment-chart
     # General
     ignoreMissingValueFiles: false
     skipCrds: true

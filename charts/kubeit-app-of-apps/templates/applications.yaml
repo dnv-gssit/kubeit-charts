@@ -94,7 +94,7 @@ spec:
     {{- if hasKey ($app.chart | default dict) "name" }}
     chart: "{{ $app.chart.name }}"
     {{- else }}
-    path: "{{ ($app.chart | default dict ).path | default $.Values.path }}"
+    path: "{{ ($app.chart | default dict ).path | default $.Values.globals.chart.path }}"
     {{- end }}
     helm:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
