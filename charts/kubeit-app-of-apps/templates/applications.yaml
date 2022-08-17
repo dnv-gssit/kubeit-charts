@@ -17,10 +17,10 @@
 {{- end }}
 
 # ArgoCD Image Updater Values Loader
-{{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
-{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
-{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
-{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
+{{- $globalScope := printf "%s/appValues/%s/appGlobal.yaml" $.Values.globals.valuesPath $app.name }}
+{{- $envScope := printf "%s/appValues/%s/environment/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "%s/appValues/%s/environment/%s/region/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "%s/appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.clusterColour }}
 {{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
@@ -64,6 +64,9 @@
 {{- range $filename := $valuesList -}}
   {{ $allValues = mergeOverwrite $allValues ($.Files.Get . | fromYaml) }}
 {{- end -}}
+
+# {{ $.Template.Name }}
+# {{ $.Template.BasePath }}
 
 ---
 apiVersion: argoproj.io/v1alpha1
