@@ -17,10 +17,10 @@
 {{- end }}
 
 # ArgoCD Image Updater Values Loader
-{{- $globalScope := printf "%s/appValues/%s/appGlobal.yaml" $.Values.globals.valuesPath $app.name }}
-{{- $envScope := printf "%s/appValues/%s/environment/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $envDirectory }}
-{{- $regionScope := printf "%s/appValues/%s/environment/%s/region/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.region }}
-{{- $clusterScope := printf "%s/appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.clusterColour }}
+{{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
+{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
 {{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
@@ -58,15 +58,6 @@
 {{- end }}
 {{- end }}
 {{- end }}
-
-# Create a map with Helm Values inline
-{{ $allValues := dict }}
-{{- range $filename := $valuesList -}}
-  {{ $allValues = mergeOverwrite $allValues ($.Files.Get . | fromYaml) }}
-{{- end -}}
-
-# {{ $.Template.Name }}
-# {{ $.Template.BasePath }}
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -109,10 +100,12 @@ spec:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
       skipCrds: {{ ($app.chart | default dict ).skipCrds | default $.Values.globals.chart.skipCrds }}
       valueFiles:
-        - "{{ $.Values.globals.valuesPath }}/global.yaml"
-        {{- range $valuesList }}
-        - "{{ . }}"
-        {{- end }}
+        - ../../../chart/appValues/appValues/global.yaml
+        - ../../../chart/appValues/{{ $app.name }}/appGlobal.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
+        - ../../../chart/appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
       values: |
         app: {{ $app.name }}
         namespace: {{ . }}
@@ -130,9 +123,6 @@ spec:
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
-
-{{ $allValues | toYaml | indent 8 }}
-
   syncPolicy:
     automated:
       prune: true
