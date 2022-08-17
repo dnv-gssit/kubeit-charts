@@ -17,10 +17,10 @@
 {{- end }}
 
 # ArgoCD Image Updater Values Loader
-{{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
-{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $.Values.env $.Values.env }}
-{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $.Values.env $.Values.region $.Values.region }}
-{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $.Values.env $.Values.region $.Values.clusterColour }}
+{{- $globalScope := printf "%s/appValues/%s/appGlobal.yaml" $.Values.globals.valuesPath $app.name }}
+{{- $envScope := printf "%s/appValues/%s/environment/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "%s/appValues/%s/environment/%s/region/%s/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "%s/appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $.Values.globals.valuesPath $app.name $envDirectory $.Values.region $.Values.clusterColour }}
 {{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
@@ -59,6 +59,15 @@
 {{- end }}
 {{- end }}
 
+# Create a map with Helm Values inline
+{{ $allValues := dict }}
+{{- range $filename := $valuesList -}}
+  {{ $allValues = mergeOverwrite $allValues ($.Files.Get . | fromYaml) }}
+{{- end -}}
+
+# {{ $.Template.Name }}
+# {{ $.Template.BasePath }}
+
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -87,7 +96,8 @@ spec:
   project: "{{ $.Values.tenantName }}"
   source:
     repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.globals.chart.repoURL }}"
-    {{- if hasKey ($app.chart | default dict) "targetRevision" }}
+    {{- if and (hasKey ($app.chart | default dict) "targetRevision") (eq ($app.chart | default dict ).targetRevision "latest") }}
+    {{- else }}
     targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.globals.chart.targetRevision }}"
     {{- end }}
     {{- if hasKey ($app.chart | default dict) "name" }}
@@ -99,15 +109,13 @@ spec:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
       skipCrds: {{ ($app.chart | default dict ).skipCrds | default $.Values.globals.chart.skipCrds }}
       valueFiles:
-        - ./values.yaml
-        - ./appValues/global.yaml
-        - ./appValues/{{ $app.name }}/appGlobal.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
-        - ./appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
+        - "{{ $.Values.globals.valuesPath }}/global.yaml"
+        {{- range $valuesList }}
+        - "{{ . }}"
+        {{- end }}
       values: |
         app: {{ $app.name }}
+        namespace: {{ . }}
         defaultRouting:
           kubeitDefaultHosts:
             dnsDomain: "{{ $.Values.dnsDomain }}"
@@ -122,6 +130,9 @@ spec:
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+
+{{ $allValues | toYaml | indent 8 }}
+
   syncPolicy:
     automated:
       prune: true
