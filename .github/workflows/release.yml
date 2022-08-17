@@ -1,6 +1,8 @@
+---
 name: Release Charts
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

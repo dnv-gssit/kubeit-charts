@@ -1,17 +1,10 @@
 ---
 globals:
   chart:
-    ## https://github.com/dnv-gssit/kubeit-charts/releases
-    # repoURL: "https://dnv-gssit.github.io/kubeit-charts/"
-    # name: kubeit-deployment-chart
-    # targetRevision: 1.0.13
-    ## or
-    # repoURL: "https://github.com/dnv-gssit/kubeit-charts.git"
-    # path: charts/kubeit-deployment-chart
-    # targetRevision: main
-    ### General
-    # ignoreMissingValueFiles: true
-    # skipCrds: true
+    path: kubeit-charts/charts/kubeit-deployment-chart
+    # General
+    ignoreMissingValueFiles: false
+    skipCrds: true
 
 applications:
   # - name: ""                          # Required: tenant_app_name - name of the app, must be the same as folder name in appValues directory

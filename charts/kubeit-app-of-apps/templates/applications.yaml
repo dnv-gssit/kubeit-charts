@@ -18,9 +18,9 @@
 
 # ArgoCD Image Updater Values Loader
 {{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
-{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $.Values.env $.Values.env }}
-{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $.Values.env $.Values.region $.Values.region }}
-{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $.Values.env $.Values.region $.Values.clusterColour }}
+{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
 {{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
@@ -86,9 +86,10 @@ spec:
     server: 'https://kubernetes.default.svc'
   project: "{{ $.Values.tenantName }}"
   source:
-    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.globals.chart.repoURL }}"
-    {{- if hasKey ($app.chart | default dict) "targetRevision" }}
-    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.globals.chart.targetRevision }}"
+    repoURL: "{{ ($app.chart | default dict ).repoURL | default $.Values.repoURL }}"
+    {{- if and (hasKey ($app.chart | default dict) "targetRevision") (eq ($app.chart | default dict ).targetRevision "latest") }}
+    {{- else }}
+    targetRevision: "{{ ($app.chart | default dict ).targetRevision | default $.Values.targetRevision }}"
     {{- end }}
     {{- if hasKey ($app.chart | default dict) "name" }}
     chart: "{{ $app.chart.name }}"
@@ -99,15 +100,15 @@ spec:
       ignoreMissingValueFiles: {{ ($app.chart | default dict ).ignoreMissingValueFiles | default $.Values.globals.chart.ignoreMissingValueFiles }}
       skipCrds: {{ ($app.chart | default dict ).skipCrds | default $.Values.globals.chart.skipCrds }}
       valueFiles:
-        - ./values.yaml
-        - ./appValues/global.yaml
-        - ./appValues/{{ $app.name }}/appGlobal.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
-        - ./appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
-        - ./appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
+        - ../../../chart/appValues/appValues/global.yaml
+        - ../../../chart/appValues/{{ $app.name }}/appGlobal.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/{{ $envDirectory }}.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/{{ $.Values.region }}.yaml
+        - ../../../chart/appValues/{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/{{ $.Values.clusterColour }}.yaml
+        - ../../../chart/appValues//{{ $app.name }}/environment/{{ $envDirectory }}/region/{{ $.Values.region }}/cluster/namespaces/{{ . }}.yaml
       values: |
         app: {{ $app.name }}
+        namespace: {{ . }}
         defaultRouting:
           kubeitDefaultHosts:
             dnsDomain: "{{ $.Values.dnsDomain }}"
