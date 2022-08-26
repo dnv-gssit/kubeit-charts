@@ -122,7 +122,8 @@ spec:
           shortRegion: "{{ $.Values.shortRegion }}"
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
-          tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+          podIdentityName: "{{ $.Values.podIdentityName }}"
+          gatewayEnabled: "{{ $.Values.kubeit.gatewayEnabled }}"
   syncPolicy:
     automated:
       prune: true

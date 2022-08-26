@@ -64,7 +64,7 @@ gateway:
   # map virtual service to a gateway expose this service
   exposeService: true
   # gateway name (fully qualified if in a different namespace), default one provided automatically by KubeIT
-  # name: gateway/one-gateway
+  name: gateway/one-gateway
 
 opa:
   # set to true to enable opa.  requires config in a config map called opa-istio-config and policy in a config map called opa-policy
@@ -81,7 +81,7 @@ defaultRouting:
   enabled: true
 
   kubeitDefaultHosts:
-    enabled: true
+    enabled: false
     # hostsPrefix:            # Optional - default app name
 
   # hosts to take into account for routing rules (ignored if allHosts = true)
@@ -254,17 +254,6 @@ tolerations: []
 
 affinity: {}
 
-keyVaultSecrets:
-  enabled: false                                    # Set to true to enable keyVaultSecrets
-  # tenantId:                                       # ID of the tenant with desired keyvault
-  # keyVaults:
-  #   - keyVaultName:                               # KeyVault name
-  #     secrets:
-  #       - name:                                   # Name of the secret in globalKeyvaultName KeyVault
-  #         k8sSecretEnabled: true                  # Optional - If set to true, creates Kubernetes secret in the application namespace
-  #         k8sSecretName: ancris3-session-manager  # Optional - Name of the Kubernetes secret
-  #         k8sSecretKey: client-secret             # Optional - Secret key of the Kubernetes secret
-
 securityContext: {}
 #   fsGroup: 1000
 #   runAsUser: 1000
@@ -282,9 +271,4 @@ debugEnvoyFilters: true
 kubeit:
   tenantPrefixEnabled: true
 
-# TODO: remove if not needed
-sessionManagerDeployment: false
-
-initContainersExtra: []
-
-# podIdentityName:
+initContainersDefinitions: []
