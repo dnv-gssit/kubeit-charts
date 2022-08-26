@@ -23,3 +23,7 @@ redis:
     enabled: true
     command: ["sh", "-c", "echo never >/host-sys/kernel/mm/transparent_hugepage/enabled"]
     mountHostSys: true
+
+  auth:
+    existingSecret: "redis-password"
+    existingSecretPasswordKey: "db-password"
