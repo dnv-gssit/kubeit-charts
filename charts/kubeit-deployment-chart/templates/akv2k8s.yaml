@@ -4,7 +4,7 @@
 apiVersion: spv.no/v2beta1
 kind: AzureKeyVaultSecret
 metadata:
-  name: aks-secret-{{ $k8sSecret }}-{{ $k8sDataKeySanitized }}
+  name: aks-secret-{{ .k8sSecretName }}
 spec:
   vault:
     name: {{ .keyVaultName }}
