@@ -1,4 +1,4 @@
-{{- if .Values.ConfigMap }}
+{{- if .Values.configMap.enabled }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -12,5 +12,5 @@ metadata:
     app: {{ required "app is required" .Values.app }}
 {{ include "kubeit.tags" . | trim | indent 4 }}
 data:
-  configmapdata: {{- .Values.configmapdata | toYaml | indent 2 }}
+{{ tpl .Values.configMap.data $ | indent 2 }}
 {{- end }}
