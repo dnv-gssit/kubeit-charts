@@ -30,6 +30,16 @@ deploymentOnly: false
 
 updateStrategy: RollingUpdate
 
+#ConfigMap
+configMap:
+  enabled: false
+  data: |
+# data: |
+#   myconfig.conf: |
+#     my first config line
+#     my second config line
+#     my third config line
+
 service:
   # unspecified for default microservice (for now at least)
   type:
