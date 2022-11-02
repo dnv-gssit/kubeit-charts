@@ -63,8 +63,9 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  # add substr 0 63
   name: {{ $app.name }}-{{ . }}-{{ $.Values.clusterSubdomain }}
-  namespace: argocd
+  namespace: "{{ . }}"
   annotations:
     argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
     {{- if $enableUpdater }}
