@@ -5,5 +5,5 @@ repos:
     hooks:
       - id: ct
         name: Run ct lint
-        entry: ct lint --all --config=test-config.yaml 
+        entry: ct lint --config=test-config.yaml 
         language: system

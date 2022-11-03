@@ -4,7 +4,7 @@ validate-maintainers: false
 validate-chart-schema: true
 validate-yaml: true
 check-version-increment: false
-all: false
+all: true
 chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
 helm-repo-extra-args: []
