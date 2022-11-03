@@ -30,7 +30,7 @@ deploymentOnly: false
 
 updateStrategy: RollingUpdate
 
-#ConfigMap
+# ConfigMap
 configMap:
   enabled: false
   data: |

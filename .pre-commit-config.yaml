@@ -1,0 +1,9 @@
+---
+repos:
+repos:
+  - repo: local
+    hooks:
+      - id: ct
+        name: Run ct lint
+        entry: ct lint --all --config=test-config.yaml 
+        language: system
