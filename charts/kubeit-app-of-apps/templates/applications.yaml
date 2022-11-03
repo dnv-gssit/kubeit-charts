@@ -58,12 +58,13 @@
 {{- end }}
 {{- end }}
 {{- end }}
+{{- $appTruncName := printf "%s-%s-%s" ($app.name | trunc 20 | trimSuffix "-") (. | trunc 20 | trimSuffix "-") $.Values.clusterSubdomain | trunc 53 | trimSuffix "-" -}}
 
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ $app.name }}-{{ . }}-{{ $.Values.clusterSubdomain }}
+  name: {{ $appTruncName }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: {{ $app.syncWave | default "'1'" }}
