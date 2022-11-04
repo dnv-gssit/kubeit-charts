@@ -1,6 +1,5 @@
 ---
 repos:
-repos:
   - repo: local
     hooks:
       - id: ct
