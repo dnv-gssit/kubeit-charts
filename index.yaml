@@ -3,6 +3,16 @@ entries:
   kubeit-app-of-apps:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-11-04T10:04:11.574940998Z"
+    description: KubeIT ArgoCD app-of-apps chart
+    digest: 1b13f2daaadacade08f58e82248b740b8e3873af32e79ae94f9283f479277bfd
+    name: kubeit-app-of-apps
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-app-of-apps-0.1.30/kubeit-app-of-apps-0.1.30.tgz
+    version: 0.1.30
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-08-17T09:22:12.236590766Z"
     description: KubeIT ArgoCD app-of-apps chart
     digest: 9d4114ce925ace5c54946c6113ba3437386aa1b34f05f937111bb7c6ca252208
@@ -415,6 +425,20 @@ entries:
   kubeit-redis-chart:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-11-04T10:04:11.936899776Z"
+    dependencies:
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 17.1.2
+    description: KubeIT Redis chart
+    digest: 34d86608e2a828677d234463f51433623acf65837459eacb75a6daec729862f7
+    name: kubeit-redis-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-redis-chart-0.1.2/kubeit-redis-chart-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-03-22T23:34:53.963660029Z"
     dependencies:
     - name: redis
@@ -468,4 +492,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.1/kubeit-secrets-chart-1.0.1.tgz
     version: 1.0.1
-generated: "2022-08-17T09:22:12.236924766Z"
+generated: "2022-11-04T10:04:11.937199977Z"
