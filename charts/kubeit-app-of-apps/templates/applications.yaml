@@ -17,11 +17,12 @@
 {{- end }}
 
 # ArgoCD Image Updater Values Loader
-{{- $globalScope := printf "appValues/%s/appGlobal.yaml" $app.name }}
-{{- $envScope := printf "appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
-{{- $regionScope := printf "appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
-{{- $clusterScope := printf "appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
-{{- $valuesList := list $globalScope $envScope $regionScope $clusterScope }}
+{{- $globalScope := printf "../../../chart/appValues/%s/appGlobal.yaml" $app.name }}
+{{- $envScope := printf "../../../chart/appValues/%s/environment/%s/%s.yaml" $app.name $envDirectory $envDirectory }}
+{{- $regionScope := printf "../../../chart/appValues/%s/environment/%s/region/%s/%s.yaml" $app.name $envDirectory $.Values.region $.Values.region }}
+{{- $clusterScope := printf "../../../chart/appValues/%s/environment/%s/region/%s/cluster/%s.yaml" $app.name $envDirectory $.Values.region $.Values.clusterColour }}
+{{- $namespaceScope := printf "../../../chart/appValues/%s/environment/%s/region/%s/cluster/namespaces/%s.yaml" $app.name $envDirectory $.Values.region . }}
+{{- $valuesList := list $globalScope $envScope $regionScope $clusterScope $namespaceScope }}
 # ArgoCD Image Updater Variables
 {{- $enableUpdater := "" }}
 {{- $updaterRepo := "" }}

@@ -1,0 +1,23 @@
+{{- if .Values.keyVaultSecrets }}
+{{- range $keyVaults:= .Values.keyVaultSecrets.keyVaults }}
+---
+apiVersion: spv.no/v2beta1
+kind: AzureKeyVaultSecret
+metadata:
+  name: aks-secret
+spec:
+  vault:
+    name: {{ .keyVaultName }}
+    {{- range $secrets:= .secrets }}
+    object:
+      name: {{ .keyVaultSecretName }} 
+      type: secret 
+    {{- end }}
+  output: 
+    secret:
+    {{- range $secrets:= .secrets }}
+      name: {{ .k8sSecretName }} 
+      dataKey: {{ .k8sSecretName }}
+    {{- end }}
+{{- end }}
+{{- end }}
