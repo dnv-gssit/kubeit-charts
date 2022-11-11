@@ -24,3 +24,4 @@ applications:
   #     path: ""                        # Optional - if git repo was provided as repoURL, provide path to the helm chart in git repo
   #     ignoreMissingValueFiles: false  # Optional - set to true if you want to ignore missing values files (define only required ones), false by default
   #     skipCrds: false                 # Optional - set to true if you want to skip CRDs deployment by Helm, false by default
+  #   ignoreReplicasOnSync: false       # Optional - set to true if you want ArgoCD to ignore the number of replicas when syncing. Useful if you're using HPA.
