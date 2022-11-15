@@ -124,6 +124,13 @@ spec:
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+  {{- if ($app.ignoreReplicasOnSync | default false) }}
+  ignoreDifferences:
+  - group: "apps"
+    kind: "Deployment"
+    jsonPointers:
+    - /spec/replicas
+  {{- end }}
   syncPolicy:
     automated:
       prune: true
@@ -133,6 +140,7 @@ spec:
       - CreateNamespace=false
       - PrunePropagationPolicy=foreground
       - PruneLast=false
+      {{if ($app.ignoreReplicasOnSync | default false) }}- RespectIgnoreDifferences{{ end }}
     retry:
       limit: 2
       backoff:
