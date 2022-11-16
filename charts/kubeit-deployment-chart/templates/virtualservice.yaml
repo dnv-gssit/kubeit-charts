@@ -39,9 +39,9 @@ metadata:
 {{ include "appLabels" . | trim | indent 4 }}
 spec:
   hosts:
-  {{- if .Values.defaultRouting.kubeitDefaultHosts.enabled }}
+  {{- if eq .Values.defaultRouting.kubeitDefaultHosts.enabled true }}
   {{ $tenantPrefix := "" }}
-  {{- if and $.Values.defaultRouting.kubeitDefaultHosts.enabled $.Values.defaultRouting.kubeitDefaultHosts.tenantPrefixEnabled }}
+  {{- if and (eq $.Values.defaultRouting.kubeitDefaultHosts.enabled true) (eq $.Values.defaultRouting.kubeitDefaultHosts.tenantPrefixEnabled true) }}
   {{ $tenantPrefix = printf "-%s" .Values.kubeit.tenantName }}
   {{- end }}
     - "{{ .Values.defaultRouting.kubeitDefaultHosts.hostsPrefix | default .Values.app }}{{ $tenantPrefix }}.{{ .Values.kubeit.clusterSubdomain }}.{{ .Values.defaultRouting.kubeitDefaultHosts.dnsDomain }}"                                                                      # Cluster specific subdomain, i.e.: dev001

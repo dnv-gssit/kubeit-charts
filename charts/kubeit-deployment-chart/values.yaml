@@ -94,7 +94,7 @@ defaultRouting:
 
   kubeitDefaultHosts:
     enabled: true
-    tenantPrefixEnabled: true
+    tenantPrefixEnabled: false
     # hostsPrefix:            # Optional - default app name
 
   # hosts to take into account for routing rules (ignored if allHosts = true)
