@@ -41,7 +41,7 @@ kind: VirtualService
 metadata:
   name: {{ include "platform-service.serviceName" . }}-external
   labels:
-    app: {{ required "app is required" .Values.app }}
+    app: {{ required "app is required" .Values.app | trunc 63 | trimSuffix "-" }}
 {{ include "kubeit.tags" . | trim | indent 4 }}
 spec:
   hosts:
