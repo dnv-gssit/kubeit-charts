@@ -125,7 +125,8 @@ spec:
           environmentName: "{{ $.Values.env }}"
           podIdentityName: "{{ $.Values.tenantPodIdentityName }}"
           tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
-        podIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+        podIdentityName: "{{ $.Values.tenantPodIdentityName }}" 
+        tenantIdentityClientId: "{{ $.Values.tenantIdentityClientId }}"
   {{- if ($app.ignoreReplicasOnSync | default false) }}
   ignoreDifferences:
   - group: "apps"
