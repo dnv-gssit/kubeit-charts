@@ -1,5 +1,7 @@
 {{- define "image" -}}
-{{- if .Values.image.registry -}}
+{{- if .Values.image.full -}}
+  {{ .Values.image.full }}
+{{- else if .Values.image.registry -}}
   {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
 {{- else -}}
   {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -10,13 +12,7 @@ kind: Deployment
 metadata:
   name: {{ include "platform-service.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "platform-service.name" . }}
-    helm.sh/chart: {{ include "platform-service.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app: {{ required "app is required" .Values.app | trunc 63 | trimSuffix "-" }}
-    version: {{ .Values.version }}
-{{ include "kubeit.tags" . | trim | indent 4 }}
+{{ include "appLabels" . | trim | indent 4 }}
 spec:
   {{- if eq .Values.updateStrategy "NoSurge" }}
   strategy:
@@ -37,11 +33,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "platform-service.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app: {{ required "app is required" .Values.app }}
-        version: {{ .Values.version }}
-        aadpodidbinding: {{ .Values.podIdentityName | default .Values.kubeit.tenantPodIdentityName }}
+{{ include "appLabels" . | trim | indent 8 }}
         {{- if .Values.opa.enabled }}
         sidecar.opa-istio.io/inject: "true"
         {{- end }}
@@ -56,6 +48,12 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
+        {{- if .Values.service.liveness.enabled }}  
+        sidecar.istio.io/rewriteAppHTTPProbers: "true"
+        {{- end }}
+        {{- if .Values.mergeAppMetrics }}
+        prometheus.io/scrape: "true"
+        {{- end }}
         {{- if .Values.proxyResources.requests }}
         {{- if .Values.proxyResources.requests.cpu }}
         sidecar.istio.io/proxyCPU: {{ .Values.proxyResources.requests.cpu }}
@@ -64,10 +62,7 @@ spec:
         sidecar.istio.io/proxyMemory: {{ .Values.proxyResources.requests.memory }}
         {{- end }}
         {{- end }}
-        {{- if .Values.service.liveness.enabled }}
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
-        {{- end }}
-        {{- with .Values.additionalPodAnnotations }}
+        {{- with .Values.additionalPodAnnotations }}       
         {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
@@ -84,7 +79,7 @@ spec:
 {{ toYaml . | indent 12 }}
 {{- end }}
       {{- end }}
-      {{- toYaml .Values.initContainersExtra | nindent 8 }}
+      {{- toYaml .Values.initContainersDefinitions | nindent 8 }}
       containers:
 {{ if .Values.opa.enabled }}
         - name: opa-istio
@@ -115,6 +110,12 @@ spec:
               - "/app/opa_envoy_linux_amd64"
               - "eval"
               - "1"
+
+          env:
+{{- range $key, $value := .Values.opaenv }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+{{- end }}
 
 {{ if .Values.opa.resources }}
           resources:

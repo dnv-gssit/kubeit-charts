@@ -6,6 +6,8 @@ app: app        # Required
 version: v1
 replicaCount: 1
 
+mergeAppMetrics: false
+
 # sample extra label, you can add as many as you want
 additionalPodLabels: {}
   # saml-idp-forward-auth-filter: enabled
@@ -92,6 +94,7 @@ defaultRouting:
 
   kubeitDefaultHosts:
     enabled: true
+    tenantPrefixEnabled: true
     # hostsPrefix:            # Optional - default app name
 
   # hosts to take into account for routing rules (ignored if allHosts = true)
@@ -222,6 +225,11 @@ authorizationPolicy:
 #         name: mysecret
 #         key: username
 
+# OPA environment variables are given as a map - key is the name - either followed by the actual value
+# or a valueFrom component which is literally translated
+# opaenv:
+#   envName: "envValue"
+
 # deprecated
 environmentVariables:
 #  - name: Serilog__MinimumLevel
@@ -292,9 +300,6 @@ debugEnvoyFilters: true
 kubeit:
   tenantPrefixEnabled: true
 
-# TODO: remove if not needed
 sessionManagerDeployment: false
 
-initContainersExtra: []
-
-# podIdentityName:
+initContainersDefinitions: []

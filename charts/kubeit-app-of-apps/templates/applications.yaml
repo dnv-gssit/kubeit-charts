@@ -110,6 +110,8 @@ spec:
       values: |
         app: {{ $app.name }}
         namespace: {{ . }}
+        gateway:
+          name: istio-system/global-https-{{ $.Values.ingressType }}-default-gateway
         defaultRouting:
           kubeitDefaultHosts:
             dnsDomain: "{{ $.Values.dnsDomain }}"
