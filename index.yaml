@@ -475,6 +475,20 @@ entries:
   kubeit-redis-chart:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-02-10T14:55:58.302582248Z"
+    dependencies:
+    - name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: 17.7.3
+    description: KubeIT Redis chart
+    digest: 3d6bff0309f9a69011df9febdfe9379cb3f8009c913bae61dfd6c44591d4c13a
+    name: kubeit-redis-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-redis-chart-0.1.3/kubeit-redis-chart-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-11-04T10:04:11.936899776Z"
     dependencies:
     - name: redis
@@ -542,4 +556,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.1/kubeit-secrets-chart-1.0.1.tgz
     version: 1.0.1
-generated: "2023-02-10T12:04:29.63942127Z"
+generated: "2023-02-10T14:55:58.302760951Z"
