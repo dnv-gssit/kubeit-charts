@@ -27,3 +27,8 @@ redis:
   auth:
     existingSecret: "redis-password"
     existingSecretPasswordKey: "db-password"
+
+  commonConfiguration: |-
+    appendonly yes
+    save ""
+    loglevel verbose
