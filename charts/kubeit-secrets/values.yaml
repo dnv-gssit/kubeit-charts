@@ -1,0 +1,17 @@
+# Definitions:
+azureKeyVaultSecrets:
+  type: external-secrets/csi-keyvault                  # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
+#   tenantId:                                            # Azure Active Directory Tenant ID
+#   azureKeyVaults:
+#     - azureKeyVaultName:                               # Name of the Azure KeyVault
+#       secrets:
+#         - k8sSecretName:                               # Name of the Kubernetes secret resource that is going to be created inside the cluster
+#           data:
+#             - k8sSecretKey:                           # Name of the key in Kubernetes secret resource
+#               azureKeyVaultSecretName:                # Name of the secret in Azure KeyVault to pull the secret value from
+#             - k8sSecretKey:                           # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
+#               azureKeyVaultSecretName:
+#         - k8sSecretName:
+#           data:
+#             k8sSecretKey:
+#             azureKeyVaultSecretName:
