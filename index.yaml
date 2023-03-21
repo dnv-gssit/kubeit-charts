@@ -556,4 +556,15 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.1/kubeit-secrets-chart-1.0.1.tgz
     version: 1.0.1
-generated: "2023-02-10T14:55:58.302760951Z"
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2023-03-21T15:06:37.094290009Z"
+    description: KubeIT secrets chart for using the csi-keyvault or external-secrets
+      operators
+    digest: 5964068e6e93c4965f73ea85eb5979b9f81b0219c037702789c720e5a2eae781
+    name: kubeit-secrets-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
+    version: 1.0.0
+generated: "2023-03-21T15:06:37.094601911Z"
