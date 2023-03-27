@@ -58,7 +58,7 @@
 {{- end }}
 {{- end }}
 {{- end }}
-{{- $appTruncName := printf "%s-%s" ($app.name | trunc 31 | trimSuffix "-") $.Values.clusterSubdomain | trunc 43 | trimSuffix "-" -}}
+{{- $appTruncName := printf "%s-%s" ($app.name | trunc 31 | trimSuffix "-") . | trunc 43 | trimSuffix "-" -}}
 
 ---
 apiVersion: argoproj.io/v1alpha1
