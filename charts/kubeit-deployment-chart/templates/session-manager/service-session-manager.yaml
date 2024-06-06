@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/instance: session-manager-{{ $namePostfix }}
     app.kubernetes.io/managed-by: {{ $.Release.Service }}
     app: {{ required "app is required" $.Values.app | trunc 63 | trimSuffix "-" }}
-    tenant: {{ $.Values.tenantName }}
+    tenant: {{ $.Values.kubeit.tenantName }}
 spec:
   ports:
     - port: {{ required "service.port must be specified" $.Values.service.port }}
