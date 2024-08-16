@@ -251,13 +251,13 @@ volumes:
 #      azureFile:
 
 # Resource requests and limits for primary container in pod
-resources: {}
-#  requests:
-#    cpu: 250m
-#    memory: 64Mi
-#  limits:
-#    cpu: 500m
-#    memory: 128Mi
+resources:
+  requests:
+    cpu: 250m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 128Mi
 
 # Adjust resources requested for proxy sidecar (see https://istio.io/docs/concepts/performance-and-scalability/#cpu-and-memory)
 proxyResources:
