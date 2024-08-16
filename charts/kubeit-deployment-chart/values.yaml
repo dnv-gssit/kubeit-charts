@@ -47,8 +47,6 @@ service:
   type:
   # port number
   port: 80
-  # appProtocol
-  appProtocol: http
 
   # provide access to other services
   liveness:
