@@ -28,7 +28,9 @@ spec:
     - destination:
         host: {{ include "platform-service.fullQualifiedServiceName" . | quote }}
 {{- include "retries" . }}
-
+    {{- if .Values.defaultRouting.timeout }}
+    timeout: {{ .Values.defaultRouting.timeout }}
+    {{- end }}
 ---
 {{- if .Values.gateway.exposeService }}
 apiVersion: networking.istio.io/v1alpha3
@@ -78,6 +80,9 @@ spec:
     corsPolicy:
 {{ .Values.defaultRouting.corsPolicy | toYaml | trim | indent 6 }}
 {{- end }}
+    {{- if .Values.defaultRouting.timeout }}
+    timeout: {{ .Values.defaultRouting.timeout }}
+    {{- end }}
 {{- end }}
 
 {{- if .Values.defaultRouting.redirectOnNoTrailingSlash }}
@@ -99,6 +104,9 @@ spec:
     corsPolicy:
 {{ .Values.defaultRouting.corsPolicy | toYaml | trim | indent 6 }}
 {{- end -}}
+    {{- if .Values.defaultRouting.timeout }}
+    timeout: {{ .Values.defaultRouting.timeout }}
+    {{- end }}
 
   {{- if not .Values.defaultRouting.catchAll }}
     match:

@@ -139,6 +139,7 @@ defaultRouting:
     #   attempts: 3
     #   perTryTimeout: 2s
 
+  # Configure CORS policy
   # corsPolicy:
   #   allowOrigins:
   #     - exact: https://example.com
@@ -149,6 +150,20 @@ defaultRouting:
   #   allowHeaders:
   #     - X-Foo-Bar
   #   maxAge: "24h"
+
+  # Configure request timeout
+  # timeout: 5s
+
+  # Configure connectionPool for DestinationRule
+  # connectionPool:
+  #   tcp:
+  #     maxConnections: 100
+  #     connectTimeout: 30ms
+  #     tcpKeepalive:
+  #       time: 7200s
+  #       interval: 75
+  #   http:
+  #     idleTimeout: 1h
 
   # route from all hosts (typically only common services)
   allHosts: false
@@ -260,8 +275,7 @@ resources:
     memory: 128Mi
 
 # Adjust resources requested for proxy sidecar (see https://istio.io/docs/concepts/performance-and-scalability/#cpu-and-memory)
-proxyResources:
-  {}
+proxyResources: {}
   # request values are passed to the envoy proxy through annotations
   # these may be set globally at the istio level, so only override by service if necessary
   # requests:

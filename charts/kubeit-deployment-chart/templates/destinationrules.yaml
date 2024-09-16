@@ -19,4 +19,8 @@ spec:
       {{- end}}
     tls:
       mode: {{ .Values.defaultRouting.tls.mode }}
+    {{- if .Values.defaultRouting.connectionPool }}
+    connectionPool:
+      {{- toYaml .Values.defaultRouting.connectionPool | nindent 6 }}
+    {{- end }}
 {{- end}}
