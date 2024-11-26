@@ -15,3 +15,4 @@ azureKeyVaultSecrets:
 #           data:
 #             k8sSecretKey:
 #             azureKeyVaultSecretName:
+#       serviceAccountRefId:                              # Reference to service account client id for access via workload identity

@@ -125,7 +125,7 @@ spec:
           shortRegion: "{{ $.Values.shortRegion }}"
           tenantName: "{{ $.Values.tenantName }}"
           environmentName: "{{ $.Values.env }}"
-          tenantPodIdentityName: "{{ $.Values.tenantPodIdentityName }}"
+          workloadIdentity: "{{ $.Values.workloadIdentity }}"
   {{- if ($app.ignoreReplicasOnSync | default false) }}
   ignoreDifferences:
   - group: "apps"

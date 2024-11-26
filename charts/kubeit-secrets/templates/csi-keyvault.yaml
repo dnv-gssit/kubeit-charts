@@ -18,7 +18,8 @@ spec:
       {{- end }}
   {{- end }}
   parameters:
-    usePodIdentity: "true"
+    usePodIdentity: "false"
+    clientID: "{{ .serviceAccountRefId }}"
     keyvaultName: {{ .azureKeyVaultName }}
     objects: |
       array:

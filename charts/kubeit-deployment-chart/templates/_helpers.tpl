@@ -49,20 +49,22 @@ tenant: {{ $.Values.kubeit.tenantName }}
 {{- end -}}
 {{- end -}}
 
-{{ $podIdentityName := "" }}
+
+{{ $workloadIdentity := "" }}
 {{- if $.Values.kubeit }}
-{{- if $.Values.kubeit.tenantPodIdentityName }}
-{{ $podIdentityName = .Values.kubeit.tenantPodIdentityName }}
+{{- if $.Values.kubeit.workloadIdentity }}
+{{ $workloadIdentity = .Values.kubeit.workloadIdentity }}
 {{- end }}
 {{- end }}
 
-{{- if $.Values.podIdentityName }}
-{{ $podIdentityName = .Values.podIdentityName }}
+{{- if $.Values.workloadIdentity }}
+{{ $workloadIdentity = .Values.workloadIdentity }}
 {{- end }}
 
-{{- if $podIdentityName }}
-aadpodidbinding: {{ $podIdentityName }}
+{{- if $workloadIdentity }}
+azure.workload.identity/use: {{ $workloadIdentity }}
 {{- end }}
+
 {{ if $.Values.volumes -}}
 state: stateful
 {{- end -}}
