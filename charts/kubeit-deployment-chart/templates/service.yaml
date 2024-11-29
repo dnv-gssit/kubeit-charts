@@ -12,7 +12,6 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-      appProtcol: {{ .Values.service.appProtocol }}
   selector:
     app.kubernetes.io/name: {{ include "platform-service.name" . }}
     app: {{ .Values.app }}
