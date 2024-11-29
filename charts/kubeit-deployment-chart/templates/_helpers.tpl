@@ -62,7 +62,7 @@ tenant: {{ $.Values.kubeit.tenantName }}
 {{- end }}
 
 {{- if $workloadIdentity }}
-azure.workload.identity/use: "{{ $workloadIdentity | quote }}"
+azure.workload.identity/use: "{{ $workloadIdentity | toString }}"
 {{- end }}
 
 {{ if $.Values.volumes -}}
