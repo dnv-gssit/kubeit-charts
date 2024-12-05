@@ -289,26 +289,24 @@ affinity: {}
 
 # To use secrets with the Deployment, use KubeIT Secrets chart from the same repository
 azureKeyVaultSecrets:
-  type: none
-# azureKeyVaultSecrets:
-#   type: csi-keyvault                                   # Type of the secret controller used to deploy the secrets inside the KubeIT cluster - csi-keyvault used in this example for mounting secrets inside pod
-#   tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"     # Azure Active Directory Tenant ID
-#   clientId: "1234"                                     # Required for external-secrets / Not used by csi-keyvault - Managed Identity Application ID - use Active Directory to pull this value or ask the Cluster Admin team to provide it
-#   azureKeyVaults:
-#     - azureKeyVaultName: testkeyvault                  # Name of the Azure KeyVault
-#       secrets:
-#         - k8sSecretName: testSecret                    # Name of the Kubernetes secret resource that is going to be created inside the cluster
-#           data:
-#             - k8sSecretKey: k8sSecretKey               # Name of the key in Kubernetes secret resource
-#               azureKeyVaultSecretName: SecretName      # Name of the secret in Azure KeyVault to pull the secret value from
-#             - k8sSecretKey: k8sSecretKey2              # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
-#               azureKeyVaultSecretName: SecretName2
-#         - k8sSecretName: testSecret2
-#           data:
-#             - k8sSecretKey: k8sSecretKey3
-#               azureKeyVaultSecretName: SecretName3
-#             - k8sSecretKey: k8sSecretKey3
-#               azureKeyVaultSecretName: SecretName3
+  type: external-secrets                                   # Type of the secret controller used to deploy the secrets inside the KubeIT cluster - csi-keyvault used in this example for mounting secrets inside pod
+  tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"     # Azure Active Directory Tenant ID
+  clientId: "f66be285-b3f7-46ea-a936-73efaba23b6c"                                     # Required for external-secrets / Not used by csi-keyvault - Managed Identity Application ID - use Active Directory to pull this value or ask the Cluster Admin team to provide it
+  azureKeyVaults:
+    - azureKeyVaultName: testkeyvaultkm                  # Name of the Azure KeyVault
+      secrets:
+        - k8sSecretName: testSecret                    # Name of the Kubernetes secret resource that is going to be created inside the cluster
+          data:
+            - k8sSecretKey: k8sSecretKey               # Name of the key in Kubernetes secret resource
+              azureKeyVaultSecretName: SecretName      # Name of the secret in Azure KeyVault to pull the secret value from
+            # - k8sSecretKey: k8sSecretKey2              # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
+            #   azureKeyVaultSecretName: SecretName2
+        # - k8sSecretName: testSecret2
+        #   data:
+        #     - k8sSecretKey: k8sSecretKey3
+        #       azureKeyVaultSecretName: SecretName3
+        #     - k8sSecretKey: k8sSecretKey3
+        #       azureKeyVaultSecretName: SecretName3
 
 securityContext: {}
 #   fsGroup: 1000
