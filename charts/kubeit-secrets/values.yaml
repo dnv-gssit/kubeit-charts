@@ -1,18 +1,17 @@
 # Definitions:
 azureKeyVaultSecrets:
-  type: external-secrets                  # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
-  tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"                                           # Azure Active Directory Tenant ID
-  clientId: "f66be285-b3f7-46ea-a936-73efaba23b6c"
-  azureKeyVaults:
-    - azureKeyVaultName: testkeyvaultkm                               # Name of the Azure KeyVault
-      secrets:
-        - k8sSecretName: testSecret                              # Name of the Kubernetes secret resource that is going to be created inside the cluster
-          data:
-            - k8sSecretKey: k8sSecretKey                          # Name of the key in Kubernetes secret resource
-              azureKeyVaultSecretName: SecretName                # Name of the secret in Azure KeyVault to pull the secret value from
-            # - k8sSecretKey:                           # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
-            #   azureKeyVaultSecretName:
-        # - k8sSecretName:
-        #   data:
-        #     k8sSecretKey:
-        #     azureKeyVaultSecretName:
+  type: external-secrets/csi-keyvault                  # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
+#   tenantId:                                            # Azure Active Directory Tenant ID
+#   azureKeyVaults:
+#     - azureKeyVaultName:                               # Name of the Azure KeyVault
+#       secrets:
+#         - k8sSecretName:                               # Name of the Kubernetes secret resource that is going to be created inside the cluster
+#           data:
+#             - k8sSecretKey:                           # Name of the key in Kubernetes secret resource
+#               azureKeyVaultSecretName:                # Name of the secret in Azure KeyVault to pull the secret value from
+#             - k8sSecretKey:                           # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
+#               azureKeyVaultSecretName:
+#         - k8sSecretName:
+#           data:
+#             k8sSecretKey:
+#             azureKeyVaultSecretName:
