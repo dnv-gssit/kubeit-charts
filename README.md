@@ -22,7 +22,7 @@ To uninstall the chart:
 
 ## Usage in kubeit dev cluster:
 By default, example charts in this repository use workload identity.
-To disable it, edit kubeit-app-of-apps/chart/templates/applications.yaml and set workloadIdentity to "false".
+To disable it, edit kubeit-charts/charts/kubeit-app-of-apps/templates/applications.yaml and set workloadIdentity to "false".
 If workload identity is disabled, skip steps 2-4. Otherwise, follow these steps:
 
 1. Create a working branch for this repository. Update kubeit-app-of-apps/.gitmodules to point to your branch.
