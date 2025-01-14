@@ -71,7 +71,7 @@ serviceAccount:
   # The name of the ServiceAccount to use (the actual service account name
   # will still be prefixed by the release prefix if that option is enabled.
   # If not set and create is true, a name is generated from the app
-  name: test
+  name:
 
 gateway:
   # map virtual service to a gateway expose this service
