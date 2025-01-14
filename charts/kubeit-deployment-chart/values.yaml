@@ -330,3 +330,5 @@ kubeit:
 sessionManagerDeployment: false
 
 initContainersDefinitions: []
+
+workloadIdentity: true
