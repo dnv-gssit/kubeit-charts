@@ -66,7 +66,7 @@ spec:
         {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
-      serviceAccountName: {{ include "platform-service.serviceAccountName" . }}
+      serviceAccountName: "{{ include "platform-service.serviceAccountName" . }}-service-account"
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
       initContainers:
