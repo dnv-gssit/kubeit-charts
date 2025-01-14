@@ -34,7 +34,7 @@ Hint: Ensure the submodule in your kubeit-app-of-apps working branch points to t
 4. Update the service-account.yaml:
    - Add the clientId to charts/deployment-chart/templates/service-account.yaml.
    - If testing secrets, also add it to charts/secrets/templates/service-account.yaml.
-5. Assign role Managed Identity Contributor to KubeIT Security group Az_KubeIT_AcrReader_Global.
+5. Assign role Managed Identity Contributor to KubeIT Security group Az_KubeIT_AcrReader_Env_Dev.
 6. Push the changes to your working branch.
 7. Wait for ArgoCD to sync deployed apps.
 
