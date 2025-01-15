@@ -15,5 +15,3 @@ azureKeyVaultSecrets:
 #           data:
 #             k8sSecretKey:
 #             azureKeyVaultSecretName:
-
-workloadIdentity: true

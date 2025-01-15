@@ -42,6 +42,5 @@ Note: After pushing changes, always update the submodule in your kubeit-app-of-a
 
 ## Workload identity
 By default, example charts in this repository use workload identity.
-To disable it follow workflow from points 1-6 analogically with updated values.yaml's:
+To disable it follow workflow from points 1-6 analogically with updated values.yaml:
   - kubeit-charts/charts/kubeit-deployment-chart/values.yaml and set workloadIdentity to "false".
-  - kubeit-charts/chart/kubeit-secrets/values.yaml and set workloadIdentity to "false".
