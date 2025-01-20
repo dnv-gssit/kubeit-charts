@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
 name: kubeit-secrets-chart
-description: KubeIT secrets chart for using the csi-keyvault or external-secrets operators
+description: KubeIT secrets chart for using external-secrets operator
 type: application
 version: 1.0.0
 appVersion: 1.0.0

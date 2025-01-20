@@ -183,12 +183,6 @@ spec:
 {{ .Values.health.startupProbe | toYaml | trim | indent 12 }}
 {{- end }}
           volumeMounts:
-{{- if eq .Values.azureKeyVaultSecrets.type "csi-keyvault" }}
-{{- range $keyVault := .Values.azureKeyVaultSecrets.azureKeyVaults }}
-            - name: "{{ .azureKeyVaultName | lower }}-secret-class"
-              mountPath: "/var/secrets/{{ .azureKeyVaultName | lower }}"
-{{- end }}
-{{- end }}
           {{- range .Values.volumes }}
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
@@ -224,16 +218,6 @@ spec:
         configMap:
           name: opa-policy
 {{ end }}
-{{- if eq .Values.azureKeyVaultSecrets.type "csi-keyvault" }}
-{{- range $keyVault:= .Values.azureKeyVaultSecrets.azureKeyVaults }}
-      - name: "{{ .azureKeyVaultName | lower }}-secret-class"
-        csi:
-          driver: secrets-store.csi.k8s.io
-          readOnly: true
-          volumeAttributes:
-            secretProviderClass: "{{ .azureKeyVaultName | lower }}-secret-class"
-{{- end }}
-{{- end }}
 {{- range .Values.volumes }}
       - name: {{ .name }}
 {{ tpl .volumeDefinition $ | indent 8 }}
