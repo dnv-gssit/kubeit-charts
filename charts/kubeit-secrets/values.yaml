@@ -1,6 +1,11 @@
 # Definitions:
 azureKeyVaultSecrets:
   type: external-secrets                                 # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
+
+serviceAccount:
+  # ClientId for Workload Identity feature
+  clientId: ""
+
 #   tenantId:                                            # Azure Active Directory Tenant ID
 #   azureKeyVaults:
 #     - azureKeyVaultName:                               # Name of the Azure KeyVault
