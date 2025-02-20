@@ -1,0 +1,179 @@
+---
+globals:
+  chart:
+    repoURL: https://github.com/dnv-gssit/kubeit-charts.git
+    path: charts/kubeit-deployment-chart
+    targetRevision: main
+    ignoreMissingValueFiles: true
+    skipCrds: true
+
+applications:
+  - name: standard-workload
+    containerOS: linux
+    environments:
+      - name: nonprod
+        namespaces:
+          - standard
+          - standard-test
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: prod
+        namespaces:
+          - standard
+          - standard-test
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+        clusterColour:
+          - blue
+          - green
+          - aux011
+          - aux033
+      - name: dev
+        namespaces:
+          - standard
+          - standard-test
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev001
+          - dev011
+          - dev023
+          - dev024
+          - dev022
+          - dev033
+          - dev044
+          - dev018
+  - name: onegateway-workload
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev011
+          - dev001
+          - dev033
+  - name: onegateway-sessionmanager
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev011
+          - dev001
+          - dev033
+  - name: onegateway-redis
+    chart:
+      path: "charts/kubeit-redis-chart"
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev011
+          - dev001
+          - dev033
+  - name: onegateway-reverseproxy-workload
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev011
+          - dev033
+  - name: onegateway-secrets
+    chart:
+      path: "charts/kubeit-secrets"
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev011
+          - dev001
+          - dev033
+      - name: nonprod
+        namespaces:
+          - onegateway
+        region:
+          - westeurope
+        clusterColour:
+          - dev001
+  - name: win-standard-workload
+    containerOS: linux
+    environments:
+      - name: prod
+        namespaces:
+          - win-standard-workload
+        region:
+          - westeurope
+          - eastus2
+          - southeastasia
+        clusterColour:
+          - blue
+          - green
+      - name: nonprod
+        namespaces:
+          - win-standard-workload
+        region:
+          - westeurope
+        clusterColour:
+          - blue
+      - name: dev
+        namespaces:
+          - win-standard-workload
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - blue
+          - green
+          - dev033
+  - name: win-api-workload
+    containerOS: linux
+    environments:
+      - name: dev
+        namespaces:
+          - win-standard-workload
+        region:
+          - westeurope
+          - eastus2
+        clusterColour:
+          - dev033
+      - name: nonprod
+        namespaces:
+          - win-standard-workload
+        region:
+          - westeurope
+        clusterColour:
+          - blue
