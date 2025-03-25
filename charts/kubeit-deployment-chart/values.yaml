@@ -79,7 +79,7 @@ gateway:
   # map virtual service to a gateway expose this service
   exposeService: true
   # gateway name (fully qualified if in a different namespace), default one provided automatically by KubeIT
-  # name: gateway/one-gateway
+  name: istio-system/global-https-internal-default-gateway
 
 opa:
   # set to true to enable opa.  requires config in a config map called opa-istio-config and policy in a config map called opa-policy
@@ -98,6 +98,7 @@ defaultRouting:
   kubeitDefaultHosts:
     enabled: true
     tenantPrefixEnabled: true
+    dnsDomain: kubeit.dnv.com
     # hostsPrefix:            # Optional - default app name
 
   # hosts to take into account for routing rules (ignored if allHosts = true)
@@ -328,6 +329,11 @@ debugEnvoyFilters: true
 
 kubeit:
   tenantPrefixEnabled: true
+  clusterSubdomain: dev001
+  environmentName: dev
+  shortRegion: we
+  clusterColour: red
+  tenantName: tenant
 
 sessionManagerDeployment: false
 
