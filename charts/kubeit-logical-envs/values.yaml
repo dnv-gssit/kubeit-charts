@@ -23,6 +23,7 @@ global:
   appOfApps:
     repoURL: example
     targetRevision: 0.0.1
+    chart: apps-in-logical-env
   env: e1
   region: reg
   dnsDomain: "domain.com"

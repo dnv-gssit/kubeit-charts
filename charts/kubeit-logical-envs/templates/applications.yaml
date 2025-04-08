@@ -21,80 +21,31 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: "{{ $.Values.global.tenantName }}"
-  source:
-    repoURL: {{ $.Values.global.appOfApps.repoURL }}
-    targetRevision: {{ $.Values.global.appOfApps.targetRevision }}
-{{/*
-    {{- if and (and (hasKey $app "path") (eq $app.type "kustomize")) (ne (or $app.ignoreRegionStructure false) true) }}
-    {{- if not $app.path }}
-    path: {{ $.Values.env }}/{{ $.Values.region }}
-    {{- else }}
-    path: {{ $app.path }}/{{ $.Values.env }}/{{ $.Values.region }}
-    {{- end }}
-    {{- else if hasKey $app "path" }}
-    path: {{ $app.path }}
-    {{- end }}
-    {{- if hasKey $app "chart" }}
-    chart: {{ $app.chart }}
-    {{- end }}
-    {{- if eq $app.type "helm"}}
-    helm:
-      {{- if ne (or $app.ignoreRegionStructure false) true }}
-      valueFiles:
-       - env/{{ $.Values.env }}.yaml
-       - env/{{ $.Values.env }}-{{ $.Values.region }}.yaml
-      {{- else }}
-      {{- if not (empty ($app.tenantValues)) }}
-      valueFiles:
-      {{- range $app.tenantValues }}
-       - {{ . }}
-      {{- end }}
-      {{- end }}
-      {{- end }}
-      values: |
-        env: {{ $.Values.env }}
-        region: {{ $.Values.region }}
-        dnsDomain: "{{ $.Values.dnsDomain }}"
-        internalDnsDomain: "{{ $.Values.internalDnsDomain }}"
-        clusterSubdomain: "{{ $.Values.clusterSubdomain }}"
-        clusterColour: "{{ $.Values.clusterColour }}"
-        ingressType: "{{ $.Values.ingressType }}"
-        shortRegion: {{ $.Values.shortRegion }}
-        tenantName: {{ $tenantName }}
-        targetRevision: {{ $app.targetRevision }}
-        repoURL: {{ include "httpRepo" (dict "patEnabled" $.Values.patEnabled "url" $app.repoURL) }}
-        networkPlugin: {{ $.Values.networkPlugin }}
-        {{- if ge (len $tenantConfig.targetRegions) 2 }}
-        tenantMultiRegion: true
-        {{- else }}
-        tenantMultiRegion: false
-        {{- end }}
-        managementNamespace: "{{ $tenantConfig.managementNamespace }}"
-    {{- end }}
-  destination:
-    server: https://kubernetes.default.svc
-    {{- if (hasKey $app "namespace") }}
-    namespace: {{ $app.namespace }}
-    {{- else }}
-    namespace: {{ $tenantConfig.managementNamespace }}
-    {{- end }}
-  {{- if eq $app.autosync true }}
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - Validate=true
-      - CreateNamespace=false
-      - PrunePropagationPolicy=foreground
-      - PruneLast=false
-    retry:
-      limit: 2
-      backoff:
-        duration: 5s
-        factor: 2
-        maxDuration: 1m
-*/}}
+  sources:
+    - repoURL: {{ $.Values.global.appOfApps.repoURL }}
+      chart: {{ $.Values.global.appOfApps.chart }}
+      targetRevision: {{ $.Values.global.appOfApps.targetRevision }}
+      helm:
+        valuesFiles:
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
+        values: |
+          env: {{ $.Values.global.env }}
+          region: {{ $.Values.global.region }}
+          dnsDomain: {{ $.Values.global.dnsDomain }}
+          internalDnsDomain: {{ $.Values.global.internalDnsDomain }}
+          clusterSubdomain: {{ $.Values.global.clusterSubdomain }}
+          clusterColour: {{ $.Values.global.clusterColour }}
+          ingressType: {{ $.Values.global.ingressType }}
+          shortRegion: {{ $.Values.global.shortRegion }}
+          tenantName: {{ $.Values.global.tenantName }}
+          targetRevision: {{ $.Values.global.targetRevision }}
+          repoURL: {{ $.Values.global.repoURL }}
+          managementNamespace: {{ $.Values.global.managementNamespace }}
+    - repoURL: {{ $.Values.global.repoURL }}
+      targetRevision: {{ $.Values.global.targetRevision }}
+      ref: values
 {{- end -}}
 {{- end -}}
 {{- end -}}
