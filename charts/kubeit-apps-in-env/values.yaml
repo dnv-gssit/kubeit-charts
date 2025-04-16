@@ -1,0 +1,63 @@
+# Values injected by KubeIT team
+
+# Env name
+#env: nonprod
+
+# Full region name
+#region: westeurope
+
+# Short region name
+#shortRegion: we
+
+# External DNS domain
+#dnsDomain: "kubeit.dnv.com"
+
+# Cluster name
+#clusterSubdomain: "nonprod001"
+
+# Cluster color
+#clusterColour: "blue"
+
+# External ingress type
+#ingressType: "internal"
+
+# Tenant name
+#tenantName: scecp
+
+# Tenant's repo to bootstrap tenant's apps
+#repoURL: git@ssh.dev.azure.com:v3/dnvgl-gssit/Superior%20customer%20experience/Customer%20Portal%20-BE
+
+# Branch used to bootstrap tenant's apps from tenant's repo
+#targetRevision: poc/containerization
+
+# Add values-{region}.yaml into apps values - optional
+#tenantMultiRegion: false
+
+# Name of tenant's management namespace with all KubeIT settings/apps for tenant
+#managementNamespace: "management-scecp"
+
+# List of ArgoCD applications to deploy
+# ArgoCD application represents service (or helm chart) deployed into Kubernetes
+
+# List of applications to deploy
+# Example:
+#  - name: appname
+#    namespace: tenant-namespace
+#    image:
+#      name: acr.azurecr.io/appname
+#      tag: latest
+#    useArgoCDimageUpdater: true
+#    serviceChart:
+#      repoURL: https://dnv-gssit.github.io/kubeit-charts
+#      targetRevision: 1.2.0
+#      chart: kubeit-deployment-chart
+#    values:
+#      # values to service chart
+applications: []
+
+# default service chart
+serviceChart:
+  repoURL: https://dnv-gssit.github.io/kubeit-charts
+  targetRevision: 1.2.0
+  chart: kubeit-deployment-chart
+

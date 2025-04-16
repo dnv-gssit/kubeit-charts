@@ -22,9 +22,9 @@ metadata:
 spec:
   project: "{{ $.Values.global.tenantName }}"
   sources:
-    - repoURL: {{ $.Values.global.appOfApps.repoURL }}
-      chart: {{ $.Values.global.appOfApps.chart }}
-      targetRevision: {{ $.Values.global.appOfApps.targetRevision }}
+    - repoURL: {{ $.Values.global.appLogicalEnvChart.repoURL }}
+      chart: {{ $.Values.global.appLogicalEnvChart.chart }}
+      targetRevision: {{ $.Values.global.appLogicalEnvChart.targetRevision }}
       helm:
         valuesFiles:
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml

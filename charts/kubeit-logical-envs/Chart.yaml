@@ -1,6 +1,6 @@
 ---
 apiVersion: v2
 name: kubeit-logical-envs
-description: Deployment tenant's apps using app-of-apps for all logical envs
+description: Deployment tenant's all logical envs
 type: application
 version: 0.1.0

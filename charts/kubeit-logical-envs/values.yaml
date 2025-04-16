@@ -20,10 +20,10 @@
 #                  blue: true
 #                  green: true
 global:
-  appOfApps:
-    repoURL: example
+  appLogicalEnvChart:
+    repoURL: https://dnv-gssit.github.io/kubeit-charts
     targetRevision: 0.0.1
-    chart: apps-in-logical-env
+    chart: kubeit-apps-in-env
   env: e1
   region: reg
   dnsDomain: "domain.com"
@@ -39,4 +39,3 @@ global:
   tenantMultiRegion: false
   managementNamespace: "management-t1"
   teams: []
-
