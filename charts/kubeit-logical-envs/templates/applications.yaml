@@ -32,7 +32,9 @@ spec:
         valueFiles:
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
+         {{- if ne $.Values.global.clusterColour $.Values.global.clusterSubdomain }}
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
+         {{- end }}
         values: |
           env: {{ $.Values.global.env }}
           region: {{ $.Values.global.region }}
