@@ -1,0 +1,41 @@
+---
+# list of teams
+#  - name: team1
+#    envs:
+#      # logical env target Kubeit clusters
+#      - name: dev
+#        targetClusters:
+#          dev:
+#            regions:
+#              we:
+#                colours:
+#                  blue: true
+#                  green: true
+#              eus2:
+#                colours:
+#                  blue: true
+#                  green: true
+#              sea:
+#                colours:
+#                  blue: true
+#                  green: true
+global:
+  appLogicalEnvChart:
+    repoURL: https://dnv-gssit.github.io/kubeit-charts
+    targetRevision: 0.0.1
+    chart: kubeit-apps-in-env
+  env: e1
+  region: reg
+  dnsDomain: "domain.com"
+  internalDnsDomain: "internal.dnv.com"
+  clusterSubdomain: "001"
+  clusterColour: "red"
+  ingressType: "internal"
+  shortRegion: rg
+  tenantName: t1
+  targetRevision: main
+  repoURL: git@ssh.dev.azure.com
+  networkPlugin: azure
+  tenantMultiRegion: false
+  managementNamespace: "management-t1"
+  teams: []

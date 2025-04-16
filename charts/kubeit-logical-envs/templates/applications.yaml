@@ -1,0 +1,55 @@
+{{- range $team := .Values.global.teams -}}
+{{- $teamName := $team.name -}}
+{{- range $tenantEnv := $team.envs -}}
+{{- $logicalEnvName := $tenantEnv.name -}}
+{{- if hasKey $tenantEnv "targetClusters" -}}
+{{- if hasKey $tenantEnv.targetClusters $.Values.global.env -}}
+{{- $envsDict := index $tenantEnv.targetClusters $.Values.global.env -}}
+{{- if hasKey $envsDict "regions" -}}
+{{- $regionsDict := index $envsDict.regions $.Values.global.shortRegion -}}
+{{- if hasKey $regionsDict "colours" -}}
+{{- $coloursDict := index $regionsDict.colours $.Values.global.clusterColour -}}
+{{- if $coloursDict }}
+{{- $appName := printf "%s-%s-%s" $.Values.global.tenantName $teamName $logicalEnvName | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $appName }}
+  namespace: {{ $.Values.global.managementNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: "{{ $.Values.global.tenantName }}"
+  sources:
+    - repoURL: {{ $.Values.global.appLogicalEnvChart.repoURL }}
+      chart: {{ $.Values.global.appLogicalEnvChart.chart }}
+      targetRevision: {{ $.Values.global.appLogicalEnvChart.targetRevision }}
+      helm:
+        valuesFiles:
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
+        values: |
+          env: {{ $.Values.global.env }}
+          region: {{ $.Values.global.region }}
+          dnsDomain: {{ $.Values.global.dnsDomain }}
+          internalDnsDomain: {{ $.Values.global.internalDnsDomain }}
+          clusterSubdomain: {{ $.Values.global.clusterSubdomain }}
+          clusterColour: {{ $.Values.global.clusterColour }}
+          ingressType: {{ $.Values.global.ingressType }}
+          shortRegion: {{ $.Values.global.shortRegion }}
+          tenantName: {{ $.Values.global.tenantName }}
+          targetRevision: {{ $.Values.global.targetRevision }}
+          repoURL: {{ $.Values.global.repoURL }}
+          managementNamespace: {{ $.Values.global.managementNamespace }}
+    - repoURL: {{ $.Values.global.repoURL }}
+      targetRevision: {{ $.Values.global.targetRevision }}
+      ref: values
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

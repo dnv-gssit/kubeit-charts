@@ -1,0 +1,53 @@
+{{- range $app := .Values.applications }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $app.name }}
+  namespace: {{ $.Values.managementNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  {{- if $app.useArgoCDimageUpdater }}
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: alias={{ $app.image.name }}:{{ $app.image.tag }}
+    argocd-image-updater.argoproj.io/alias.update-strategy: digest
+    argocd-image-updater.argoproj.io/alias.force-update: "true"
+  {{- end }}
+spec:
+  destination:
+    namespace: {{ $app.namespace }}
+    server: https://kubernetes.default.svc
+  project: {{ $.Values.tenantName }}
+  source:
+    repoURL: {{ $.Values.repoURL }}
+    targetRevision: {{ $.Values.targetRevision }}
+    path: {{ default $.Values.chartPath $app.chartPath }}
+    helm:
+      releaseName: {{ $app.name }}
+      values: |
+        # Image values pass from application as they are common for kind:application and service
+        {{- if hasKey $app "image" }}
+        image:
+          name: {{ $app.image.name }}
+          tag: {{ $app.image.tag }}
+        {{- end }}
+        env: {{ $app.env }}
+        ## Pass variables from values.yaml dedicated for application
+        {{- toYaml $app.values | nindent 8 }}
+        # Pass variables from KubeIT, if required, so far no needs
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m
+      limit: 2
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=false
+{{- end }}
