@@ -315,6 +315,15 @@ entries:
     version: 0.1.0
   kubeit-apps-in-env:
   - apiVersion: v2
+    created: "2025-04-16T12:51:07.105470485Z"
+    description: Deployment applications in one logical environment
+    digest: eaeaeab5b60d723a317311963c12bb23b953de941d58f0e4d7d8197aadecd10e
+    name: kubeit-apps-in-env
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-apps-in-env-0.0.4/kubeit-apps-in-env-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
     created: "2025-04-16T12:23:23.538859307Z"
     description: Deployment applications in one logical environment
     digest: 5739b4722cf4bc23d4f87e57de1b12df8985e79aefeab27a9385b028f48f2a7c
@@ -641,4 +650,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-16T12:38:08.95419224Z"
+generated: "2025-04-16T12:51:07.10560097Z"
