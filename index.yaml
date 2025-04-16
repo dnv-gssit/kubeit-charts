@@ -313,6 +313,16 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-app-of-apps-0.1.0/kubeit-app-of-apps-0.1.0.tgz
     version: 0.1.0
+  kubeit-apps-in-env:
+  - apiVersion: v2
+    created: "2025-04-16T09:07:40.625918811Z"
+    description: Deployment applications in one logical environment
+    digest: 5004836448119d432a638c1e94df0e051d01b59dde897ad82858ac66f69ecffe
+    name: kubeit-apps-in-env
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-apps-in-env-0.0.1/kubeit-apps-in-env-0.0.1.tgz
+    version: 0.0.1
   kubeit-deployment-chart:
   - apiVersion: v2
     created: "2025-03-25T10:14:02.324066136Z"
@@ -490,6 +500,16 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-deployment-chart-1.0.0/kubeit-deployment-chart-1.0.0.tgz
     version: 1.0.0
+  kubeit-logical-envs:
+  - apiVersion: v2
+    created: "2025-04-16T09:07:40.753190827Z"
+    description: Deployment tenant's all logical envs
+    digest: b1e0ea8ce7a04c604aeb507f4a926a8cae2fdd643ba98896e696c473a419503f
+    name: kubeit-logical-envs
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-logical-envs-0.0.1/kubeit-logical-envs-0.0.1.tgz
+    version: 0.0.1
   kubeit-redis-chart:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -585,4 +605,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-25T10:14:02.45597823Z"
+generated: "2025-04-16T09:07:40.753319719Z"
