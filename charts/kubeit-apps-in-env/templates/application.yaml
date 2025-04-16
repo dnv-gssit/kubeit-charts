@@ -20,7 +20,7 @@ spec:
   project: {{ $.Values.tenantName }}
   source:
     repoURL: {{ $.Values.serviceChart.repoURL }}
-    chart: {{ $.Values.global.serviceChart.chart }}
+    chart: {{ $.Values.serviceChart.chart }}
     targetRevision: {{ $.Values.serviceChart.targetRevision }}
     helm:
       releaseName: {{ $app.name }}
