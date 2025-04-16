@@ -33,6 +33,7 @@ spec:
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
+        ignoreMissingValueFiles: true
         values: |
           env: {{ $.Values.global.env }}
           region: {{ $.Values.global.region }}
