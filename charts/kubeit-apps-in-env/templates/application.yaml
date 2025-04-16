@@ -20,11 +20,12 @@ spec:
   project: {{ $.Values.tenantName }}
   source:
     repoURL: {{ $.Values.serviceChart.repoURL }}
+    chart: {{ $.Values.global.serviceChart.chart }}
     targetRevision: {{ $.Values.serviceChart.targetRevision }}
     helm:
       releaseName: {{ $app.name }}
       values: |
-        # Image values pass from application as they are common for kind:application and service
+        # Image values pass from application as they are common for kind:application and serviceChart
         {{- if hasKey $app "image" }}
         image:
           name: {{ $app.image.name }}
