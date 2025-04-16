@@ -29,7 +29,7 @@ spec:
       chart: {{ $.Values.global.appLogicalEnvChart.chart }}
       targetRevision: {{ $.Values.global.appLogicalEnvChart.targetRevision }}
       helm:
-        valuesFiles:
+        valueFiles:
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
          - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
