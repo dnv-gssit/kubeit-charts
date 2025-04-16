@@ -19,9 +19,8 @@ spec:
     server: https://kubernetes.default.svc
   project: {{ $.Values.tenantName }}
   source:
-    repoURL: {{ $.Values.repoURL }}
-    targetRevision: {{ $.Values.targetRevision }}
-    path: {{ default $.Values.chartPath $app.chartPath }}
+    repoURL: {{ $.Values.serviceChart.repoURL }}
+    targetRevision: {{ $.Values.serviceChart.targetRevision }}
     helm:
       releaseName: {{ $app.name }}
       values: |
@@ -31,10 +30,21 @@ spec:
           name: {{ $app.image.name }}
           tag: {{ $app.image.tag }}
         {{- end }}
-        env: {{ $app.env }}
+        # Pass variables from KubeIT
+        env: {{ $.Values.env }}
+        region: {{ $.Values.region }}
+        dnsDomain: {{ $.Values.dnsDomain }}
+        internalDnsDomain: {{ $.Values.internalDnsDomain }}
+        clusterSubdomain: {{ $.Values.clusterSubdomain }}
+        clusterColour: {{ $.Values.clusterColour }}
+        ingressType: {{ $.Values.ingressType }}
+        shortRegion: {{ $.Values.shortRegion }}
+        tenantName: {{ $.Values.tenantName }}
+        targetRevision: {{ $.Values.targetRevision }}
+        repoURL: {{ $.Values.repoURL }}
+        managementNamespace: {{ $.Values.managementNamespace }}
         ## Pass variables from values.yaml dedicated for application
         {{- toYaml $app.values | nindent 8 }}
-        # Pass variables from KubeIT, if required, so far no needs
   syncPolicy:
     automated:
       prune: true
