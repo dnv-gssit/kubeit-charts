@@ -21,6 +21,9 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: "{{ $.Values.global.tenantName }}"
+  destination:
+    namespace: {{ $.Values.global.managementNamespace }}
+    server: https://kubernetes.default.svc
   sources:
     - repoURL: {{ $.Values.global.appLogicalEnvChart.repoURL }}
       chart: {{ $.Values.global.appLogicalEnvChart.chart }}
@@ -46,6 +49,21 @@ spec:
     - repoURL: {{ $.Values.global.repoURL }}
       targetRevision: {{ $.Values.global.targetRevision }}
       ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m
+      limit: 2
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=false
 {{- end -}}
 {{- end -}}
 {{- end -}}
