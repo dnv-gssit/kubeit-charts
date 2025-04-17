@@ -30,9 +30,7 @@ spec:
       targetRevision: {{ $.Values.global.appLogicalEnvChart.targetRevision }}
       helm:
         valueFiles:
-         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/global.yaml
-         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.shortRegion }}.yaml
-         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/{{ $.Values.global.clusterColour }}.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/apps.yaml
         ignoreMissingValueFiles: true
         values: |
           env: {{ $.Values.global.env }}
@@ -47,6 +45,8 @@ spec:
           targetRevision: {{ $.Values.global.targetRevision }}
           repoURL: {{ $.Values.global.repoURL }}
           managementNamespace: {{ $.Values.global.managementNamespace }}
+          logicalEnvName: {{ $logicalEnvName }}
+          teamName: {{ $teamName }}
     - repoURL: {{ $.Values.global.repoURL }}
       targetRevision: {{ $.Values.global.targetRevision }}
       ref: values
