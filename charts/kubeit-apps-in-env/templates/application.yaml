@@ -85,4 +85,5 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=false
+---
 {{- end }}
