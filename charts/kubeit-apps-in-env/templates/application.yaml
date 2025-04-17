@@ -54,18 +54,19 @@ spec:
             tag: {{ $app.image.tag }}
           {{- end }}
           # Pass variables from KubeIT
-          env: {{ $.Values.env }}
-          region: {{ $.Values.region }}
-          dnsDomain: {{ $.Values.dnsDomain }}
-          internalDnsDomain: {{ $.Values.internalDnsDomain }}
-          clusterSubdomain: {{ $.Values.clusterSubdomain }}
-          clusterColour: {{ $.Values.clusterColour }}
-          ingressType: {{ $.Values.ingressType }}
-          shortRegion: {{ $.Values.shortRegion }}
-          tenantName: {{ $.Values.tenantName }}
-          targetRevision: {{ $.Values.targetRevision }}
-          repoURL: {{ $.Values.repoURL }}
-          managementNamespace: {{ $.Values.managementNamespace }}
+          kubeit:
+            env: {{ $.Values.env }}
+            region: {{ $.Values.region }}
+            dnsDomain: {{ $.Values.dnsDomain }}
+            internalDnsDomain: {{ $.Values.internalDnsDomain }}
+            clusterSubdomain: {{ $.Values.clusterSubdomain }}
+            clusterColour: {{ $.Values.clusterColour }}
+            ingressType: {{ $.Values.ingressType }}
+            shortRegion: {{ $.Values.shortRegion }}
+            tenantName: {{ $.Values.tenantName }}
+            targetRevision: {{ $.Values.targetRevision }}
+            repoURL: {{ $.Values.repoURL }}
+            managementNamespace: {{ $.Values.managementNamespace }}
     - repoURL: {{ $.Values.repoURL }}
       targetRevision: {{ $.Values.targetRevision }}
       ref: values
