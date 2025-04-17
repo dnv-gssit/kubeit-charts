@@ -30,7 +30,7 @@ spec:
       targetRevision: {{ $.Values.global.appLogicalEnvChart.targetRevision }}
       helm:
         valueFiles:
-         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}/apps.yaml
+         - $values/envs/{{ $teamName }}/{{ $logicalEnvName }}.yaml
         ignoreMissingValueFiles: true
         values: |
           env: {{ $.Values.global.env }}
