@@ -2,17 +2,17 @@
 {{- $srChart := $.Values.serviceChart.chart -}}
 {{- $srRepo := $.Values.serviceChart.repoURL -}}
 {{- $srTargetRevision := $.Values.serviceChart.targetRevision -}}
-{{- if hasKey $app "serviceChart" }}
-{{- if hasKey $app.serviceChart "chart" }}
-{{- $srChart = $app.serviceChart.chart }}
-{{- end }}
-{{- if hasKey $app.serviceChart "targetRevision" }}
-{{- $srTargetRevision = $app.serviceChart.targetRevision }}
-{{- end }}
-{{- if hasKey $app.serviceChart "repoURL" }}
-{{- $srRepo := $app.serviceChart.repoURL }}
-{{- end }}
-{{- end }}
+{{- if hasKey $app "serviceChart" -}}
+{{- if hasKey $app.serviceChart "chart" -}}
+{{- $srChart = $app.serviceChart.chart -}}
+{{- end -}}
+{{- if hasKey $app.serviceChart "targetRevision" -}}
+{{- $srTargetRevision = $app.serviceChart.targetRevision -}}
+{{- end -}}
+{{- if hasKey $app.serviceChart "repoURL" -}}
+{{- $srRepo := $app.serviceChart.repoURL -}}
+{{- end -}}
+{{- end -}}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
