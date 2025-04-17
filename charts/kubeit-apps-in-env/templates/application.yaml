@@ -1,4 +1,18 @@
 {{- range $app := .Values.applications }}
+{{- $srChart := $.Values.serviceChart.chart -}}
+{{- $srRepo := $.Values.serviceChart.repoURL -}}
+{{- $srTargetRevision := $.Values.serviceChart.targetRevision -}}
+{{- if hasKey $app "serviceChart" }}
+{{- if hasKey $app.serviceChart "chart" }}
+{{- $srChart = $app.serviceChart.chart }}
+{{- end }}
+{{- if hasKey $app.serviceChart "targetRevision" }}
+{{- $srTargetRevision = $app.serviceChart.targetRevision }}
+{{- end }}
+{{- if hasKey $app.serviceChart "repoURL" }}
+{{- $srRepo := $app.serviceChart.repoURL }}
+{{- end }}
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -19,9 +33,9 @@ spec:
     server: https://kubernetes.default.svc
   project: {{ $.Values.tenantName }}
   sources:
-    - repoURL: {{ default $.Values.serviceChart.repoURL $app.serviceChart.repoURL }}
-      chart: {{ default $.Values.serviceChart.chart $app.serviceChart.chart }}
-      targetRevision: {{ default $.Values.serviceChart.targetRevision $app.serviceChart.targetRevision }}
+    - repoURL: {{ $srRepo }}
+      chart: {{ $srChart }}
+      targetRevision: {{ $srTargetRevision }}
       helm:
         releaseName: {{ $app.name }}
         valueFiles:
@@ -52,8 +66,8 @@ spec:
           targetRevision: {{ $.Values.targetRevision }}
           repoURL: {{ $.Values.repoURL }}
           managementNamespace: {{ $.Values.managementNamespace }}
-    - repoURL: {{ $.Values.global.repoURL }}
-      targetRevision: {{ $.Values.global.targetRevision }}
+    - repoURL: {{ $.Values.repoURL }}
+      targetRevision: {{ $.Values.targetRevision }}
       ref: values
   syncPolicy:
     automated:
