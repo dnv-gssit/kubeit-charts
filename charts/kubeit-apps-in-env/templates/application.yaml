@@ -18,34 +18,43 @@ spec:
     namespace: {{ $app.namespace }}
     server: https://kubernetes.default.svc
   project: {{ $.Values.tenantName }}
-  source:
-    repoURL: {{ $.Values.serviceChart.repoURL }}
-    chart: {{ $.Values.serviceChart.chart }}
-    targetRevision: {{ $.Values.serviceChart.targetRevision }}
-    helm:
-      releaseName: {{ $app.name }}
-      values: |
-        # Image values pass from application as they are common for kind:application and serviceChart
-        {{- if hasKey $app "image" }}
-        image:
-          name: {{ $app.image.name }}
-          tag: {{ $app.image.tag }}
-        {{- end }}
-        # Pass variables from KubeIT
-        env: {{ $.Values.env }}
-        region: {{ $.Values.region }}
-        dnsDomain: {{ $.Values.dnsDomain }}
-        internalDnsDomain: {{ $.Values.internalDnsDomain }}
-        clusterSubdomain: {{ $.Values.clusterSubdomain }}
-        clusterColour: {{ $.Values.clusterColour }}
-        ingressType: {{ $.Values.ingressType }}
-        shortRegion: {{ $.Values.shortRegion }}
-        tenantName: {{ $.Values.tenantName }}
-        targetRevision: {{ $.Values.targetRevision }}
-        repoURL: {{ $.Values.repoURL }}
-        managementNamespace: {{ $.Values.managementNamespace }}
-        ## Pass variables from values.yaml dedicated for application
-        {{- toYaml $app.values | nindent 8 }}
+  sources:
+    - repoURL: {{ default $.Values.serviceChart.repoURL $app.serviceChart.repoURL }}
+      chart: {{ default $.Values.serviceChart.chart $app.serviceChart.chart }}
+      targetRevision: {{ default $.Values.serviceChart.targetRevision $app.serviceChart.targetRevision }}
+      helm:
+        releaseName: {{ $app.name }}
+        valueFiles:
+          - $values/appValues/global.yaml
+          - $values/appValues/{{ $app.name }}/global.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}-{{ $.Values.clusterColour }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}-{{ $.Values.clusterColour }}-{{ $app.namespace }}.yaml
+        ignoreMissingValueFiles: true
+        values: |
+          # Image values pass from application as they are common for kind:application and serviceChart
+          {{- if hasKey $app "image" }}
+          image:
+            name: {{ $app.image.name }}
+            tag: {{ $app.image.tag }}
+          {{- end }}
+          # Pass variables from KubeIT
+          env: {{ $.Values.env }}
+          region: {{ $.Values.region }}
+          dnsDomain: {{ $.Values.dnsDomain }}
+          internalDnsDomain: {{ $.Values.internalDnsDomain }}
+          clusterSubdomain: {{ $.Values.clusterSubdomain }}
+          clusterColour: {{ $.Values.clusterColour }}
+          ingressType: {{ $.Values.ingressType }}
+          shortRegion: {{ $.Values.shortRegion }}
+          tenantName: {{ $.Values.tenantName }}
+          targetRevision: {{ $.Values.targetRevision }}
+          repoURL: {{ $.Values.repoURL }}
+          managementNamespace: {{ $.Values.managementNamespace }}
+    - repoURL: {{ $.Values.global.repoURL }}
+      targetRevision: {{ $.Values.global.targetRevision }}
+      ref: values
   syncPolicy:
     automated:
       prune: true

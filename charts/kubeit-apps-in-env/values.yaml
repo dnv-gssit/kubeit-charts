@@ -36,6 +36,12 @@
 # Name of tenant's management namespace with all KubeIT settings/apps for tenant
 # managementNamespace: "management-scecp"
 
+# Logical env name
+# logicalEnvName: "dev"
+
+# teamName
+# teamName: "team1"
+
 # List of ArgoCD applications to deploy
 # ArgoCD application represents service (or helm chart) deployed into Kubernetes
 
