@@ -41,10 +41,9 @@ spec:
         valueFiles:
           - $values/appValues/global.yaml
           - $values/appValues/{{ $app.name }}/global.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}-{{ $.Values.clusterColour }}.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.env }}-{{ $.Values.shortRegion }}-{{ $.Values.clusterColour }}-{{ $app.namespace }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}-{{ $.Values.logicalEnvName }}.yaml
+          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}-{{ $.Values.logicalEnvName }}-{{ $app.namespace }}.yaml
         ignoreMissingValueFiles: true
         values: |
           # Image values pass from application as they are common for kind:application and serviceChart

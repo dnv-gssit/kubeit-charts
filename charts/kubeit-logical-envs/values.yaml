@@ -3,26 +3,15 @@
 #  - name: team1
 #    envs:
 #      # logical env target Kubeit clusters
-#      - name: dev
-#        targetClusters:
-#          dev:
-#            regions:
-#              we:
-#                colours:
-#                  blue: true
-#                  green: true
-#              eus2:
-#                colours:
-#                  blue: true
-#                  green: true
-#              sea:
-#                colours:
-#                  blue: true
-#                  green: true
+#        - name: dev-we-blue
+#          targetCluster:
+#            env: dev
+#            region: we
+#            colour: blue
 global:
   appLogicalEnvChart:
     repoURL: https://dnv-gssit.github.io/kubeit-charts
-    targetRevision: 0.0.1
+    targetRevision: 0.0.11
     chart: kubeit-apps-in-env
   env: e1
   region: reg

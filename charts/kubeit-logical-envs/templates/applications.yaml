@@ -2,14 +2,13 @@
 {{- $teamName := $team.name -}}
 {{- range $tenantEnv := $team.envs -}}
 {{- $logicalEnvName := $tenantEnv.name -}}
-{{- if hasKey $tenantEnv "targetClusters" -}}
-{{- if hasKey $tenantEnv.targetClusters $.Values.global.env -}}
-{{- $envsDict := index $tenantEnv.targetClusters $.Values.global.env -}}
-{{- if hasKey $envsDict "regions" -}}
-{{- $regionsDict := index $envsDict.regions $.Values.global.shortRegion -}}
-{{- if hasKey $regionsDict "colours" -}}
-{{- $coloursDict := index $regionsDict.colours $.Values.global.clusterColour -}}
-{{- if $coloursDict }}
+{{- if hasKey $tenantEnv "targetCluster" -}}
+{{- if hasKey $tenantEnv.targetCluster "env" -}}
+{{- if hasKey $tenantEnv.targetCluster "region" -}}
+{{- if hasKey $tenantEnv.targetCluster "colour" -}}
+{{- if eq $tenantEnv.targetCluster.env $.Values.global.env -}}
+{{- if eq $tenantEnv.targetCluster.region $.Values.global.shortRegion -}}
+{{- if eq $tenantEnv.targetCluster.colour $.Values.global.clusterColour -}}
 {{- $appName := printf "%s-%s-%s" $.Values.global.tenantName $teamName $logicalEnvName | trunc 63 | trimSuffix "-" }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -65,6 +64,8 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=false
+{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
