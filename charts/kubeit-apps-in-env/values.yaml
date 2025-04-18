@@ -52,11 +52,15 @@
 #    image:
 #      name: acr.azurecr.io/appname
 #      tag: latest
-#    useArgoCDimageUpdater: true
+#    useArgoCDimageUpdater: true  # true if you want to use ArgoCD image updater
+#    annotations: {}              # any annotations you want to add to the application, overrides image updater annotations
 #    serviceChart:
 #      repoURL: https://dnv-gssit.github.io/kubeit-charts
 #      targetRevision: 1.2.0
 #      chart: kubeit-deployment-chart
+#      or instead of chart, it could be path and it takes precedence over chart
+#      in this case targetRevision could be branch or tag on repository
+#      path: charts/kubeit-deployment-chart
 #    values:
 #      # values to service chart
 applications: []
