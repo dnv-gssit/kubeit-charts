@@ -2,6 +2,7 @@
 {{- $srChart := $.Values.serviceChart.chart -}}
 {{- $srRepo := $.Values.serviceChart.repoURL -}}
 {{- $srTargetRevision := $.Values.serviceChart.targetRevision -}}
+{{- $srPath := "" -}}
 {{- if hasKey $app "serviceChart" -}}
 {{- if hasKey $app.serviceChart "chart" -}}
 {{- $srChart = $app.serviceChart.chart -}}
@@ -10,7 +11,10 @@
 {{- $srTargetRevision = $app.serviceChart.targetRevision -}}
 {{- end -}}
 {{- if hasKey $app.serviceChart "repoURL" -}}
-{{- $srRepo := $app.serviceChart.repoURL -}}
+{{- $srRepo = $app.serviceChart.repoURL -}}
+{{- end -}}
+{{- if hasKey $app.serviceChart "path" -}}
+{{- $srPath = $app.serviceChart.path -}}
 {{- end -}}
 {{- end -}}
 ---
@@ -21,11 +25,18 @@ metadata:
   namespace: {{ $.Values.managementNamespace }}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  {{- if hasKey $app "annotations" }}
+  annotations:
+    {{- with $app.annotations }}
+    {{- toYaml . | indent 4 }}
+    {{- end }}
+  {{- else }}
   {{- if $app.useArgoCDimageUpdater }}
   annotations:
     argocd-image-updater.argoproj.io/image-list: alias={{ $app.image.name }}:{{ $app.image.tag }}
     argocd-image-updater.argoproj.io/alias.update-strategy: digest
     argocd-image-updater.argoproj.io/alias.force-update: "true"
+  {{- end }}
   {{- end }}
 spec:
   destination:
@@ -34,7 +45,11 @@ spec:
   project: {{ $.Values.tenantName }}
   sources:
     - repoURL: {{ $srRepo }}
+      {{- if $srPath }}
+      path: {{ $srPath }}
+      {{- else }}
       chart: {{ $srChart }}
+      {{- end }}
       targetRevision: {{ $srTargetRevision }}
       helm:
         releaseName: {{ $app.name }}
