@@ -11,10 +11,10 @@
 {{- $srTargetRevision = $app.serviceChart.targetRevision -}}
 {{- end -}}
 {{- if hasKey $app.serviceChart "repoURL" -}}
-{{- $srRepo := $app.serviceChart.repoURL -}}
+{{- $srRepo = $app.serviceChart.repoURL -}}
 {{- end -}}
 {{- if hasKey $app.serviceChart "path" -}}
-{{- $srPath := $app.serviceChart.path -}}
+{{- $srPath = $app.serviceChart.path -}}
 {{- end -}}
 {{- end -}}
 ---
