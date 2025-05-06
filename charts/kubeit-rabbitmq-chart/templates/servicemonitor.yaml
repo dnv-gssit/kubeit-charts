@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.rabbitmqCluster.metadata.name }}-servicemonitor
+  labels:
+    tenant: {{ .Values.tenant }}
+spec:
+  endpoints:
+  - port: prometheus
+    scheme: https
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  - port: prometheus
+    scheme: https
+    path: /metrics/detailed
+    params:
+      family:
+        - queue_coarse_metrics
+        - queue_metrics
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: rabbitmq
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}

@@ -1,0 +1,96 @@
+# Default values for RabbitMQ Helm chart.
+---
+tenant: tenant2
+rabbitmqCluster:
+  metadata:
+    name: testmq-tenant
+  spec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 800Mi
+    containers:
+      volumeMount:
+        name: persistence-testmq
+    initContainers:
+      volumeMount:
+        name: persistence-testmq
+
+  additionalConfig: |
+    log.console.level = info
+    channel_max = 1700
+    default_user_tags.administrator = true
+
+persistentVolume:
+  name: persistence-testmq-tenant
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile-csi
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl
+  csi:
+    driver: file.csi.azure.com
+    volumeHandle: testmq-tenant # make sure this is unique in the cluster
+    volumeAttributes:
+      shareName: rabbitmq # name of Azure File Share
+
+queue:
+  - name: testmq-tenant
+    replicas: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 800Mi
+    arguments:
+      x_max_length_bytes: 1000000000 # setting the retention policy
+      x_message_ttl: 60000 # setting the message TTL
+
+users:
+  - name: admin
+    vhost: /
+    tags:
+      - administrator
+    permissions:
+      configure: .*
+      write: .*
+      read: .*
+    userK8sSecretName: admin-user-creds
+
+
+kubeit-secrets-chart:
+  app: rmq
+  serviceAccount:
+    clientId: "850ed0f2-3b12-4334-934f-b1b168a5ea90"
+  azureKeyVaultSecrets:
+    type: external-secrets
+    tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"
+    azureKeyVaults:
+      - azureKeyVaultName: KubeIT-DEV-KV-SH-WE
+        secrets:
+          - k8sSecretName: rabbitmq-storageaccount-secret
+            data:
+              - k8sSecretKey: azurestorageaccountname
+                azureKeyVaultSecretName: rabbitmq-storage-account-name
+              - k8sSecretKey: azurestorageaccountkey
+                azureKeyVaultSecretName: rabbitmq-storage-account-key
+          - k8sSecretName: admin-user-creds
+            data:
+              - k8sSecretKey: username
+                azureKeyVaultSecretName: rabbitmq-admin-username
+              - k8sSecretKey: password
+                azureKeyVaultSecretName: rabbitmq-admin-password

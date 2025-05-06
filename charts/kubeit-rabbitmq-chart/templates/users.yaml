@@ -1,0 +1,29 @@
+{{- range .Values.users }}
+apiVersion: rabbitmq.com/v1beta1
+kind: User
+metadata:
+  name: {{ .name }}
+spec:
+  tags:
+  {{- range .tags }}
+  - {{ . }}
+  {{- end }}
+  rabbitmqClusterReference:
+    name: {{ $.Values.rabbitmqCluster.metadata.name }}
+  importCredentialsSecret:
+    name: {{ .userK8sSecretName }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: Permission
+metadata:
+  name: rabbit-{{ .name }}-permission
+spec:
+  vhost: {{ quote .vhost }}
+  user: {{ quote .name }}
+  permissions:
+    {{- range $key, $value := .permissions }}
+    {{ $key }}: {{ quote $value }}
+    {{- end }}
+  rabbitmqClusterReference:
+    name: {{ $.Values.rabbitmqCluster.metadata.name }}
+{{- end }}

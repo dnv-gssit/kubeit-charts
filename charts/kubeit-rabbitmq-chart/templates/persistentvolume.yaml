@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.persistentVolume.name }}
+spec:
+  capacity:
+    storage: {{ .Values.persistentVolume.capacity.storage }}
+  accessModes:
+  {{- range .Values.persistentVolume.accessModes }}
+    - {{ . }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  storageClassName: {{ .Values.persistentVolume.storageClassName }}
+  mountOptions:
+    {{- range .Values.persistentVolume.mountOptions }}
+    - {{ . }}
+    {{- end }}
+  csi:
+    driver: {{ .Values.persistentVolume.storageClassName }}
+    # volumeid has to be unique for every identical storage blob container in the cluster
+    # character `#`and `/` are reserved for internal use and cannot be used in volumehandle
+    volumeHandle: {{ .Values.persistentVolume.csi.volumeHandle }} # make sure this is unique in the cluster
+    volumeAttributes:
+      shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }} # name of Azure File Share
+    nodeStageSecretRef:
+      name: rabbitmq-storageaccount-secret

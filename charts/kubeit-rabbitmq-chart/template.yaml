@@ -1,0 +1,230 @@
+---
+# Source: kubeit-rabbitmq-chart/charts/kubeit-secrets-chart/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    azure.workload.identity/client-id: 850ed0f2-3b12-4334-934f-b1b168a5ea90
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+  name: "kubeit-dev-kv-sh-we-service-account"
+---
+# Source: kubeit-rabbitmq-chart/templates/persistentvolume.yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: persistence-testmq-tenant
+spec:
+  capacity:
+    storage: 2Gi
+    accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain  # If set as "Delete" container would be removed after pvc deletion
+  storageClassName: azurefile-csi
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl
+  csi:
+    driver: azurefile-csi
+    # volumeid has to be unique for every identical storage blob container in the cluster
+    # character `#`and `/` are reserved for internal use and cannot be used in volumehandle
+    volumeHandle: testmq-tenant # make sure this is unique in the cluster
+    volumeAttributes:
+      shareName: rabbitmq # name of Azure File Share
+    nodeStageSecretRef:
+      name: rabbitmq-storageaccount-secret
+---
+# Source: kubeit-rabbitmq-chart/charts/kubeit-secrets-chart/templates/external-secrets.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: "rmq-rabbitmq-storageaccount-secret"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: "kubeit-dev-kv-sh-we-secret-store"
+    kind: SecretStore
+  target:
+    name: "rabbitmq-storageaccount-secret"
+    creationPolicy: Owner
+  data:
+    - secretKey: azurestorageaccountname
+      remoteRef:
+        key: "rabbitmq-storage-account-name"
+    - secretKey: azurestorageaccountkey
+      remoteRef:
+        key: "rabbitmq-storage-account-key"
+---
+# Source: kubeit-rabbitmq-chart/charts/kubeit-secrets-chart/templates/external-secrets.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: "rmq-admin-user-creds"
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: "kubeit-dev-kv-sh-we-secret-store"
+    kind: SecretStore
+  target:
+    name: "admin-user-creds"
+    creationPolicy: Owner
+  data:
+    - secretKey: username
+      remoteRef:
+        key: "rabbitmq-admin-username"
+    - secretKey: password
+      remoteRef:
+        key: "rabbitmq-admin-password"
+---
+# Source: kubeit-rabbitmq-chart/templates/users.yaml
+apiVersion: rabbitmq.com/v1beta1
+kind: Permission
+metadata:
+  name: rabbit-admin-permission
+spec:
+  vhost: "/"
+  user: "admin"
+  permissions:
+    configure: ".*"
+    read: ".*"
+    write: ".*"
+  rabbitmqClusterReference:
+    name: testmq-tenant
+---
+# Source: kubeit-rabbitmq-chart/templates/queue.yaml
+apiVersion: rabbitmq.com/v1beta1
+kind: Queue
+metadata:
+  name: testmq-tenant
+spec:
+  name: testmq-tenant
+  arguments:
+    x-max-length-bytes: 1e+09 ## setting the retention policy
+    x-message-ttl: 60000 ## setting the message TTL
+  autoDelete: true # queue that has had at least one consumer is deleted when last consumer unsubscribes
+  durable: true # the queue will survive a broker restart
+  rabbitmqClusterReference:
+    name: testmq-tenant  # rabbitmqCluster must exist in the same namespace as queue
+---
+# Source: kubeit-rabbitmq-chart/templates/rabbitmq-cluster.yaml
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: testmq-tenant
+spec:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+     memory: 800Mi
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: persistence-testmq
+            initContainers:
+              - name: setup-container
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: persistence-testmq
+        volumeClaimTemplates:
+          - apiVersion: v1
+            kind: PersistentVolumeClaim
+            spec:
+              accessModes:
+                - ReadWriteMany
+              storageClassName: azurefile-csi
+              volumeName: persistence-testmq-tenant
+              resources:
+                requests:
+                  storage: 2Gi
+            metadata:
+              name: persistence-testmq
+  rabbitmq:
+    additionalConfig: |
+      
+      log.console.level = info
+      channel_max = 1700
+      default_user_tags.administrator = true
+      
+  persistence:
+    storage: 
+    storageClassName: azurefile-csi
+---
+# Source: kubeit-rabbitmq-chart/charts/kubeit-secrets-chart/templates/external-secrets.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: "kubeit-dev-kv-sh-we-secret-store"
+spec:
+  provider:
+    azurekv:
+      authType: WorkloadIdentity
+      # URL of your vault instance - https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates
+      vaultUrl: https://kubeit-dev-kv-sh-we.vault.azure.net/
+      serviceAccountRef:
+        name: "kubeit-dev-kv-sh-we-service-account"
+---
+# Source: kubeit-rabbitmq-chart/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: testmq-tenant-servicemonitor
+  labels:
+    tenant: tenant2
+spec:
+  endpoints:
+  - port: prometheus
+    scheme: https
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  - port: prometheus
+    scheme: https
+    path: /metrics/detailed
+    params:
+      family:
+        - queue_coarse_metrics
+        - queue_metrics
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: rabbitmq
+  namespaceSelector:
+    matchNames:
+      - default
+---
+# Source: kubeit-rabbitmq-chart/templates/users.yaml
+apiVersion: rabbitmq.com/v1beta1
+kind: User
+metadata:
+  name: admin
+spec:
+  tags:
+  - administrator
+  rabbitmqClusterReference:
+    name: testmq-tenant
+  importCredentialsSecret:
+    name: admin-user-creds
