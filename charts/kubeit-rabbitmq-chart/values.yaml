@@ -75,7 +75,7 @@ users:
 kubeit-secrets-chart:
   app: rmq
   serviceAccount:
-    clientId: "850ed0f2-3b12-4334-934f-b1b168a5ea90"
+    clientId: "" # clientId of the managed identity principal
   azureKeyVaultSecrets:
     type: external-secrets
     tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"

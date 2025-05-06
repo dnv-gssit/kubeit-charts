@@ -45,5 +45,5 @@ spec:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
   persistence:
-    storage: {{ .Values.persistentVolume.storage }}
+    storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ .Values.persistentVolume.storageClassName }}
