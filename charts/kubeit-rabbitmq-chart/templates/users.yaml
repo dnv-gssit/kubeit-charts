@@ -1,8 +1,11 @@
 {{- range .Values.users }}
+---
 apiVersion: rabbitmq.com/v1beta1
 kind: User
 metadata:
   name: {{ .name }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
 spec:
   tags:
   {{- range .tags }}
@@ -26,4 +29,5 @@ spec:
     {{- end }}
   rabbitmqClusterReference:
     name: {{ $.Values.rabbitmqCluster.metadata.name }}
+---
 {{- end }}

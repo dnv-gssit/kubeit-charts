@@ -3,6 +3,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Queue
 metadata:
   name: {{ .name}}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
 spec:
   name: {{ .name }}
   arguments:

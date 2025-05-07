@@ -1,0 +1,18 @@
+{{- if .Values.service.create }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubeit-rabbit-chart.fullname" . }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,6 +1,0 @@
-dependencies:
-- name: kubeit-secrets-chart
-  repository: file://../kubeit-secrets
-  version: 1.0.0
-digest: sha256:a65f1b8f315c0fb9c4d0f6d58f1e0d254fd69860e223063e426e6ea344f22ef8
-generated: "2025-05-06T13:31:53.4692621-05:00"

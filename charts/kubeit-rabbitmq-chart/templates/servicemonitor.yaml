@@ -3,7 +3,8 @@ kind: ServiceMonitor
 metadata:
   name: {{ .Values.rabbitmqCluster.metadata.name }}-servicemonitor
   labels:
-    tenant: {{ .Values.tenant }}
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+    tenant: {{ .Values.tenantName }}
 spec:
   endpoints:
   - port: prometheus

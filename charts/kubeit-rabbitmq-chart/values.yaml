@@ -1,6 +1,6 @@
 # Default values for RabbitMQ Helm chart.
 ---
-tenant: tenant2
+tenantName: tenant2
 rabbitmqCluster:
   metadata:
     name: testmq-tenant
@@ -94,3 +94,45 @@ kubeit-secrets-chart:
                 azureKeyVaultSecretName: rabbitmq-admin-username
               - k8sSecretKey: password
                 azureKeyVaultSecretName: rabbitmq-admin-password
+
+service:
+  create: true
+  type: ClusterIP
+  port: 5672
+
+virtualService:
+  create: true
+  host: ""
+  useCors: false
+  public: false
+  allowOrigins: []
+
+# KubeIT passed variables
+dnsDomain: "kubeit.dnv.com"
+internalDnsDomain: "kubeit-int.dnv.com"
+shortRegion: "we"
+clusterColour: "green"
+env: "nonprod"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations:
+    azure.workload.identity/client-id: 1111-2222-3333
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+  name: ""
+
+# SecretStore is definition how to access Azure Key Vault
+# serviceAccount must be created to use SecretStore with annotations for Workload Identity
+# https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
+secretStore:
+  create: true
+  vaultUrl: ""
+
+# ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
+# - name: k8s-secret-name (to create)
+#   key: k8s-secret-key (to create)
+#   azureSecretName: name-of-secret-in-azure-key-vault
+# SecretStore must be created to use ExternalSecrets
+externalSecrets: []

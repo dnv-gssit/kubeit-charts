@@ -1,0 +1,55 @@
+{{- if .Values.virtualService.create }}
+{{- $useGateway := "" -}}
+{{- $useDomain := "" -}}
+{{- if .Values.virtualService.public -}}
+{{- $useGateway = "istio-system/global-https-internal-default-gateway" -}}
+{{- $useDomain = .Values.dnsDomain -}}
+{{- else }}
+{{- $useGateway = "istio-system/global-internaluse-gateway" -}}
+{{- $useDomain = .Values.internalDnsDomain -}}
+{{- end -}}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kubeit-rabbit-chart.fullname" . }}-vs
+spec:
+  gateways:
+  - {{ $useGateway }}
+  hosts:
+  {{- if .Values.virtualService.host }}
+  - {{ .Values.virtualService.host }}
+  {{- else }}
+  - {{ printf "rabbitmq-%s.%s.%s.%s.%s" .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
+  {{- end }}
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: {{ include "kubeit-rabbit-chart.fullname" . }}
+        port:
+          number: {{ .Values.service.port }}
+    {{- if .Values.virtualService.useCors }}
+    corsPolicy:
+      allowOrigins:
+        {{- range $k,$v := .Values.virtualService.allowOrigins }}
+        - exact: {{ $v }}
+        {{- end }}
+      allowMethods:
+      - POST
+      - GET
+      - OPTIONS
+      allowCredentials: true
+      allowHeaders:
+      - Content-Type
+      - Authorization
+      - Accept
+      exposeHeaders:
+      - Authorization
+      - Content-Type
+      - X-Custom-Header
+      maxAge: "24h"
+    {{- end }}
+{{- end }}
