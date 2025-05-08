@@ -20,7 +20,7 @@ spec:
   {{- if .Values.virtualService.host }}
   - {{ .Values.virtualService.host }}
   {{- else }}
-  - {{ printf "rabbitmq-%s.%s.%s.%s.%s" .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
+  - {{ printf "rabbitmq-%s-%s.%s.%s.%s.%s" .Values.tenantName .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
   {{- end }}
   http:
   - match:

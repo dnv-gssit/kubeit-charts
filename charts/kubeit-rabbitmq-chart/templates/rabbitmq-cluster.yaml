@@ -2,7 +2,7 @@
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
-  name: {{ .Values.rabbitmqCluster.metadata.name }}
+  name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
 spec:

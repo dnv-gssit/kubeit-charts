@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ .Values.rabbitmqCluster.metadata.name }}-servicemonitor
+  name: {{ printf "sm-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
     tenant: {{ .Values.tenantName }}

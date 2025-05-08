@@ -25,7 +25,6 @@ rabbitmqCluster:
     default_user_tags.administrator = true
 
 persistentVolume:
-  name: persistence-testmq-tenant
   capacity:
     storage: 2Gi
   accessModes:
@@ -71,30 +70,6 @@ users:
       read: .*
     userK8sSecretName: admin-user-creds
 
-
-kubeit-secrets-chart:
-  app: rmq
-  serviceAccount:
-    clientId: "" # clientId of the managed identity principal
-  azureKeyVaultSecrets:
-    type: external-secrets
-    tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"
-    azureKeyVaults:
-      - azureKeyVaultName: KubeIT-DEV-KV-SH-WE
-        secrets:
-          - k8sSecretName: rabbitmq-storageaccount-secret
-            data:
-              - k8sSecretKey: azurestorageaccountname
-                azureKeyVaultSecretName: rabbitmq-storage-account-name
-              - k8sSecretKey: azurestorageaccountkey
-                azureKeyVaultSecretName: rabbitmq-storage-account-key
-          - k8sSecretName: admin-user-creds
-            data:
-              - k8sSecretKey: username
-                azureKeyVaultSecretName: rabbitmq-admin-username
-              - k8sSecretKey: password
-                azureKeyVaultSecretName: rabbitmq-admin-password
-
 service:
   create: true
   type: ClusterIP
@@ -116,7 +91,7 @@ env: "nonprod"
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Annotations to add to the service account
   annotations:
     azure.workload.identity/client-id: 1111-2222-3333
@@ -127,7 +102,7 @@ serviceAccount:
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: true
+  create: false
   vaultUrl: ""
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
