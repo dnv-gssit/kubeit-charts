@@ -12,7 +12,7 @@ spec:
   - {{ . }}
   {{- end }}
   rabbitmqClusterReference:
-    name: {{ $.Values.rabbitmqCluster.metadata.name }}
+    name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
   importCredentialsSecret:
     name: {{ .userK8sSecretName }}
 ---
@@ -28,6 +28,6 @@ spec:
     {{ $key }}: {{ quote $value }}
     {{- end }}
   rabbitmqClusterReference:
-    name: {{ $.Values.rabbitmqCluster.metadata.name }}
+    name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
 ---
 {{- end }}

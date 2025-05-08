@@ -37,7 +37,7 @@ spec:
                 - {{ . }}
                 {{- end }}
               storageClassName: {{ .Values.persistentVolume.storageClassName }}
-              volumeName: {{ .Values.persistentVolume.name }}
+              volumeName: {{ printf "pv-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}

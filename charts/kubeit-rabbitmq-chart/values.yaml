@@ -30,7 +30,7 @@ persistentVolume:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: azurefile-csi
+  storageClassName: file.csi.azure.com
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
@@ -42,12 +42,13 @@ persistentVolume:
     - nobrl
   csi:
     driver: file.csi.azure.com
-    volumeHandle: testmq-tenant # make sure this is unique in the cluster
+    volumeHandle: rabbitmq-tenant
     volumeAttributes:
       shareName: rabbitmq # name of Azure File Share
 
 queue:
   - name: testmq-tenant
+    replicas: 1
     replicas: 1
     resources:
       requests:
@@ -60,7 +61,7 @@ queue:
       x_message_ttl: 60000 # setting the message TTL
 
 users:
-  - name: admin
+  - name: rohan
     vhost: /
     tags:
       - administrator
@@ -68,7 +69,7 @@ users:
       configure: .*
       write: .*
       read: .*
-    userK8sSecretName: admin-user-creds
+    userK8sSecretName: admin-user-creds # Create external secret
 
 service:
   create: true
@@ -91,23 +92,36 @@ env: "nonprod"
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
+  create: true ## Set to false
   # Annotations to add to the service account
   annotations:
-    azure.workload.identity/client-id: 1111-2222-3333
+    azure.workload.identity/client-id: XYZ
     azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
-  name: ""
+  name: "rabbitmq-sa"
 
 # SecretStore is definition how to access Azure Key Vault
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: false
-  vaultUrl: ""
+  create: true ## Set to false
+  vaultUrl: "https://kubeit-dev-kv-sh-we.vault.azure.net/"
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
-# - name: k8s-secret-name (to create)
-#   key: k8s-secret-key (to create)
-#   azureSecretName: name-of-secret-in-azure-key-vault
+#  - name: k8s-secret-name (to create)
+#   data:
+#     - key: k8s-secret-key (to create)
+#       azureSecretName: name-of-secret-in-azure-key-vault
 # SecretStore must be created to use ExternalSecrets
-externalSecrets: []
+externalSecrets:
+  - name: rabbitmq-storageaccount-secret
+    data:
+      - key: azurestorageaccountname
+        azureSecretName: azurestorageaccountname
+      - key: azurestorageaccountkey
+        azureSecretName: azurestorageaccountkey
+  - name: admin-user-creds
+    data:
+      - key: username
+        azureSecretName: rabbimq-admin-user # rohan
+      - key: password
+        azureSecretName: rabbimq-admin-pass # rohan
