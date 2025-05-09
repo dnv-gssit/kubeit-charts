@@ -28,7 +28,7 @@ spec:
         prefix: /
     route:
     - destination:
-        host: {{ include "kubeit-rabbit-chart.fullname" . }}
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
         port:
           number: {{ .Values.service.port }}
     {{- if .Values.virtualService.useCors }}

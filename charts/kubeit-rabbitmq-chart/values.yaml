@@ -1,6 +1,7 @@
 # Default values for RabbitMQ Helm chart.
 ---
 tenantName: tenant2
+component: rabbitmq
 rabbitmqCluster:
   metadata:
     name: testmq-tenant
@@ -24,7 +25,10 @@ rabbitmqCluster:
     channel_max = 1700
     default_user_tags.administrator = true
 
+# it should be optionally to use external Azure File Share
+# it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
+  external: false
   capacity:
     storage: 2Gi
   accessModes:

@@ -46,8 +46,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "kubeit-rabbit-chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "kubeit-rabbit-chart.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ printf "%s-%s" .Chart.Name .Values.tenantName | quote }}
 app.kubernetes.io/component: {{ default .Release.Name .Values.component }}
 {{- end }}
 

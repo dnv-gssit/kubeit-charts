@@ -13,6 +13,7 @@ spec:
       memory: {{ .Values.rabbitmqCluster.spec.resources.requests.memory }}
     limits:
      memory: {{ .Values.rabbitmqCluster.spec.resources.limits.memory }}
+{{- if .Values.persistentVolume.external }}
   override:
     statefulSet:
       spec:
@@ -43,9 +44,46 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: persistence-testmq
+{{- end }}
   rabbitmq:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
+{{- if .Values.persistentVolume.external }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ .Values.persistentVolume.storageClassName }}
+{{- end }}
+  service:
+    type: {{ .Values.service.type }}
+    port: {{ .Values.service.port }}
+{{- if .Values.persistentVolume.external }}
+  override:
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+            initContainers:
+              - name: setup-container
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+        volumeClaimTemplates:
+          - apiVersion: v1
+            kind: PersistentVolumeClaim
+            spec:
+              accessModes:
+                {{- range .Values.persistentVolume.accessModes }}
+                - {{ . }}
+                {{- end }}
+              storageClassName: {{ .Values.persistentVolume.storageClassName }}
+              resources:
+                requests:
+                  storage: {{ .Values.persistentVolume.capacity.storage }}
+            metadata:
+              name: persistence-testmq
+{{- end }}
