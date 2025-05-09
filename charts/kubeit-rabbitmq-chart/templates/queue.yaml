@@ -13,5 +13,5 @@ spec:
   autoDelete: true # queue that has had at least one consumer is deleted when last consumer unsubscribes
   durable: true # the queue will survive a broker restart
   rabbitmqClusterReference:
-    name: {{ $.Values.rabbitmqCluster.metadata.name }}  # rabbitmqCluster must exist in the same namespace as queue
+    name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
 {{- end }}

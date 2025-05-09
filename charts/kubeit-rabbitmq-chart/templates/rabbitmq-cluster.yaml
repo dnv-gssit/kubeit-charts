@@ -13,8 +13,12 @@ spec:
       memory: {{ .Values.rabbitmqCluster.spec.resources.requests.memory }}
     limits:
      memory: {{ .Values.rabbitmqCluster.spec.resources.limits.memory }}
-{{- if .Values.persistentVolume.external }}
   override:
+    service:
+      metadata:
+        labels:
+          {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
+{{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
         template:
@@ -48,14 +52,12 @@ spec:
   rabbitmq:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
-{{- if .Values.persistentVolume.external }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ .Values.persistentVolume.storageClassName }}
-{{- end }}
   service:
     type: {{ .Values.service.type }}
-    port: {{ .Values.service.port }}
+    # port: {{ .Values.service.port }}
 {{- if .Values.persistentVolume.external }}
   override:
     statefulSet:

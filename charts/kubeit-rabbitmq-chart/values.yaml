@@ -28,13 +28,14 @@ rabbitmqCluster:
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
-  external: false
+  # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
+  external: false # Set to false to use AKS built-in storage classes
+  storageClassName: azurefile-csi  # set the storage class name
   capacity:
-    storage: 2Gi
+    storage: 2Gi # configure PVC size
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: file.csi.azure.com
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
@@ -126,6 +127,6 @@ externalSecrets:
   - name: admin-user-creds
     data:
       - key: username
-        azureSecretName: rabbimq-admin-user # rohan
+        azureSecretName: rabbimq-admin-user
       - key: password
-        azureSecretName: rabbimq-admin-pass # rohan
+        azureSecretName: rabbimq-admin-pass
