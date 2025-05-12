@@ -129,7 +129,8 @@ secretStore:
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
   - name: rabbitmq-storageaccount-secret
-    external: false # Set to false to use AKS built-in storage classes
+    # Set to false to use AKS built-in storage classes
+    external: false
     data:
       - key: azurestorageaccountname
         azureSecretName: azurestorageaccountname
