@@ -21,11 +21,12 @@ kind: Permission
 metadata:
   name: rabbit-{{ .name }}-permission
 spec:
-  vhost: {{ quote .vhost }}
-  user: {{ quote .name }}
+  vhost: {{ .vhost | quote }}
+  userReference:
+    name: {{ .name | quote }}
   permissions:
     {{- range $key, $value := .permissions }}
-    {{ $key }}: {{ quote $value }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
   rabbitmqClusterReference:
     name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
