@@ -41,7 +41,7 @@ spec:
                 {{- range .Values.persistentVolume.accessModes }}
                 - {{ . }}
                 {{- end }}
-              storageClassName: {{ .Values.persistentVolume.storageClassName }}
+              storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
               volumeName: {{ printf "pv-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
               resources:
                 requests:
@@ -54,7 +54,7 @@ spec:
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
-    storageClassName: {{ .Values.persistentVolume.storageClassName }}
+    storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
   service:
     type: {{ .Values.service.type }}
     # port: {{ .Values.service.port }}
@@ -82,7 +82,7 @@ spec:
                 {{- range .Values.persistentVolume.accessModes }}
                 - {{ . }}
                 {{- end }}
-              storageClassName: {{ .Values.persistentVolume.storageClassName }}
+              storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
