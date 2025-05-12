@@ -1,13 +1,6 @@
 {{- if .Values.virtualService.create }}
-{{- $useGateway := "" -}}
-{{- $useDomain := "" -}}
-{{- if .Values.virtualService.public -}}
-{{- $useGateway = "istio-system/global-https-internal-default-gateway" -}}
-{{- $useDomain = .Values.dnsDomain -}}
-{{- else }}
-{{- $useGateway = "istio-system/global-internaluse-gateway" -}}
-{{- $useDomain = .Values.internalDnsDomain -}}
-{{- end -}}
+{{- $useGateway := "istio-system/global-internaluse-gateway" -}}
+{{- $useDomain := .Values.internalDnsDomain -}}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -53,7 +46,6 @@ spec:
       maxAge: "24h"
     {{- end }}
 ---
-{{- if not .Values.virtualService.public }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -76,5 +68,4 @@ spec:
         port:
           number: {{ .Values.service.tcpPort }}
 ---
-{{- end }}
 {{- end }}

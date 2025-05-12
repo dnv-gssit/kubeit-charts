@@ -86,7 +86,6 @@ virtualService:
   create: true
   host: ""
   useCors: false
-  public: false
   allowOrigins: []
 
 # KubeIT passed variables
