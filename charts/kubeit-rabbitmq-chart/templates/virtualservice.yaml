@@ -5,7 +5,7 @@
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ include "kubeit-rabbit-chart.fullname" . }}-vs
+  name: {{ include "kubeit-rabbit-chart.fullname" . }}-ui
 spec:
   gateways:
   - {{ $useGateway }}
@@ -49,7 +49,7 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: {{ include "kubeit-rabbit-chart.fullname" . | trunc 55 | trimSuffix "-" }}-vs-tcp
+  name: {{ include "kubeit-rabbit-chart.fullname" . | trunc 55 | trimSuffix "-" }}-tcp
 spec:
   gateways:
   - {{ $useGateway }}
