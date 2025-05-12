@@ -2,7 +2,7 @@
 apiVersion: rabbitmq.com/v1beta1
 kind: Queue
 metadata:
-  name: {{ .name}}
+  name: {{ printf "%s-queue" .name | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
 spec:
