@@ -30,7 +30,7 @@ spec:
     - destination:
         host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
         port:
-          number: {{ .Values.service.port }}
+          number: {{ .Values.service.uiPort }}
     {{- if .Values.virtualService.useCors }}
     corsPolicy:
       allowOrigins:
@@ -52,4 +52,29 @@ spec:
       - X-Custom-Header
       maxAge: "24h"
     {{- end }}
+---
+{{- if not .Values.virtualService.public }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kubeit-rabbit-chart.fullname" . | trunc 55 | trimSuffix "-" }}-vs-tcp
+spec:
+  gateways:
+  - {{ $useGateway }}
+  hosts:
+  {{- if .Values.virtualService.host }}
+  - {{ .Values.virtualService.host }}
+  {{- else }}
+  - {{ printf "rabbitmq-%s-%s.%s.%s.%s.%s" .Values.tenantName .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
+  {{- end }}
+  tcp:
+  - match:
+    - port: {{ .Values.service.tcpPort }}
+    route:
+    - destination:
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
+        port:
+          number: {{ .Values.service.tcpPort }}
+---
+{{- end }}
 {{- end }}

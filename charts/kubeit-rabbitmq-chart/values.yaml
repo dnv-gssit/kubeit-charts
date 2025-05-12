@@ -79,7 +79,8 @@ users:
 service:
   create: true
   type: ClusterIP
-  port: 5672
+  uiPort: 15672
+  tcpPort: 5672
 
 virtualService:
   create: true
@@ -92,15 +93,15 @@ virtualService:
 dnsDomain: "kubeit.dnv.com"
 internalDnsDomain: "kubeit-int.dnv.com"
 shortRegion: "we"
-clusterColour: "green"
-env: "nonprod"
+clusterColour: "blue"
+env: "dev"
 
 serviceAccount:
   # Specifies whether a service account should be created
   create: true ## Set to false
   # Annotations to add to the service account
   annotations:
-    azure.workload.identity/client-id: XYZ
+    azure.workload.identity/client-id: 850ed0f2-3b12-4334-934f-b1b168a5ea90
     azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
   name: "rabbitmq-sa"
 
