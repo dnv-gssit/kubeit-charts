@@ -4,7 +4,8 @@ tenantName: tenant2
 component: rabbitmq
 rabbitmqCluster:
   metadata:
-    name: testmq-tenant # name of the RabbitMQ cluster
+  # name of the RabbitMQ cluster
+    name: testmq-tenant
   spec:
     replicas: 1
     resources:
@@ -29,10 +30,13 @@ rabbitmqCluster:
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
   # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
-  external: false # Set to false to use AKS built-in storage classes
-  storageClassName: azurefile-csi  # set the storage class name
+  # Set to false to use AKS built-in storage classes
+  external: false
+  # set the storage class name
+  storageClassName: azurefile-csi
   capacity:
-    storage: 2Gi # configure PVC size
+  # configure PVC size
+    storage: 2Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -49,7 +53,8 @@ persistentVolume:
     driver: file.csi.azure.com
     volumeHandle: rabbitmq-tenant
     volumeAttributes:
-      shareName: rabbitmq # name of Azure File Share
+      # name of Azure File Share
+      shareName: rabbitmq
 
 # Create rabbitmq queue via RabbitMQ CRD
 queue:
@@ -62,8 +67,8 @@ queue:
       limits:
         memory: 800Mi
     arguments:
-      x_max_length_bytes: 1000000000 # setting the retention policy
-      x_message_ttl: 60000 # setting the message TTL
+      x_max_length_bytes: 1000000000
+      x_message_ttl: 60000
 
 # Configure RabbitMQ users with permissions
 users:
@@ -76,7 +81,8 @@ users:
       configure: .*
       write: .*
       read: .*
-    userK8sSecretName: admin-user-creds # Create external secret via KeyVault
+    # Create external secret via KeyVault
+    userK8sSecretName: admin-user-creds
 
 service:
   create: true
@@ -99,7 +105,7 @@ env: "dev"
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true ## Set to false
+  create: true
   # Annotations to add to the service account using workload identity
   annotations:
     azure.workload.identity/client-id: 850ed0f2-3b12-4334-934f-b1b168a5ea90
@@ -110,7 +116,7 @@ serviceAccount:
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: true ## Set to false
+  create: true
   vaultUrl: "https://kubeit-dev-kv-sh-we.vault.azure.net/"
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
