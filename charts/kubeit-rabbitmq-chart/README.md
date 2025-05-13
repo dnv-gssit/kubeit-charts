@@ -45,4 +45,43 @@ The Helm chart creates external secrets pulled down from tenant's Azure Key Vaul
 
 2. ArgoCD application
     ```bash
+      project: tenant2
+      source:
+         repoURL: https://github.com/dnv-gssit/kubeit-charts.git
+         path: charts/kubeit-rabbitmq-chart
+         targetRevision: feature/rabbitmq-chart
+      helm:
+         values: |
+            env: dev
+            region: westeurope
+            dnsDomain: "kubeit.dnv.com"
+            internalDnsDomain: "kubeit-int.dnv.com"
+            clusterSubdomain: "dev001"
+            clusterColour: "blue"
+            ingressType: "internal"
+            shortRegion: we
+            tenantName: tenant2
+            targetRevision: feature/rabbitmq-chart
+            repoURL: https://github.com/dnv-gssit/kubeit-charts.git
+            networkPlugin: azure
+            tenantMultiRegion: true
+            managementNamespace: "management-tenant2"
+      destination:
+      server: https://kubernetes.default.svc
+      namespace: standard
+      syncPolicy:
+      automated:
+         prune: true
+         selfHeal: true
+      syncOptions:
+         - Validate=true
+         - CreateNamespace=false
+         - PrunePropagationPolicy=foreground
+         - PruneLast=false
+      retry:
+         limit: 2
+         backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 1m
 

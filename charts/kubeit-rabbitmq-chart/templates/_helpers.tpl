@@ -74,3 +74,11 @@ Create the name of the service account to use
       name: {{ .Values.spec.override.statefulSet.spec.template.spec.initContainers.volumeMounts.name }}
 {{- end -}}
 
+
+{{/*
+Virtual Service Host
+*/}}
+
+{{- define "internaldns.host" -}}
+{{ printf "rabbitmq-%s-%s.%s.%s.%s.%s" .Values.tenantName .Release.Name .Values.clusterColour .Values.shortRegion .Values.env .Values.internalDnsDomain }}
+{{- end -}}

@@ -57,35 +57,3 @@ spec:
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
   service:
     type: {{ .Values.service.type }}
-    # port: {{ .Values.service.port }}
-{{- if .Values.persistentVolume.external }}
-  override:
-    statefulSet:
-      spec:
-        template:
-          spec:
-            containers:
-              - name: rabbitmq
-                volumeMounts:
-                  - mountPath: /var/lib/rabbitmq/mnesia/
-                    name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
-            initContainers:
-              - name: setup-container
-                volumeMounts:
-                  - mountPath: /var/lib/rabbitmq/mnesia/
-                    name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
-        volumeClaimTemplates:
-          - apiVersion: v1
-            kind: PersistentVolumeClaim
-            spec:
-              accessModes:
-                {{- range .Values.persistentVolume.accessModes }}
-                - {{ . }}
-                {{- end }}
-              storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
-              resources:
-                requests:
-                  storage: {{ .Values.persistentVolume.capacity.storage }}
-            metadata:
-              name: persistence-testmq
-{{- end }}

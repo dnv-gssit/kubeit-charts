@@ -1,6 +1,5 @@
 {{- if .Values.virtualService.create }}
 {{- $useGateway := "istio-system/global-internaluse-gateway" -}}
-{{- $useDomain := .Values.internalDnsDomain -}}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -13,7 +12,7 @@ spec:
   {{- if .Values.virtualService.host }}
   - {{ .Values.virtualService.host }}
   {{- else }}
-  - {{ printf "rabbitmq-%s-%s.%s.%s.%s.%s" .Values.tenantName .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
+  - {{ include "internaldns.host" . }}
   {{- end }}
   http:
   - match:
@@ -57,7 +56,7 @@ spec:
   {{- if .Values.virtualService.host }}
   - {{ .Values.virtualService.host }}
   {{- else }}
-  - {{ printf "rabbitmq-%s-%s.%s.%s.%s.%s" .Values.tenantName .Release.Name .Values.clusterColour .Values.shortRegion .Values.env $useDomain }}
+  - {{ include "internaldns.host" . }}
   {{- end }}
   tcp:
   - match:
