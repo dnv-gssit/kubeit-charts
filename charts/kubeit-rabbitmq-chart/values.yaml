@@ -32,7 +32,7 @@ rabbitmqCluster:
 persistentVolume:
   # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
   # Set to false to use AKS built-in storage classes
-  external: false
+  external: true
   # set the storage class name
   storageClassName: azurefile-csi
   capacity:
@@ -129,9 +129,8 @@ secretStore:
 #       ....
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
+    # Name of storage account must not be changed
   - name: rabbitmq-storageaccount-secret
-    # Set to false to use AKS built-in storage classes
-    external: false
     data:
       - key: azurestorageaccountname
         azureSecretName: azurestorageaccountname
