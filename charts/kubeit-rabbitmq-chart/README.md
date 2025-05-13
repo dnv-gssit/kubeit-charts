@@ -25,6 +25,10 @@ This Helm chart deploys a RabbitMQ cluster in Kubernetes. It supports advanced c
 - Optional creation of Kubernetes Service Accounts and Virtual Services.
 - Environment-specific configurations for interal DNS and cluster settings.
 
+## External Secrets
+
+The Helm chart creates external secrets pulled down from tenant's Azure Key Vault. If tenant is configuring RabbitMQ using external Azure Storage Account it will create an External Secret with Storage Account credentials. And by default it will create admin user credentials. Tenants must create these secrets in KeyVault matching `azureSecretName`
+
 ## Requirements
 
 - Kubernetes 1.21+
@@ -41,10 +45,4 @@ This Helm chart deploys a RabbitMQ cluster in Kubernetes. It supports advanced c
 
 2. ArgoCD application
     ```bash
-    - name: rabbitmq
-      type: helm
-      autosync: true
-      namespace: standard
-      ignoreRegionStructure: true
-      repoURL: https://github.com/dnv-gssit/kubeit-charts.git
-      targetRevision: feature/rabbitmq-chart
+
