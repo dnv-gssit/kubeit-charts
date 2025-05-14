@@ -654,6 +654,17 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-logical-envs-0.0.1/kubeit-logical-envs-0.0.1.tgz
     version: 0.0.1
+  kubeit-rabbitmq-chart:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-05-14T13:58:26.086336399Z"
+    description: KubeIT RabbitMQ chart
+    digest: f200311cf8923691be843b09953340bacaf6bce8cfe03197d93cfa6d1197c439
+    name: kubeit-rabbitmq-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-rabbitmq-chart-0.1.0/kubeit-rabbitmq-chart-0.1.0.tgz
+    version: 0.1.0
   kubeit-redis-chart:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -749,4 +760,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-18T12:40:58.612934445Z"
+generated: "2025-05-14T13:58:26.086599229Z"
