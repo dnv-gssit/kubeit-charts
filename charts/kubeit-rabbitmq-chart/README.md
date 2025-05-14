@@ -29,6 +29,12 @@ This Helm chart deploys a RabbitMQ cluster in Kubernetes. It supports advanced c
 
 The Helm chart creates external secrets pulled down from tenant's Azure Key Vault. If tenant is configuring RabbitMQ using external Azure Storage Account it will create an External Secret with Storage Account credentials. And by default it will create admin user credentials. Tenants must create these secrets in KeyVault matching `azureSecretName`
 
+## Storage
+
+Tenants have the option (recommended) to attach external Storage Account to RabbitMQ cluster. To reference the external account use `nodeStageSecretRef ` in PersistenceVolume with credentials of the Storage Account `azurestorageaccountname` and `azurestorageaccountkey`. When attaching a FileShare the share must pre-exist and define the name in `Values.peristentVolume.csi.volumeAttributes.shareName`
+
+Using an in-built Storage Class to provision a volume will auto-create the Storage Account and for e.g. FileShare in the same subscription as KubeIT cluster (this approach is not recommnended since tenant's will not have visibility on the FileShare)
+
 ## Requirements
 
 - Kubernetes 1.21+
