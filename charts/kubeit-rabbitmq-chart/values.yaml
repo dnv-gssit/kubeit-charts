@@ -139,6 +139,6 @@ externalSecrets:
   - name: admin-user-creds
     data:
       - key: username
-        azureSecretName: rabbimq-admin-user
+        azureSecretName: rabbitmq-admin-user
       - key: password
-        azureSecretName: rabbimq-admin-pass
+        azureSecretName: rabbitmq-admin-pass

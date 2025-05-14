@@ -27,7 +27,7 @@ This Helm chart deploys a RabbitMQ cluster in Kubernetes. It supports advanced c
 
 ## External Secrets
 
-The Helm chart creates external secrets pulled down from tenant's Azure Key Vault. If tenant is configuring RabbitMQ using external Azure Storage Account it will create an External Secret with Storage Account credentials. And by default it will create admin user credentials. Tenants must create these secrets in KeyVault matching `azureSecretName`
+The Helm chart creates external secrets pulled down from tenant's Azure Key Vault. If tenant is configuring RabbitMQ using external Azure Storage Account it will create an External Secret with Storage Account credentials. And by default it will create admin user credentials. Tenants must create these secrets in KeyVault matching `azureSecretName`: `rabbitmq-admin-user` and `rabbitmq-admin-pass`
 
 ## Storage
 
