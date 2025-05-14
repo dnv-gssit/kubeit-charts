@@ -1,0 +1,144 @@
+# Default values for RabbitMQ Helm chart.
+---
+tenantName: tenant2
+component: rabbitmq
+rabbitmqCluster:
+  metadata:
+  # name of the RabbitMQ cluster
+    name: testmq-tenant
+  spec:
+    replicas: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 800Mi
+    containers:
+      volumeMount:
+        name: persistence-testmq
+    initContainers:
+      volumeMount:
+        name: persistence-testmq
+
+  additionalConfig: |
+    log.console.level = info
+    channel_max = 1700
+    default_user_tags.administrator = true
+    vm_memory_high_watermark.absolute = 4Gi
+
+# it should be optionally to use external Azure File Share
+# it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
+persistentVolume:
+  # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
+  # Set to false to use AKS built-in storage classes
+  external: false
+  # set the storage class name
+  storageClassName: azurefile-csi
+  capacity:
+  # configure PVC size
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl
+  csi:
+    driver: file.csi.azure.com
+    volumeHandle: rabbitmq-tenant
+    volumeAttributes:
+      # name of Azure File Share
+      shareName: rabbitmq
+
+# Create rabbitmq queue via RabbitMQ CRD
+queue:
+  - name: testmq-tenant
+    replicas: 1
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 800Mi
+    arguments:
+      x_max_length_bytes: 1000000000
+      x_message_ttl: 60000
+
+# Configure RabbitMQ users with permissions
+users:
+  # Default admin user
+  - name: default-admin
+    vhost: /
+    tags:
+      - administrator
+    permissions:
+      configure: .*
+      write: .*
+      read: .*
+    # Create external secret via KeyVault
+    userK8sSecretName: admin-user-creds
+
+service:
+  create: true
+  type: ClusterIP
+  uiPort: 15672
+  tcpPort: 5672
+
+virtualService:
+  create: true
+  host: ""
+  useCors: false
+  allowOrigins: []
+
+# KubeIT passed variables
+dnsDomain: "kubeit.dnv.com"
+internalDnsDomain: "kubeit-int.dnv.com"
+shortRegion: "we"
+clusterColour: "blue"
+env: "dev"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account using workload identity
+  annotations:
+    azure.workload.identity/client-id: <CLIENT_ID>
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+  name: "rabbitmq-sa"
+
+# SecretStore is definition how to access Azure Key Vault
+# serviceAccount must be created to use SecretStore with annotations for Workload Identity
+# https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
+secretStore:
+  create: false
+  vaultUrl: "https://kubeit-dev-kv-sh-we.vault.azure.net/"
+
+# ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
+#  - name: k8s-secret-name (to create)
+#   data:
+#     - key: k8s-secret-key (to create)
+#       azureSecretName: name-of-secret-in-azure-key-vault
+#     - key: k8s-secret-key2
+#       ....
+# SecretStore must be created to use ExternalSecrets
+externalSecrets:
+    # Name of storage account must not be changed
+  - name: rabbitmq-storageaccount-secret
+    data:
+      - key: azurestorageaccountname
+        azureSecretName: azurestorageaccountname
+      - key: azurestorageaccountkey
+        azureSecretName: azurestorageaccountkey
+  - name: admin-user-creds
+    data:
+      - key: username
+        azureSecretName: rabbimq-admin-user
+      - key: password
+        azureSecretName: rabbimq-admin-pass
