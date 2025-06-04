@@ -601,6 +601,15 @@ entries:
     version: 1.0.0
   kubeit-logical-envs:
   - apiVersion: v2
+    created: "2025-06-04T10:57:34.084442651Z"
+    description: Deployment tenant's all logical envs
+    digest: f03dd65cf2663551a67f88d92e31004ba943501e559ddeb36092810e75d696ea
+    name: kubeit-logical-envs
+    type: library
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-logical-envs-0.0.9/kubeit-logical-envs-0.0.9.tgz
+    version: 0.0.9
+  - apiVersion: v2
     created: "2025-06-04T10:27:16.134247833Z"
     description: Deployment tenant's all logical envs
     digest: e6b047badbd8f30f2122c0080904bba1418dc73229b6b20b2f8065ab2ae6a81a
@@ -778,4 +787,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-06-04T10:48:44.274561519Z"
+generated: "2025-06-04T10:57:34.084617047Z"
