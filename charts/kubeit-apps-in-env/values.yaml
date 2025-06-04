@@ -46,7 +46,10 @@
 # ArgoCD application represents service (or helm chart) deployed into Kubernetes
 
 # List of applications to deploy
+#
 # Example:
+#
+# applications:
 #  - name: appname
 #    namespace: tenant-namespace
 #    image:
