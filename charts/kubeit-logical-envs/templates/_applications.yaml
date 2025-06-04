@@ -12,6 +12,15 @@
 {{- if eq $region $targetRegion -}}
 {{- if eq $color $targetColour -}}
 {{- $appName := printf "%s-%s" $values.tenantName $logicalEnvName | trunc 63 | trimSuffix "-" }}
+{{- $repoURL := $values.bootstrap.appLogicalEnvChart.repoURL -}}
+{{- $chartName := $values.bootstrap.appLogicalEnvChart.chart -}}
+{{- $targetRevision := $values.bootstrap.appLogicalEnvChart.targetRevision -}}
+{{- $overRideChart := index $values "appLogicalEnvChart" -}}
+{{- if $overRideChart -}}
+{{- $repoURL = $values.appLogicalEnvChart.repoURL -}}
+{{- $chartName =  $values.appLogicalEnvChart.chart -}}
+{{- $targetRevision = $values.appLogicalEnvChart.targetRevision -}}
+{{- end -}}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -26,9 +35,9 @@ spec:
     namespace: {{ $values.managementNamespace }}
     server: https://kubernetes.default.svc
   sources:
-    - repoURL: {{ $values.appLogicalEnvChart.repoURL }}
-      chart: {{ $values.appLogicalEnvChart.chart }}
-      targetRevision: {{ $values.appLogicalEnvChart.targetRevision }}
+    - repoURL: {{ $repoURL }}
+      chart: {{ $chartName }}
+      targetRevision: {{ $targetRevision }}
       helm:
         valueFiles:
          - $values/{{ $targetEnv }}/{{ $logicalEnvName }}/_apps.yaml
