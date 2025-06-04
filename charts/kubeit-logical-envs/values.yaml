@@ -1,1 +1,6 @@
 ---
+# app-in-logical-env chart to use to generate application within one logical env
+appLogicalEnvChart:
+  repoURL: https://dnv-gssit.github.io/kubeit-charts
+  chart: kubeit-apps-in-env
+  targetRevision: 0.0.13

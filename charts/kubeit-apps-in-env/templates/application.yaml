@@ -54,11 +54,8 @@ spec:
       helm:
         releaseName: {{ $app.name }}
         valueFiles:
-          - $values/appValues/global.yaml
-          - $values/appValues/{{ $app.name }}/global.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}-{{ $.Values.logicalEnvName }}.yaml
-          - $values/appValues/{{ $app.name }}/{{ $.Values.teamName }}-{{ $.Values.logicalEnvName }}-{{ $app.namespace }}.yaml
+          - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/global.yaml
+          - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/{{ $app.name }}.yaml
         ignoreMissingValueFiles: true
         values: |
           # Image values pass from application as they are common for kind:application and serviceChart
