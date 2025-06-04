@@ -1,0 +1,72 @@
+{{- define "bootstrap.application" }}
+{{- $values := . -}}
+{{- $targetEnv := .env -}}
+{{- $targetRegion := .shortRegion -}}
+{{- $targetColour := .clusterColour -}}
+{{- if hasKey $values $targetEnv -}}
+{{- $logicalEnvs := index $values $targetEnv -}}
+{{- range $logicalEnv := $logicalEnvs -}}
+{{- $logicalEnvName := $logicalEnv.name -}}
+{{- $region := index $logicalEnv "shortRegion" -}}
+{{- $color := index $logicalEnv "clusterColour" -}}
+{{- if eq $region $targetRegion -}}
+{{- if eq $color $targetColour -}}
+{{- $appName := printf "%s-%s" $values.tenantName $logicalEnvName | trunc 63 | trimSuffix "-" }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $appName }}
+  namespace: {{ $values.managementNamespace }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: "{{ $values.tenantName }}"
+  destination:
+    namespace: {{ $values.managementNamespace }}
+    server: https://kubernetes.default.svc
+  sources:
+    - repoURL: {{ $values.appLogicalEnvChart.repoURL }}
+      chart: {{ $values.appLogicalEnvChart.chart }}
+      targetRevision: {{ $values.appLogicalEnvChart.targetRevision }}
+      helm:
+        valueFiles:
+         - $values/{{ $targetEnv }}/{{ $logicalEnvName }}/_apps.yaml
+        ignoreMissingValueFiles: true
+        values: |
+          env: {{ $values.env }}
+          region: {{ $values.region }}
+          dnsDomain: {{ $values.dnsDomain }}
+          internalDnsDomain: {{ $values.internalDnsDomain }}
+          clusterSubdomain: {{ $values.clusterSubdomain }}
+          clusterColour: {{ $values.clusterColour }}
+          ingressType: {{ $values.ingressType }}
+          shortRegion: {{ $values.shortRegion }}
+          tenantName: {{ $values.tenantName }}
+          targetRevision: {{ $values.targetRevision }}
+          repoURL: {{ $values.repoURL }}
+          managementNamespace: {{ $values.managementNamespace }}
+          logicalEnvName: {{ $logicalEnvName }}
+    - repoURL: {{ $values.repoURL }}
+      targetRevision: {{ $values.targetRevision }}
+      ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m
+      limit: 2
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=false
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end }}
