@@ -746,6 +746,15 @@ entries:
     version: 0.1.1
   kubeit-secrets-chart:
   - apiVersion: v2
+    created: "2025-06-06T09:41:28.087374894Z"
+    description: KubeIT secrets chart for using external-secrets operator
+    digest: e53db2e18082318c32ac30b486d92810e4508b3a08fb511b9b374cf93f4d6144
+    name: kubeit-secrets-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.1.0/kubeit-secrets-chart-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2022-06-28T23:17:43.147507174Z"
     description: KubeIT secrets management chart
@@ -796,4 +805,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-06-04T12:26:03.464879949Z"
+generated: "2025-06-06T09:41:28.087564937Z"
