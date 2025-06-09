@@ -70,6 +70,6 @@ applications: []
 
 # default service chart
 serviceChart:
-  repoURL:  https://dnvgl.github.io/service-mesh-chart
+  repoURL: https://dnvgl.github.io/service-mesh-chart
   targetRevision: 1.4.0
   chart: platform-service
