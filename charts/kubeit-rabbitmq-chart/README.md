@@ -90,4 +90,3 @@ Using an in-built Storage Class to provision a volume will auto-create the Stora
             duration: 5s
             factor: 2
             maxDuration: 1m
-

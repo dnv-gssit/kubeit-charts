@@ -1,0 +1,163 @@
+---
+# Source: kubeit-deployment-chart/templates/service-account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+automountServiceAccountToken: false
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+spec:
+  type:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: app
+    app: app
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-app
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app: app
+        app.kubernetes.io/name: app
+        helm.sh/chart: kubeit-deployment-chart-2.0.0
+        app.kubernetes.io/instance: release-name
+        version: v1
+        session-management: backend
+      annotations:
+    spec:
+      serviceAccountName: app
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: app
+          image: ":"
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+
+          resources:
+            {}
+      volumes:
+---
+# Source: kubeit-deployment-chart/templates/authorizationPolicy.yaml
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: release-name-app
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: app
+      version: v1
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]
+        requestPrincipals: ["*"]
+---
+# Source: kubeit-deployment-chart/templates/destinationrules.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: release-name-app-destinationrule
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+spec:
+  host: app.default.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: RANDOM
+    tls:
+      mode: ISTIO_MUTUAL
+---
+# Source: kubeit-deployment-chart/templates/requestAuthentication.yaml
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: release-name-app
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: app
+      version: v1
+  jwtRules:
+  - audiences:
+    - 22b9c23f-4a41-4729-8a5d-793f7601dfdb
+    - fe494c14-85d2-4bfa-bb43-92b0ab0a4f72
+    issuer: https://sts.windows.net/.../
+    jwksUri: https://login.microsoftonline.com/common/discovery/keys
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: app
+spec:
+  hosts:
+  - app.default.svc.cluster.local
+  gateways:
+  - mesh
+  http:
+  - route:
+    - destination:
+        host: "app.default.svc.cluster.local"
+    retries:
+       attempts: 3
+       perTryTimeout: 2s

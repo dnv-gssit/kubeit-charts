@@ -9,25 +9,25 @@ Definitions:
 azureKeyVaultSecrets:
   type: external-secrets                               # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
   tenantId:                                            # Azure Active Directory Tenant ID
-  azureKeyVaults:                                 
+  azureKeyVaults:
     - azureKeyVaultName:                               # Name of the Azure KeyVault
-      secrets:                                 
+      secrets:
         - k8sSecretName:                               # Name of the Kubernetes secret resource that is going to be created inside the cluster
-          data:                                    
+          data:
             - k8sSecretKey:                           # Name of the key in Kubernetes secret resource
               azureKeyVaultSecretName:                # Name of the secret in Azure KeyVault to pull the secret value from
             - k8sSecretKey:                           # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
               azureKeyVaultSecretName:
-        - k8sSecretName:                          
+        - k8sSecretName:
           data:
-            k8sSecretKey:                          
-            azureKeyVaultSecretName:       
+            k8sSecretKey:
+            azureKeyVaultSecretName:
 ```
 ## Azure Key Vault Access Policies
 
 External-secrets controller use Managed Identities in the cluster to authenticate to Azure KeyVault.
-Tenants have to add the Managed Identity used for authentication to Azure KeyVault to enable pulling down secrets to the cluster. 
-Managed Identity Client ID that can be use for adding the access policies, can be found in the ArgoCD in the bootstrapped application Manifest in the `tenantIdentityClientId` field. Cluster Admin team can supply this value as well.   
+Tenants have to add the Managed Identity used for authentication to Azure KeyVault to enable pulling down secrets to the cluster.
+Managed Identity Client ID that can be use for adding the access policies, can be found in the ArgoCD in the bootstrapped application Manifest in the `tenantIdentityClientId` field. Cluster Admin team can supply this value as well.
 
 ### External-secrets
 
@@ -54,7 +54,7 @@ azureKeyVaultSecrets:
             - k8sSecretKey: k8sSecretKey3
               azureKeyVaultSecretName: SecretName3
             - k8sSecretKey: k8sSecretKey3
-              azureKeyVaultSecretName: SecretName3       
-``` 
+              azureKeyVaultSecretName: SecretName3
+```
 
 More information on how to use the Azure Key Vault provider can be found here - https://external-secrets.io/v0.11.0/provider/azure-key-vault/

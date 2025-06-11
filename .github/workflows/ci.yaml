@@ -1,7 +1,7 @@
 ---
 name: Lint and Test Charts
 
-on: pull_request
+on: pull_request  # yamllint disable-line rule:truthy
 
 jobs:
   lint-test:
@@ -13,16 +13,18 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@v4.2.0
         with:
-          version: v3.8.1
+          version: v3.11.3
 
       - uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.10
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.3.1
+        uses: helm/chart-testing-action@v2.7.0
 
-      - name: Run chart-testing (lint)
-        run: ct lint --config=test-config.yaml
+      - uses: pre-commit/action@v3.0.1
+
+      - name: Run helm tests
+        run: python run-tests.py

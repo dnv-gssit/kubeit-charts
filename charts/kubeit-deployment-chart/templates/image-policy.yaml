@@ -1,0 +1,19 @@
+{{- if .Values.image.fluxAutomation.enabled -}}
+apiVersion: image.toolkit.fluxcd.io/v1beta1
+kind: ImagePolicy
+metadata:
+  name: {{ include "platform-service.name" . }}
+spec:
+  imageRepositoryRef:
+    name: {{ include "platform-service.name" . }}
+{{- if .Values.image.fluxAutomation.filterTags }}
+  filterTags: {{ .Values.image.fluxAutomation.filterTags | toYaml | nindent 4 }}
+{{- end }}
+{{- if .Values.image.fluxAutomation.policy }}
+  policy: {{ .Values.image.fluxAutomation.policy | toYaml | nindent 4 }}
+{{- else }}
+  policy:
+    numerical:
+      order: asc
+{{- end }}
+{{- end }}
