@@ -117,7 +117,7 @@ serviceAccount:
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: false
+  create: true
   vaultUrl: "https://kubeit-dev-kv-sh-we.vault.azure.net/"
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
