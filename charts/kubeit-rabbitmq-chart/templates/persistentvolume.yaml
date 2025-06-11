@@ -23,7 +23,7 @@ spec:
     driver: {{ required "A storage class name is required" .Values.persistentVolume.csi.driver }}
     # volumeid has to be unique for every identical storage blob container in the cluster
     # character `#`and `/` are reserved for internal use and cannot be used in volumehandle
-    volumeHandle: {{ .Values.persistentVolume.csi.volumeHandle }} # make sure this is unique in the cluster
+    volumeHandle: KubeITSharedSVC-DEV-RG-WE#rabbitmqtenant2dev#rabbitmq # make sure this is unique in the cluster
     volumeAttributes:
       shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }} # name of Azure File Share
       storageAccount: rabbitmqtenant2dev  # name of Azure Storage Account
