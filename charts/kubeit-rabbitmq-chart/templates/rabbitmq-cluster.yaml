@@ -18,11 +18,13 @@ spec:
       metadata:
         labels:
           {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
+          azure.workload.identity/use: "true"
 {{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
         template:
           spec:
+            serviceAccountName: {{ .Values.serviceAccount.name }}
             containers:
               - name: rabbitmq
                 volumeMounts:
