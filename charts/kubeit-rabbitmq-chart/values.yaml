@@ -130,12 +130,12 @@ secretStore:
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
     # Name of storage account must not be changed
-  - name: rabbitmq-storageaccount-secret
-    data:
-      - key: azurestorageaccountname
-        azureSecretName: azurestorageaccountname
-      - key: azurestorageaccountkey
-        azureSecretName: azurestorageaccountkey
+  # - name: rabbitmq-storageaccount-secret
+  #   data:
+  #     - key: azurestorageaccountname
+  #       azureSecretName: azurestorageaccountname
+  #     - key: azurestorageaccountkey
+  #       azureSecretName: azurestorageaccountkey
   - name: admin-user-creds
     data:
       - key: username
