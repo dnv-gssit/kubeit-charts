@@ -29,6 +29,7 @@ spec:
       storageAccount: rabbitmqtenant2dev  # name of Azure Storage Account
       resourceGroup: KubeITSharedSVC-DEV-RG-WE
       azureStorageIdentityClientID: 850ed0f2-3b12-4334-934f-b1b168a5ea90
+      AzureStorageAuthType: MSI
     # nodeStageSecretRef:
     #   name: rabbitmq-storageaccount-secret
     #   namespace: {{ .Release.Namespace }}
