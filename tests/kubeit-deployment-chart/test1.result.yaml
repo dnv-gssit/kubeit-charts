@@ -26,7 +26,7 @@ metadata:
     version: v1
     tenant: tenant
 spec:
-  type: 
+  type:
   ports:
     - port: 80
       targetPort: http

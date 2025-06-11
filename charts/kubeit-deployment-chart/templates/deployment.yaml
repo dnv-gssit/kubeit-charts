@@ -48,7 +48,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        {{- if .Values.service.liveness.enabled }}  
+        {{- if .Values.service.liveness.enabled }}
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
         {{- end }}
         {{- if .Values.mergeAppMetrics }}
@@ -62,7 +62,7 @@ spec:
         sidecar.istio.io/proxyMemory: {{ .Values.proxyResources.requests.memory }}
         {{- end }}
         {{- end }}
-        {{- with .Values.additionalPodAnnotations }}       
+        {{- with .Values.additionalPodAnnotations }}
         {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
