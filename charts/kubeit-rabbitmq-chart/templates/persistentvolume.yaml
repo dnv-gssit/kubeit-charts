@@ -26,7 +26,7 @@ spec:
     volumeHandle: {{ .Values.persistentVolume.csi.volumeHandle }} # make sure this is unique in the cluster
     volumeAttributes:
       shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }} # name of Azure File Share
-      storageAccount: {{ .Values.persistentVolume.csi.volumeAttributes.storageAccount }} # name of Azure Storage Account
+      storageAccount: rabbitmqtenant2dev  # name of Azure Storage Account
     # nodeStageSecretRef:
     #   name: rabbitmq-storageaccount-secret
     #   namespace: {{ .Release.Namespace }}
