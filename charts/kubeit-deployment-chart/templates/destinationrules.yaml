@@ -2,7 +2,7 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: {{ include "platform-service.fullname" . }}-destinationrule
+  name: {{ include "platform-service.fullname" . | trunc 54 | trimSuffix "-" }}-destrule
   labels:
 {{ include "appLabels" . | trim | indent 4 }}
 spec:
@@ -18,5 +18,9 @@ spec:
       simple: {{ default "RANDOM" .Values.defaultRouting.loadBalancerPolicy }}
       {{- end}}
     tls:
-      mode: ISTIO_MUTUAL
+      mode: {{ .Values.defaultRouting.tls.mode }}
+    {{- if .Values.defaultRouting.connectionPool }}
+    connectionPool:
+      {{- toYaml .Values.defaultRouting.connectionPool | nindent 6 }}
+    {{- end }}
 {{- end}}

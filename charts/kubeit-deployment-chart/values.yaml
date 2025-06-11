@@ -1,3 +1,4 @@
+# Default values for platform-service
 ---
 # Application name
 app: app        # Required
@@ -26,25 +27,27 @@ image:
   pullSecret:
   containerPort: 80
 
-  fluxAutomation:
-    enabled: false
-    interval: 1m0s
-    # filterTags:
-    #   pattern: '^dev-(?P<build>.*)'
-    #   extract: '$build'
-    # policy:
-    #   numerical:
-    #   order: asc
 # deploymentOnly -- This workload is an addon to another for the same app - only create the deployment and destination rule
 deploymentOnly: false
 
 updateStrategy: RollingUpdate
+
+# ConfigMap
+configMap:
+  enabled: false
+  data: |
+# data: |
+#   myconfig.conf: |
+#     my first config line
+#     my second config line
+#     my third config line
 
 service:
   # unspecified for default microservice (for now at least)
   type:
   # port number
   port: 80
+
   # provide access to other services
   liveness:
     enabled: false
@@ -69,17 +72,14 @@ serviceAccount:
   # will still be prefixed by the release prefix if that option is enabled.
   # If not set and create is true, a name is generated from the app
   name:
-  # Indicates whether pods running as this service
-  # account should have an API token automatically mounted.
-  automountToken: false
+  # ClientId for Workload Identity feature
+  clientId: ""
 
 gateway:
   # map virtual service to a gateway expose this service
   exposeService: true
-  # external gateway name (fully qualified if in a different namespace), default gateway provided by KubeIT
+  # gateway name (fully qualified if in a different namespace), default one provided automatically by KubeIT
   name: istio-system/global-https-internal-default-gateway
-  # internal gateway name (fully qualified if in a different namespace), internaluse gateway provided by KubeIT
-  internalName: istio-system/global-internaluse-gateway
 
 opa:
   # set to true to enable opa.  requires config in a config map called opa-istio-config and policy in a config map called opa-policy
@@ -94,24 +94,19 @@ hpa:
 defaultRouting:
   # Generate default virtual services and destination rules
   enabled: true
-  # decide if generate one domain per CR VirtualService
-  oneDomainPerVirtualService: false
 
-  # external hosts to take into account for routing rules
+  kubeitDefaultHosts:
+    enabled: true
+    tenantPrefixEnabled: true
+    dnsDomain: kubeit.dnv.com
+    # hostsPrefix:            # Optional - default app name
+
+  # hosts to take into account for routing rules (ignored if allHosts = true)
   hosts: []
-  # - myhost.dnv.com
-
-  # internal hosts to take into account for routing rules
-  # <service>.dnv.com - DNS record should be requested to GSS IT / TLS supported (one "dot" level only!)
-  # <service>[.<color>].<region>.<environment>.kubeit-int.dnv.com - works immediately / TLS supported
-  internalHosts: []
-  # - myhost.green.we.nonprod.kubeit-int.dnv.com
+    # - myhost.dnvgl.com
 
   # list of prefixes for route matching - overrides the default prefix (app)
   urlPrefixes:
-
-   # list of regexes for route matching
-  urlRegexes:
 
   # catch-all route - anything not routed elsewhere will be routed here
   # When this is used, urlPrefixes are ignored (there should be only catch-all route for this host & gateway)
@@ -145,6 +140,7 @@ defaultRouting:
     #   attempts: 3
     #   perTryTimeout: 2s
 
+  # Configure CORS policy
   # corsPolicy:
   #   allowOrigins:
   #     - exact: https://example.com
@@ -155,6 +151,28 @@ defaultRouting:
   #   allowHeaders:
   #     - X-Foo-Bar
   #   maxAge: "24h"
+
+  # Configure request timeout
+  # timeout: 5s
+
+  # Configure connectionPool for DestinationRule
+  # connectionPool:
+  #   tcp:
+  #     maxConnections: 100
+  #     connectTimeout: 30ms
+  #     tcpKeepalive:
+  #       time: 7200s
+  #       interval: 75
+  #   http:
+  #     idleTimeout: 1h
+
+  # route from all hosts (typically only common services)
+  allHosts: false
+
+  # Istio tls modes
+  # Recommendation is to not change default TLS setup for the security reason
+  tls:
+    mode: ISTIO_MUTUAL
 
 # Specify network policies
 networkPolicy:
@@ -249,32 +267,51 @@ volumes:
 #      azureFile:
 
 # Resource requests and limits for primary container in pod
-resources: {}
-#  requests:
-#    cpu: 250m
-#    memory: 64Mi
-#  limits:
-#    cpu: 500m
-#    memory: 128Mi
-
-terminationGracePeriodSeconds: 30
+resources:
+  requests:
+    cpu: 250m
+    memory: 64Mi
+  limits:
+    cpu: 500m
+    memory: 128Mi
 
 # Adjust resources requested for proxy sidecar (see https://istio.io/docs/concepts/performance-and-scalability/#cpu-and-memory)
-proxyResources:
-  {}
+proxyResources: {}
   # request values are passed to the envoy proxy through annotations
   # these may be set globally at the istio level, so only override by service if necessary
   # requests:
   # cpu: 10m
   # memory: 64Mi
-  # limits:
-
+  # limits are not currently supported
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
+
+# To use secrets with the Deployment, use KubeIT Secrets chart from the same repository
+azureKeyVaultSecrets:
+  type: none
+# azureKeyVaultSecrets:
+#   type: external-secrets                               # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
+#   tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"     # Azure Active Directory Tenant ID
+#   clientId: "1234"                                     # Managed Identity Application ID - use Active Directory to pull this value or ask the Cluster Admin team to provide it
+#   azureKeyVaults:
+#     - azureKeyVaultName: testkeyvault                  # Name of the Azure KeyVault
+#       secrets:
+#         - k8sSecretName: testSecret                    # Name of the Kubernetes secret resource that is going to be created inside the cluster
+#           data:
+#             - k8sSecretKey: k8sSecretKey               # Name of the key in Kubernetes secret resource
+#               azureKeyVaultSecretName: SecretName      # Name of the secret in Azure KeyVault to pull the secret value from
+#             - k8sSecretKey: k8sSecretKey2              # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
+#               azureKeyVaultSecretName: SecretName2
+#         - k8sSecretName: testSecret2
+#           data:
+#             - k8sSecretKey: k8sSecretKey3
+#               azureKeyVaultSecretName: SecretName3
+#             - k8sSecretKey: k8sSecretKey3
+#               azureKeyVaultSecretName: SecretName3
 
 securityContext: {}
 #   fsGroup: 1000
@@ -290,24 +327,16 @@ containerSecurityContext: {}
 
 debugEnvoyFilters: true
 
-# placeholder used for kubeit parameters passed from tenant bootstrap app of apps
-# kubeit:
-#   env: nonprod
-#   region: we
-#   dnsDomain: kubeit.dnv.com
-#   internalDnsDomain: kubeit-int.dnv.com
-#   clusterSubdomain: nonprod005
-#   clusterColour: green
-#   ingressType: default
-#   shortRegion: we
-#   tenantName: tenant
-#   targetRevision: main
-#   repoURL: https://github.com/example.git
-#   networkPlugin: azure
-#   tenantMultiRegion: false
-#   managementNamespace: management-tenant
+kubeit:
+  tenantPrefixEnabled: true
+  clusterSubdomain: dev001
+  environmentName: dev
+  shortRegion: we
+  clusterColour: red
+  tenantName: tenant
+
+sessionManagerDeployment: false
 
 initContainersDefinitions: []
 
-# id of your workload identity id that is authorized to access the keyvault
-workloadIdentityClientId:
+workloadIdentity: false

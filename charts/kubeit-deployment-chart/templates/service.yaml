@@ -1,6 +1,3 @@
-{{/*
-Create the name of the service to use
-*/}}
 {{- if not .Values.deploymentOnly -}}
 apiVersion: v1
 kind: Service

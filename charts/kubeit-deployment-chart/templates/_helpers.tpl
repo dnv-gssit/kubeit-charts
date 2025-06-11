@@ -30,16 +30,6 @@ If release name contains chart name it will be used as a full name.
   {{ include "platform-service.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
 {{- end -}}
 
-{{- define "platform-service.imageRepository" -}}
-{{- if .Values.image.full -}}
-  {{ fail "image automation is incompatible with full image format" }}
-{{- else if .Values.image.registry -}}
-  {{ .Values.image.registry }}/{{ .Values.image.repository }}
-{{- else -}}
-  {{ .Values.image.repository }}
-{{- end -}}
-{{- end -}}
-
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -48,7 +38,7 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{- define "appLabels" -}}
-app: {{ required "app is required" .Values.app }}
+app: {{ required "app is required" .Values.app | trunc 63 | trimSuffix "-" }}
 app.kubernetes.io/name: {{ include "platform-service.name" . }}
 helm.sh/chart: {{ include "platform-service.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
@@ -59,101 +49,23 @@ tenant: {{ $.Values.kubeit.tenantName }}
 {{- end -}}
 {{- end -}}
 
-{{ $podIdentityName := "" }}
+
+{{ $workloadIdentity := "" }}
 {{- if $.Values.kubeit }}
-{{- if $.Values.kubeit.tenantPodIdentityName }}
-{{ $podIdentityName = .Values.kubeit.tenantPodIdentityName }}
+{{- if $.Values.kubeit.workloadIdentity }}
+{{ $workloadIdentity = .Values.kubeit.workloadIdentity }}
 {{- end }}
 {{- end }}
 
-{{- if $.Values.podIdentityName }}
-{{ $podIdentityName = .Values.podIdentityName }}
+{{- if $.Values.workloadIdentity }}
+{{ $workloadIdentity = .Values.workloadIdentity }}
 {{- end }}
 
-{{- if $podIdentityName }}
-aadpodidbinding: {{ $podIdentityName }}
+{{- if $workloadIdentity }}
+azure.workload.identity/use: "{{ $workloadIdentity | toString }}"
 {{- end }}
+
 {{ if $.Values.volumes -}}
 state: stateful
 {{- end -}}
-{{- end -}}
-
-{{- define "retries" -}}
-{{- if $.Values.defaultRouting.retries.enabled }}
-retries:
-{{- if $.Values.defaultRouting.retries.settings }}
-{{ $.Values.defaultRouting.retries.settings | toYaml | trim | indent 2 }}
-{{- else }}
-   attempts: 3
-   perTryTimeout: 2s
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "platform-service.virtualserviceContent" -}}
-{{- $prefixes := default (list $.Values.app) $.Values.defaultRouting.urlPrefixes }}
-{{- $regexes := $.Values.defaultRouting.urlRegexes }}
-http:
-{{- if $.Values.defaultRouting.urlExactMatches }}
-  - match:
-  {{- range $.Values.defaultRouting.urlExactMatches }}
-  {{- if hasPrefix "/" . }}
-    {{ fail "url matches must not include leading slash"}}
-  {{- end}}
-  {{- $slashMatch := printf "/%s" . }}
-    - uri:
-        exact: {{ $slashMatch }}
-    - uri:
-        prefix: {{ $slashMatch }}/
-  {{- end }}
-  # routes to service
-    route:
-    - destination:
-        host: {{ include "platform-service.fullQualifiedServiceName" $ | quote }}
-{{- if $.Values.defaultRouting.corsPolicy }}
-  corsPolicy:
-{{ $.Values.defaultRouting.corsPolicy | toYaml | trim | indent 4 }}
-{{- end }}
-{{- end }}
-
-{{- if $.Values.defaultRouting.redirectOnNoTrailingSlash }}
-  # redirect on prefixes without trailing slashes
-  {{- range $prefixes }}
-  {{- $slashPrefix := printf "/%s" . }}
-  - match:
-    - uri:
-        exact: {{ $slashPrefix }}
-    redirect:
-      uri: {{ $slashPrefix }}/
-  {{- end}}
-{{- end}}
-  # routes to service
-  - route:
-    - destination:
-        host: {{ include "platform-service.fullQualifiedServiceName" $ | quote }}
-{{- if $.Values.defaultRouting.corsPolicy }}
-    corsPolicy:
-{{ $.Values.defaultRouting.corsPolicy | toYaml | trim | indent 4 }}
-{{- end -}}
-
-  {{- if not $.Values.defaultRouting.catchAll }}
-    match:
-    {{- range $prefixes }}
-    {{- if hasPrefix "/" . }}
-      {{ fail "url prefixes must not include leading slash"}}
-    {{- end}}
-    {{- $slashPrefix := printf "/%s" . }}
-    - uri:
-        prefix: {{ $slashPrefix }}/
-    {{- end }}
-    {{- range $regexes }}
-    - uri:
-        regex: {{ . }}
-    {{- end }}
-  {{- end }}
-{{- if $.Values.defaultRouting.rewriteUrlPrefix.enabled }}
-    rewrite:
-      uri: {{ required "rewriteUri is required" $.Values.defaultRouting.rewriteUrlPrefix.replaceWith }}
-{{- end}}
-
 {{- end -}}

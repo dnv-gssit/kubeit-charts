@@ -25,9 +25,7 @@ spec:
   strategy:
     type: Recreate
   {{- end }}
-  {{- if not .Values.hpa.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "platform-service.name" . }}
@@ -49,11 +47,8 @@ spec:
         {{- with .Values.additionalPodLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if .Values.workloadIdentityClientId }}
-        azure.workload.identity/use: "true"
-        {{- end }}
       annotations:
-        {{- if .Values.service.liveness.enabled }}
+        {{- if .Values.service.liveness.enabled }}  
         sidecar.istio.io/rewriteAppHTTPProbers: "true"
         {{- end }}
         {{- if .Values.mergeAppMetrics }}
@@ -67,24 +62,13 @@ spec:
         sidecar.istio.io/proxyMemory: {{ .Values.proxyResources.requests.memory }}
         {{- end }}
         {{- end }}
-        {{- if .Values.proxyResources.limits }}
-        {{- if .Values.proxyResources.limits.cpu }}
-        sidecar.istio.io/proxyCPULimit: {{ .Values.proxyResources.limits.cpu }}
-        {{- end }}
-        {{- if .Values.proxyResources.limits.memory }}
-        sidecar.istio.io/proxyMemoryLimit: {{ .Values.proxyResources.limits.memory }}
-        {{- end }}
-        {{- end }}
-        {{- with .Values.additionalPodAnnotations }}
-        {{- toYaml . | nindent 8 }}
+        {{- with .Values.additionalPodAnnotations }}       
+        {{ toYaml . | indent 8 }}
         {{- end }}
     spec:
       serviceAccountName: {{ include "platform-service.serviceAccountName" . }}
-      {{- if not (empty .Values.securityContext) }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
-      {{- end }}
-      {{- if .Values.initContainers }}
       initContainers:
       {{- range .Values.initContainers }}
         - name: {{ .name }}
@@ -96,10 +80,8 @@ spec:
 {{- end }}
       {{- end }}
       {{- toYaml .Values.initContainersDefinitions | nindent 8 }}
-      {{- end }}
-      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
-{{- if .Values.opa.enabled }}
+{{ if .Values.opa.enabled }}
         - name: opa-istio
           image: {{ .Values.opa.image }}
           imagePullPolicy: IfNotPresent
@@ -135,7 +117,7 @@ spec:
               value: {{ $value | quote }}
 {{- end }}
 
-{{- if .Values.opa.resources }}
+{{ if .Values.opa.resources }}
           resources:
 {{ toYaml .Values.opa.resources | indent 12 }}
 {{ end }}
@@ -150,7 +132,6 @@ spec:
 {{ toYaml . | indent 12 }}
 {{- end }}
 {{ end }}
-{{- if .Values.env }}
           env:
 {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
@@ -160,7 +141,7 @@ spec:
               value: {{ $value | quote }}
 {{- end }}
 {{- end }}
-{{- end }}
+
 {{- if .Values.command }}
           command:
             {{- range .Values.command }}
@@ -171,10 +152,8 @@ spec:
 {{- if .Values.workingDir }}
           workingDir: {{ .Values.workingDir }}
 {{- end }}
-{{- if .Values.securityContext }}
           securityContext:
             {{- toYaml .Values.containerSecurityContext | nindent 12 }}
-{{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.image.containerPort }}

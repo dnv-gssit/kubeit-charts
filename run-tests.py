@@ -95,8 +95,7 @@ def main():
       tests = ["all"]
 
     all_defined_tests = findfiles("tests", "**/*.values.yaml")
-    print("Found test files:", all_defined_tests)
-    final_exit= 0
+    final_exit = 0
 
     for test_to_run in all_defined_tests:
         chart_to_test = test_to_run.split("/")[0].strip()

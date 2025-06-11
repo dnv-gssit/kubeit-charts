@@ -3,14 +3,15 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  annotations:
   name: app
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
-automountServiceAccountToken: false
+    tenant: tenant
 ---
 # Source: kubeit-deployment-chart/templates/service.yaml
 apiVersion: v1
@@ -20,11 +21,12 @@ metadata:
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
+    tenant: tenant
 spec:
-  type:
+  type: 
   ports:
     - port: 80
       targetPort: http
@@ -42,9 +44,10 @@ metadata:
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
+    tenant: tenant
 spec:
   replicas: 1
   selector:
@@ -56,19 +59,27 @@ spec:
       labels:
         app: app
         app.kubernetes.io/name: app
-        helm.sh/chart: kubeit-deployment-chart-2.0.0
+        helm.sh/chart: kubeit-deployment-chart-1.2.0
         app.kubernetes.io/instance: release-name
         version: v1
+        tenant: tenant
         session-management: backend
       annotations:
     spec:
       serviceAccountName: app
-      terminationGracePeriodSeconds: 30
+      securityContext:
+        {}
+      initContainers:
+        []
       containers:
+
         - name: app
           image: ":"
           imagePullPolicy: IfNotPresent
 
+          env:
+          securityContext:
+            {}
           ports:
             - name: http
               containerPort: 80
@@ -76,7 +87,12 @@ spec:
           volumeMounts:
 
           resources:
-            {}
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 250m
+              memory: 64Mi
       volumes:
 ---
 # Source: kubeit-deployment-chart/templates/authorizationPolicy.yaml
@@ -87,9 +103,10 @@ metadata:
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
+    tenant: tenant
 spec:
   selector:
     matchLabels:
@@ -106,13 +123,14 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
-  name: release-name-app-destinationrule
+  name: release-name-app-destrule
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
+    tenant: tenant
 spec:
   host: app.default.svc.cluster.local
   trafficPolicy:
@@ -129,9 +147,10 @@ metadata:
   labels:
     app: app
     app.kubernetes.io/name: app
-    helm.sh/chart: kubeit-deployment-chart-2.0.0
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
     app.kubernetes.io/instance: release-name
     version: v1
+    tenant: tenant
 spec:
   selector:
     matchLabels:
@@ -145,7 +164,7 @@ spec:
     jwksUri: https://login.microsoftonline.com/common/discovery/keys
 ---
 # Source: kubeit-deployment-chart/templates/virtualservice.yaml
-apiVersion: networking.istio.io/v1
+apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: app
@@ -159,5 +178,127 @@ spec:
     - destination:
         host: "app.default.svc.cluster.local"
     retries:
-       attempts: 3
-       perTryTimeout: 2s
+      attempts: 3
+      perTryTimeout: 2s
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: app-tenant-dev001-kubeit-dnv-com-ext
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+    tenant: tenant
+spec:
+  hosts:
+    - "app-tenant.dev001.kubeit.dnv.com"
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+  # redirect on prefixes without trailing slashes
+  - match:
+    - uri:
+        exact: /app
+    redirect:
+      uri: /app/
+  # routes to service
+  - route:
+    - destination:
+        host: "app.default.svc.cluster.local"
+    match:
+    - uri:
+        prefix: /app/
+    rewrite:
+      uri: /
+    # deprecated
+    headers:
+      request:
+        add:
+          x-appname: app
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: app-tenant-we-dev-kubeit-dnv-com-ext
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+    tenant: tenant
+spec:
+  hosts:
+    - "app-tenant.we.dev.kubeit.dnv.com"
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+  # redirect on prefixes without trailing slashes
+  - match:
+    - uri:
+        exact: /app
+    redirect:
+      uri: /app/
+  # routes to service
+  - route:
+    - destination:
+        host: "app.default.svc.cluster.local"
+    match:
+    - uri:
+        prefix: /app/
+    rewrite:
+      uri: /
+    # deprecated
+    headers:
+      request:
+        add:
+          x-appname: app
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: app-tenant-red-we-dev-kubeit-dnv-com-ext
+  labels:
+    app: app
+    app.kubernetes.io/name: app
+    helm.sh/chart: kubeit-deployment-chart-1.2.0
+    app.kubernetes.io/instance: release-name
+    version: v1
+    tenant: tenant
+spec:
+  hosts:
+    - "app-tenant.red.we.dev.kubeit.dnv.com"
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+  # redirect on prefixes without trailing slashes
+  - match:
+    - uri:
+        exact: /app
+    redirect:
+      uri: /app/
+  # routes to service
+  - route:
+    - destination:
+        host: "app.default.svc.cluster.local"
+    match:
+    - uri:
+        prefix: /app/
+    rewrite:
+      uri: /
+    # deprecated
+    headers:
+      request:
+        add:
+          x-appname: app
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
