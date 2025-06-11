@@ -26,11 +26,17 @@ def cmd(command):
     process = subprocess.run([command],capture_output=True,shell=True)
     return process.stdout, process.stderr
 
+def strip_lines(lines):
+    """Function to strip lines."""
+    fixed_lines = [line.strip() for line in lines]
+    return fixed_lines
+
 def run_test(chart, test):
     """Function to run a single test."""
     chart_path = f"charts/{chart}"
     values_file = f"tests/{chart}/{test}.values.yaml"
     result_file = f"tests/{chart}/{test}.result.yaml"
+    result_output = f"/tmp/out_{chart}_{test}.yaml"
     result = True
     output = ""
     with open(result_file, "r", encoding="utf-8") as stream:
@@ -41,24 +47,21 @@ def run_test(chart, test):
             result = False
             return (result, output)
 
-    command = f"helm template -f {values_file} {chart_path}"
+    command = f"helm template -f {values_file} {chart_path} > {result_output}"
     out, err = cmd(command)
-    if not(err):
-      output_template = out.decode('utf-8')
-    else:
-      output = f"Error running command {command}: {err.decode('utf-8')}"
-      result = False
-      return (result, output)
+    if err:
+        output = f"Error running command {command}: {err.decode('utf-8')}"
+        result = False
+        return (result, output)
 
-    diff = difflib.unified_diff(
-        result_loaded,
-        output_template.splitlines(keepends=True),
-        fromfile=result_file,
-        tofile="helm output",
-        lineterm='',
-    )
+    command = f"diff -cwB {result_file} {result_output}"
+    out, err = cmd(command)
+    if err:
+        output = f"Error running command {command}: {err.decode('utf-8')}"
+        result = False
+        return (result, output)
 
-    output_diff = ''.join(diff)
+    output_diff = "".join(out.decode('utf-8').splitlines(keepends=True))
     if output_diff != "":
         output = f"{output_diff}"
         result = False
