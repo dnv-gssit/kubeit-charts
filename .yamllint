@@ -1,0 +1,15 @@
+---
+extends: default
+
+ignore: |
+  charts/*
+  tests/*
+
+rules:
+  line-length: disable
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 2
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 2

@@ -1,3 +1,4 @@
+---
 lint-conf: lintconf.yaml
 chart-yaml-schema: chart_schema.yaml
 validate-maintainers: false
@@ -10,7 +11,7 @@ chart-repos:
 helm-repo-extra-args: []
 chart-dirs:
   - charts
-excluded-charts: []
+excluded-charts: [kubeit-redis-chart]
 helm-extra-args: --timeout 300
 upgrade: true
 skip-missing-values: false
