@@ -80,7 +80,7 @@ health:
 
 # List of volume mounts for the main container
 # names must match the volumes below
-valumeMounts: []
+volumeMounts: []
 
 # List of volumes to mount in the pod
 # https://kubernetes.io/docs/concepts/storage/volumes/
