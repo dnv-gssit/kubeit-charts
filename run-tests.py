@@ -54,10 +54,10 @@ def run_test(chart, test):
         result = False
         return (result, output)
 
-    command = f"diff -cwB {result_file} {result_output}"
+    command = f"diff -Ba --context=10 {result_file} {result_output}"
     out, err = cmd(command)
     if err:
-        output = f"Error running command {command}: {err.decode('utf-8')}"
+        output = f"Error running command {command}: {err.decode()}"
         result = False
         return (result, output)
 
