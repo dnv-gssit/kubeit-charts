@@ -1,0 +1,56 @@
+---
+app: test
+
+replicaCount: 3
+
+additionalPodLabels:
+  some-label: some-value
+
+additionalPodAnnotations:
+  some-annotation: some-value
+  new-annotation: new-value
+
+envs:
+  - name: ENV_VAR_1
+    value: value1
+  - name: ENV_VAR_2
+    value: value2
+
+envsFrom:
+  - configMapRef:
+      name: my-config-map
+  - secretRef:
+      name: my-secret
+
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+health:
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+      httpHeaders:
+      - name: Custom-Header
+        value: Awesome
+    initialDelaySeconds: 3
+    periodSeconds: 3
+
+nodeSelector:
+  disktype: ssd
+  cpu: high
+
+tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+  - key: "key2"
+    operator: "Exists"

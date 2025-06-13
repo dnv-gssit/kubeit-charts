@@ -1,23 +1,30 @@
 ---
 # REQUIRED: image for application
 image:
-  # registry and repository, example: myacr.azurecr.io/repository
+  # registry and repository, example: myacr.azurecr.io/repository/imagename
   # align naming for ArgoCD image updater
   name: nginx
   # image tag
   tag: ""
+  # https://kubernetes.io/docs/concepts/containers/images/#updating-images
+  imagePullPolicy: IfNotPresent
 
-# REQUIRED: Resource requests and limits for the main container in pod
+# REQUIRED: resource requests and limits for the main container in pod
 # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
 # note: recommendation is to do NOT set limit for cpu
-resources: {}
+resources:
+  requests:
+    cpu: "10m"
+    memory: "64Mi"
+  limits:
+    memory: "64Mi"
 
 # Application name
 # If set, it would be used to render K8S resources names and labels
 app: ""
 
 # Number of pod replicas
-# it is overidden if hpa.enabled=true
+# it is not taken into account if hpa.enabled=true
 replicaCount: 1
 
 # Application upgrade strategy
@@ -46,11 +53,15 @@ terminationGracePeriodSeconds: 30
 
 # Pod security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-securityContext: {}
+podSecurityContext: {}
 
 # The main container security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-containerSecurityContext: {}
+securityContext: {}
+
+# List of arguments for the main container
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
+args: []
 
 # List of environment variables for the main container
 # https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
@@ -67,13 +78,13 @@ health:
   readinessProbe: {}
   startupProbe: {}
 
+# List of volume mounts for the main container
+# names must match the volumes below
+valumeMounts: []
+
 # List of volumes to mount in the pod
 # https://kubernetes.io/docs/concepts/storage/volumes/
 volumes: []
-
-# List of volume mounts for the main container
-# names must match the volumes above
-valumeMounts: []
 
 # Node selectors for the pod
 # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -168,12 +179,12 @@ defaultRouting:
   # tcp traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
   tcp: []
-  
+
   # tsl traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
   tls: []
 
-  # CORS policy confid
+  # CORS policy config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#CorsPolicy
   corsPolicy: {}
 
