@@ -220,6 +220,8 @@ externalSecrets: []
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
 sessionManagerDeployment: false
 
+# KubeIT injected values
+# https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments
 # kubeit:
 #   env: nonprod
 #   region: we
