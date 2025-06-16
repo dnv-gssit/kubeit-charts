@@ -35,8 +35,8 @@ Common labels
 */}}
 {{- define "services-chart.labels" -}}
 {{ include "services-chart.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- if .Values.appVersion }}
+app.kubernetes.io/version: {{ .Values.appVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if $.Values.kubeit }}
@@ -66,70 +66,90 @@ Create the name of the serviceaccount to use
 {{- end }}
 {{- end }}
 
-{{- define "services-chart.virtualserviceContent" -}}
-{{- $prefixes := default (list $.Values.app) $.Values.defaultRouting.urlPrefixes }}
-{{- $regexes := $.Values.defaultRouting.urlRegexes }}
-http:
-{{- if $.Values.defaultRouting.urlExactMatches }}
-  - match:
-  {{- range $.Values.defaultRouting.urlExactMatches }}
-  {{- if hasPrefix "/" . }}
-    {{ fail "url matches must not include leading slash"}}
-  {{- end}}
-  {{- $slashMatch := printf "/%s" . }}
-    - uri:
-        exact: {{ $slashMatch }}
-    - uri:
-        prefix: {{ $slashMatch }}/
-  {{- end }}
-  # routes to service
-    route:
-    - destination:
-        host: {{ include "platform-service.fullQualifiedServiceName" $ | quote }}
-{{- if $.Values.defaultRouting.corsPolicy }}
-  corsPolicy:
-{{ $.Values.defaultRouting.corsPolicy | toYaml | trim | indent 4 }}
+{{/*
+Create the name of the configMap to use
+*/}}
+{{- define "services-chart.configMapName" -}}
+{{- if .Values.configMap.create }}
+{{- default (include "services-chart.fullname" .) .Values.configMap.name }}
+{{- else }}
+{{- default "default" .Values.configMap.name }}
 {{- end }}
 {{- end }}
 
-{{- if $.Values.defaultRouting.redirectOnNoTrailingSlash }}
-  # redirect on prefixes without trailing slashes
-  {{- range $prefixes }}
-  {{- $slashPrefix := printf "/%s" . }}
-  - match:
-    - uri:
-        exact: {{ $slashPrefix }}
-    redirect:
-      uri: {{ $slashPrefix }}/
-  {{- end}}
-{{- end}}
-  # routes to service
-  - route:
-    - destination:
-        host: {{ include "platform-service.fullQualifiedServiceName" $ | quote }}
+{{/*
+Create the automatic external FQDN for virtualService
+*/}}
+{{- define "services-chart.autoFQDNexternal" -}}
+{{- if (hasKey .Values "kubeit") -}}
+{{- if and (hasKey .Values.kubeit "dnsDomain") (hasKey .Values.kubeit "shortRegion") (hasKey .Values.kubeit "clusterColour") (hasKey .Values.kubeit "env") -}}
+{{- printf "%s.%s.%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.shortRegion .Values.kubeit.env .Values.kubeit.dnsDomain -}}
+{{- else -}}
+{{- fail "kubeit.dnsDomain and kubeit.shortRegion and kubeit.clusterColour and kubeit.env are required" }}
+{{- end -}}
+{{- else -}}
+{{- fail "kubeit is required" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create the automatic internal FQDN for virtualService
+*/}}
+{{- define "services-chart.autoFQDNinternal" -}}
+{{- if (hasKey .Values "kubeit") -}}
+{{- if and (hasKey .Values.kubeit "internalDnsDomain") (hasKey .Values.kubeit "shortRegion") (hasKey .Values.kubeit "clusterColour") (hasKey .Values.kubeit "env") -}}
+{{- printf "%s.%s.%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.shortRegion .Values.kubeit.env .Values.kubeit.internalDnsDomain -}}
+{{- else -}}
+{{- fail "kubeit.internalDnsDomain and kubeit.shortRegion and kubeit.clusterColour and kubeit.env are required" }}
+{{- end -}}
+{{- else -}}
+{{- fail "kubeit is required" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create the content of the virtualService
+*/}}
+{{- define "services-chart.virtualserviceContent" -}}
+{{- if $.Values.defaultRouting.http }}
+http:
+{{- range $httpRoute := $.Values.defaultRouting.http }}
+{{- toYaml (list $httpRoute) | nindent 2 }}
+    route:
+      - destination:
+          host: {{ include "services-chart.fullname" $ }}
+          port:
+            number: {{ $.Values.service.port }}
+{{- end }}
 {{- if $.Values.defaultRouting.corsPolicy }}
     corsPolicy:
-{{ $.Values.defaultRouting.corsPolicy | toYaml | trim | indent 4 }}
-{{- end -}}
-
-  {{- if not $.Values.defaultRouting.catchAll }}
-    match:
-    {{- range $prefixes }}
-    {{- if hasPrefix "/" . }}
-      {{ fail "url prefixes must not include leading slash"}}
-    {{- end}}
-    {{- $slashPrefix := printf "/%s" . }}
+      {{- toYaml $.Values.defaultRouting.corsPolicy | nindent 6 }}
+{{- end }}
+{{- else }}
+http:
+  - match:
     - uri:
-        prefix: {{ $slashPrefix }}/
-    {{- end }}
-    {{- range $regexes }}
-    - uri:
-        regex: {{ . }}
-    {{- end }}
+        prefix: /
+    route:
+      - destination:
+          host: {{ include "services-chart.fullname" $ }}
+          port:
+            number: {{ $.Values.service.port }}
+{{- if $.Values.defaultRouting.corsPolicy }}
+    corsPolicy:
+      {{- toYaml .Values.defaultRouting.corsPolicy | nindent 6 }}
   {{- end }}
-{{- if $.Values.defaultRouting.rewriteUrlPrefix.enabled }}
-    rewrite:
-      uri: {{ required "rewriteUri is required" $.Values.defaultRouting.rewriteUrlPrefix.replaceWith }}
-{{- end}}
-
-{{- end -}}
+{{- end }}
+{{- if $.Values.defaultRouting.tcp }}
+tcp:
+{{- with $.Values.defaultRouting.tcp }}
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- if $.Values.defaultRouting.tls }}
+tls:
+{{- with $.Values.defaultRouting.tls }}
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,21 @@
+{{- if .Values.defaultRouting.create -}}
+{{- range $host := $.Values.defaultRouting.hosts }}
+{{- if eq $host "auto" -}}
+{{- $host = include "services-chart.autoFQDNexternal" $ -}}
+{{- end }}
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ $host  | replace "." "-" | trimSuffix "-" | trunc 59 }}-ext
+  labels:
+    {{- include "services-chart.labels" $ | nindent 4 }}
+spec:
+  hosts:
+    - {{ $host }}
+  gateways:
+    - {{ $.Values.gateway.name }}
+{{- include "services-chart.virtualserviceContent" $ | indent 2 }}
+{{- end }}
+---
+{{- end }}

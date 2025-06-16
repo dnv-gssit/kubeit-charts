@@ -1,0 +1,9 @@
+---
+app: test
+appVersion: 1.1.1
+hpa:
+  enabled: true
+  maxReplicas: 3
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 40
+  targetMemoryUtilizationPercentage: 80

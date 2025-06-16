@@ -1,0 +1,11 @@
+{{- if .Values.configMap.create }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "services-chart.configMapName" . }}
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+data:
+{{ tpl .Values.configMap.data $ | indent 2 }}
+{{- end }}

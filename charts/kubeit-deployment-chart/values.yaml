@@ -23,6 +23,10 @@ resources:
 # If set, it would be used to render K8S resources names and labels
 app: ""
 
+# Application version
+# If set, it would be used to label for K8S resources
+appVersion: ""
+
 # Number of pod replicas
 # it is not taken into account if hpa.enabled=true
 replicaCount: 1
@@ -129,6 +133,7 @@ service:
   create: true
   # type of service: ClusterIP for most cases
   #                  LoadBalancer for TCP services exposed via F5
+  # https://docs.kubeit-int.dnv.com/documentation/components/networking/#f5-tcp-virtualservers
   type: ClusterIP
   # container port for the main container
   containerPort: 80
@@ -153,38 +158,38 @@ gateway:
 defaultRouting:
   # create CR virtualservices, only valid if service.create=true
   create: false
-  # decide if generate one domain per CR VirtualService
-  # https://docs.kubeit-int.dnv.com/release/breaking-changes-2.2/#virtualservice-host-list
-  oneDomainPerVirtualService: true
 
   # Once defaultRouting.create=true, hosts or internalHosts or both must be set
 
   # external hosts to take into account for routing rules
   # if set [auto] FQDN will be created based on kubeit parameters and release name
-  hosts: []
+  hosts: [auto]
   # - myhost.dnv.com
 
   # internal hosts to take into account for routing rules
   # <service>.dnv.com - DNS record should be requested to GSS IT / TLS supported (one "dot" level only!)
   # <service>[.<color>].<region>.<environment>.kubeit-int.dnv.com - works immediately / TLS supported
   # if set [auto] FQDN will be created based on kubeit parameters and release name
-  internalHosts: []
+  internalHosts: [auto]
   # - myhost.green.we.nonprod.kubeit-int.dnv.com
 
   # http traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-http
+  # Possible to set all except `route` and `corsPolicy`
   # if not set, create default match.uri.prefix=/
   http: []
 
   # tcp traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
+  # Possible to set all except `route`
   tcp: []
 
   # tsl traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
+  # Possible to set all except `route`
   tls: []
 
-  # CORS policy config
+  # CORS policy config for http config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#CorsPolicy
   corsPolicy: {}
 
@@ -223,6 +228,7 @@ secretStore:
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
 # secretStore.create=true must be set to use ExternalSecrets
 externalSecrets: []
+# support case to create one k8s secret based on many Azure Key Vault secrets
 # - name: k8s-secret-name
 #   key: k8s-secret-key
 #   azureSecretName: name-of-secret-in-azure-key-vault
