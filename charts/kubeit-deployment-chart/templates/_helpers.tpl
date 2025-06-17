@@ -117,7 +117,7 @@ Create full FQDN for internal service
 Create the content of the virtualService
 */}}
 {{- define "services-chart.virtualserviceContent" -}}
-{{- if $.Values.defaultRouting.http }}
+{{- if $.Values.defaultRouting.http -}}
 http:
 {{- range $httpRoute := $.Values.defaultRouting.http }}
 {{- toYaml (list $httpRoute) | nindent 2 }}
@@ -131,7 +131,7 @@ http:
     corsPolicy:
       {{- toYaml $.Values.defaultRouting.corsPolicy | nindent 6 }}
 {{- end }}
-{{- else }}
+{{- else -}}
 http:
   - match:
     - uri:

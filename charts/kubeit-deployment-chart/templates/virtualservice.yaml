@@ -14,8 +14,8 @@ spec:
   hosts:
     - {{ $host }}
   gateways:
-    - {{ $.Values.gateway.name }}
-{{- include "services-chart.virtualserviceContent" $ | indent 2 }}
+    - {{ $.Values.gateway.name | trim }}
+{{ include "services-chart.virtualserviceContent" $ | indent 2 }}
 {{- end }}
 ---
 {{- range $host := $.Values.defaultRouting.internalHosts }}
@@ -33,8 +33,8 @@ spec:
   hosts:
     - {{ $host }}
   gateways:
-    - {{ $.Values.gateway.internalName }}
-{{- include "services-chart.virtualserviceContent" $ | indent 2 }}
+    - {{ $.Values.gateway.internalName | trim }}
+{{ include "services-chart.virtualserviceContent" $ | indent 2 }}
 {{- end }}
 ---
 {{- if $.Values.destinationRule.enabled }}
