@@ -148,7 +148,6 @@ typed_config:
         path = originalPath
       end
       local error = nil
-
       if(path == "/login") then
         handleInternalRedirect(request_handle, sessionManagerLoginRoute, nil)
       elseif(path == "/logout") then
