@@ -131,7 +131,7 @@ spec:
       session-management: backend
       session-manager-name: test
   configPatches:
-    # adds the lua filter to the listener/http connection manager
+  # adds the lua filter to the listener/http connection manager
   - applyTo: HTTP_FILTER
     match:
       context: SIDECAR_INBOUND
@@ -143,7 +143,7 @@ spec:
               name: "envoy.filters.http.jwt_authn"
     patch:
       operation: INSERT_BEFORE
-      value: # lua filter specification
+      value:
         name: envoy.filters.http.session-backend-filter-test
         typed_config:
           '@type': type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
@@ -307,7 +307,7 @@ spec:
       session-management: frontend
       session-manager-name: test
   configPatches:
-    # adds the lua filter to the listener/http connection manager
+  # adds the lua filter to the listener/http connection manager
   - applyTo: HTTP_FILTER
     match:
       context: SIDECAR_INBOUND
@@ -319,7 +319,7 @@ spec:
               name: "envoy.filters.http.jwt_authn"
     patch:
       operation: INSERT_BEFORE
-      value: # lua filter specification
+      value:
         name: envoy.filters.http.session-frontend-filter-test
         typed_config:
           '@type': type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua

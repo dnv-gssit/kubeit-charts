@@ -12,3 +12,6 @@ rules:
   brackets:
     min-spaces-inside: 0
     max-spaces-inside: 2
+  indentation:
+    spaces: consistent
+    indent-sequences: whatever
