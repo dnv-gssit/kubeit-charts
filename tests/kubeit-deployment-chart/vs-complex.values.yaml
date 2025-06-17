@@ -5,32 +5,32 @@ service:
 defaultRouting:
   enabled: true
   hosts:
-  - y.dnv.com
-  - a.green.we.nonprod.kubeit.dnv.com
-  - auto
+    - y.dnv.com
+    - a.green.we.nonprod.kubeit.dnv.com
+    - auto
   internalHosts:
-  - a.green.we.nonprod.kubeit-int.dnv.com
-  - z.dnv.com
-  - auto
+    - a.green.we.nonprod.kubeit-int.dnv.com
+    - z.dnv.com
+    - auto
   http:
-  - match:
-    - uri:
-        prefix: /api
-    - uri:
-        prefix: /v2
-    rewrite:
-      uri: "/newcatalog"
-  - match:
-    - uri:
-        prefix: /v1
+    - match:
+        - uri:
+            prefix: /api
+        - uri:
+            prefix: /v2
+      rewrite:
+        uri: "/newcatalog"
+    - match:
+        - uri:
+            prefix: /v1
   tcp:
-  - match:
-    - port: 443
+    - match:
+        - port: 443
   tls:
-  - match:
-    - port: 443
-      sniHosts:
-      - login.bookinfo.com
+    - match:
+        - port: 443
+          sniHosts:
+          - login.bookinfo.com
   corsPolicy:
     allowOrigins:
       - exact: http://localhost:4200
@@ -45,7 +45,7 @@ defaultRouting:
       - Content-Type
       - Authorization
       - Accept
-    exposeHeaders: 
+    exposeHeaders:
       - Authorization
       - Content-Type
       - X-Custom-Header

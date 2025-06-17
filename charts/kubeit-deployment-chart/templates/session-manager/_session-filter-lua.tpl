@@ -27,7 +27,6 @@ typed_config:
         logger:logDebug(message)
 {{- end }}
     end
-
     function trim(s)
       return (s:gsub("^%s*(.-)%s*$", "%1"))
     end
@@ -76,7 +75,6 @@ typed_config:
       end
       return nil
     end
-
     function requestRefreshedToken(handle, sessionId)
       local origRequestHost = handle:headers():get(":authority")
       local sessionManagerClusterName = computeSessionManagerClusterName(handle, origRequestHost)

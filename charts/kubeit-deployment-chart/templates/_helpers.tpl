@@ -50,7 +50,6 @@ tenant: {{ $.Values.kubeit.tenantName }}
 Selector labels
 */}}
 {{- define "services-chart.selectorLabels" -}}
-app: {{ include "services-chart.name" . }}
 app.kubernetes.io/name: {{ include "services-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}

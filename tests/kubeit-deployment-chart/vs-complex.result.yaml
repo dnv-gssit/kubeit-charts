@@ -5,7 +5,6 @@ kind: Service
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +17,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
 ---
@@ -28,7 +26,6 @@ kind: Deployment
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -37,13 +34,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kubeit-deployment-chart
       app.kubernetes.io/name: kubeit-deployment-chart
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: kubeit-deployment-chart
         app.kubernetes.io/name: kubeit-deployment-chart
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/managed-by: Helm
@@ -71,7 +66,6 @@ kind: VirtualService
 metadata:
   name: y-dnv-com-ext
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -80,7 +74,7 @@ spec:
   hosts:
     - y.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:
@@ -136,7 +130,6 @@ kind: VirtualService
 metadata:
   name: a-green-we-nonprod-kubeit-dnv-com-ext
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -145,7 +138,7 @@ spec:
   hosts:
     - a.green.we.nonprod.kubeit.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:
@@ -201,7 +194,6 @@ kind: VirtualService
 metadata:
   name: release-name-green-we-nonprod-kubeit-dnv-com-ext
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -210,7 +202,7 @@ spec:
   hosts:
     - release-name.green.we.nonprod.kubeit.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:
@@ -267,7 +259,6 @@ kind: VirtualService
 metadata:
   name: a-green-we-nonprod-kubeit-int-dnv-com-int
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -276,7 +267,7 @@ spec:
   hosts:
     - a.green.we.nonprod.kubeit-int.dnv.com
   gateways:
-    - istio-system/global-internaluse-gateway  
+    - istio-system/global-internaluse-gateway
   http:
     - match:
       - uri:
@@ -332,7 +323,6 @@ kind: VirtualService
 metadata:
   name: z-dnv-com-int
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -341,7 +331,7 @@ spec:
   hosts:
     - z.dnv.com
   gateways:
-    - istio-system/global-internaluse-gateway  
+    - istio-system/global-internaluse-gateway
   http:
     - match:
       - uri:
@@ -397,7 +387,6 @@ kind: VirtualService
 metadata:
   name: release-name-green-we-nonprod-kubeit-int-dnv-com-int
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -406,7 +395,7 @@ spec:
   hosts:
     - release-name.green.we.nonprod.kubeit-int.dnv.com
   gateways:
-    - istio-system/global-internaluse-gateway  
+    - istio-system/global-internaluse-gateway
   http:
     - match:
       - uri:

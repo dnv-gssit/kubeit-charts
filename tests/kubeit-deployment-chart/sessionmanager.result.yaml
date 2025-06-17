@@ -5,7 +5,6 @@ kind: Service
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +17,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
 ---
@@ -28,7 +26,6 @@ kind: Service
 metadata:
   name: session-manager-test-green-we-nonprod-kubeit-dnv-com
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -48,7 +45,6 @@ kind: Deployment
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -57,13 +53,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test
       app.kubernetes.io/name: test
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: test
         app.kubernetes.io/name: test
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/managed-by: Helm
@@ -111,7 +105,6 @@ kind: DestinationRule
 metadata:
   name: test-dr
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -175,7 +168,6 @@ spec:
             function logDebug(logger, message)
                 logger:logDebug(message)
             end
-        
             function trim(s)
               return (s:gsub("^%s*(.-)%s*$", "%1"))
             end
@@ -224,7 +216,6 @@ spec:
               end
               return nil
             end
-        
             function requestRefreshedToken(handle, sessionId)
               local origRequestHost = handle:headers():get(":authority")
               local sessionManagerClusterName = computeSessionManagerClusterName(handle, origRequestHost)
@@ -288,7 +279,7 @@ spec:
                 path = originalPath
               end
               local error = nil
-        
+
               if(path == "/login") then
                 handleInternalRedirect(request_handle, sessionManagerLoginRoute, nil)
               elseif(path == "/logout") then
@@ -354,7 +345,6 @@ spec:
             function logDebug(logger, message)
                 logger:logDebug(message)
             end
-        
             function trim(s)
               return (s:gsub("^%s*(.-)%s*$", "%1"))
             end
@@ -403,7 +393,6 @@ spec:
               end
               return nil
             end
-        
             function requestRefreshedToken(handle, sessionId)
               local origRequestHost = handle:headers():get(":authority")
               local sessionManagerClusterName = computeSessionManagerClusterName(handle, origRequestHost)
@@ -475,7 +464,7 @@ spec:
                 path = originalPath
               end
               local error = nil
-        
+
               if(path == "/login") then
                 handleInternalRedirect(request_handle, sessionManagerLoginRoute, nil)
               elseif(path == "/logout") then
@@ -499,7 +488,6 @@ kind: VirtualService
 metadata:
   name: test-green-we-nonprod-kubeit-dnv-com-ext
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -508,7 +496,7 @@ spec:
   hosts:
     - test.green.we.nonprod.kubeit.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:

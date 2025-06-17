@@ -5,7 +5,6 @@ kind: Service
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "v2"
@@ -18,7 +17,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
 ---
@@ -28,7 +26,6 @@ kind: Deployment
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "v2"
@@ -37,13 +34,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: test
       app.kubernetes.io/name: test
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: test
         app.kubernetes.io/name: test
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/version: "v2"
@@ -71,7 +66,6 @@ kind: DestinationRule
 metadata:
   name: test-dr
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "v2"
@@ -93,7 +87,6 @@ kind: VirtualService
 metadata:
   name: a-dnv-com-ext
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "v2"
@@ -102,7 +95,7 @@ spec:
   hosts:
     - a.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:
@@ -119,7 +112,6 @@ kind: VirtualService
 metadata:
   name: b-dnv-com-ext
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "v2"
@@ -128,7 +120,7 @@ spec:
   hosts:
     - b.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:

@@ -5,7 +5,6 @@ kind: Service
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "1.1.1"
@@ -18,7 +17,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
 ---
@@ -28,7 +26,6 @@ kind: Deployment
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "1.1.1"
@@ -36,13 +33,11 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: test
       app.kubernetes.io/name: test
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: test
         app.kubernetes.io/name: test
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/version: "1.1.1"
@@ -70,7 +65,6 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: test
   labels:
-    app: test
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/version: "1.1.1"

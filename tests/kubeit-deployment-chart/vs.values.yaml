@@ -9,18 +9,18 @@ defaultRouting:
       - https://dev.example.com
       - https://test.example.com
     allowMethods:
-    - POST
-    - GET
-    - OPTIONS
+      - POST
+      - GET
+      - OPTIONS
     allowCredentials: true
     allowHeaders:
-    - Content-Type
-    - Authorization
-    - Accept
-    exposeHeaders: 
-    - Authorization
-    - Content-Type
-    - X-Custom-Header
+      - Content-Type
+      - Authorization
+      - Accept
+    exposeHeaders:
+      - Authorization
+      - Content-Type
+      - X-Custom-Header
     maxAge: "24h"
 
 kubeit:

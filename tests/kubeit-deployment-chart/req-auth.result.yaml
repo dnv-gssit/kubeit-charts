@@ -5,7 +5,6 @@ kind: Service
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -17,7 +16,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
 ---
@@ -27,7 +25,6 @@ kind: Deployment
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -35,13 +32,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kubeit-deployment-chart
       app.kubernetes.io/name: kubeit-deployment-chart
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: kubeit-deployment-chart
         app.kubernetes.io/name: kubeit-deployment-chart
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/managed-by: Helm
@@ -68,14 +63,12 @@ kind: RequestAuthentication
 metadata:
   name: release-name-kubeit-deployment-chart-ra
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
 spec:
   selector:
     matchLabels:
-      app: kubeit-deployment-chart
       app.kubernetes.io/name: kubeit-deployment-chart
       app.kubernetes.io/instance: release-name
   jwtRules:

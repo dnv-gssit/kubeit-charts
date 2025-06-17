@@ -5,7 +5,6 @@ kind: NetworkPolicy
 metadata:
   name: release-name-kubeit-deployment-chart-np
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -13,7 +12,6 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: kubeit-deployment-chart
       app.kubernetes.io/name: kubeit-deployment-chart
       app.kubernetes.io/instance: release-name
   policyTypes:
@@ -47,7 +45,6 @@ kind: Service
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -60,7 +57,6 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
 ---
@@ -70,7 +66,6 @@ kind: Deployment
 metadata:
   name: release-name-kubeit-deployment-chart
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -79,13 +74,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: kubeit-deployment-chart
       app.kubernetes.io/name: kubeit-deployment-chart
       app.kubernetes.io/instance: release-name
   template:
     metadata:
       labels:
-        app: kubeit-deployment-chart
         app.kubernetes.io/name: kubeit-deployment-chart
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/managed-by: Helm
@@ -116,7 +109,6 @@ kind: VirtualService
 metadata:
   name: release-name-green-we-nonprod-kubeit-dnv-com-ext
   labels:
-    app: kubeit-deployment-chart
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
@@ -125,7 +117,7 @@ spec:
   hosts:
     - release-name.green.we.nonprod.kubeit.dnv.com
   gateways:
-    - istio-system/global-https-internal-default-gateway  
+    - istio-system/global-https-internal-default-gateway
   http:
     - match:
       - uri:
