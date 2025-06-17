@@ -61,3 +61,44 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/authorizationpolicy.yaml
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: release-name-kubeit-deployment-chart-ap
+  labels:
+    app: kubeit-deployment-chart
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app: kubeit-deployment-chart
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/default/sa/sleep
+    - source:
+        namespaces:
+        - test
+    to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /info*
+    - operation:
+        methods:
+        - POST
+        paths:
+        - /data
+    when:
+    - key: request.auth.claims[iss]
+      values:
+      - https://accounts.google.com

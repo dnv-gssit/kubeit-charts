@@ -3,7 +3,7 @@ service:
   port: 443
 
 defaultRouting:
-  create: true
+  enabled: true
   hosts:
   - y.dnv.com
   - a.green.we.nonprod.kubeit.dnv.com

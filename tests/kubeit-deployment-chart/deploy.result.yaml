@@ -1,4 +1,26 @@
 ---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test
+  labels:
+    app: test
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app: test
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+---
 # Source: kubeit-deployment-chart/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment

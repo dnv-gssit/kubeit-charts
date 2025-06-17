@@ -1,0 +1,14 @@
+{{- if .Values.authorizationPolicy.enabled }}
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: {{ include "services-chart.fullname" . }}-ap
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "services-chart.selectorLabels" . | nindent 6 }}
+{{ toYaml .Values.authorizationPolicy.spec | indent 2 }}
+{{- end }}

@@ -1,27 +1,14 @@
 ---
+app: test
+sessionManagerDeployment: true
+
 defaultRouting:
   enabled: true
   hosts: [auto]
-  internalHosts: [auto]
-  corsPolicy:
-    allowOrigins:
-      - http://localhost:4200
-      - https://dev.example.com
-      - https://test.example.com
-    allowMethods:
-    - POST
-    - GET
-    - OPTIONS
-    allowCredentials: true
-    allowHeaders:
-    - Content-Type
-    - Authorization
-    - Accept
-    exposeHeaders: 
-    - Authorization
-    - Content-Type
-    - X-Custom-Header
-    maxAge: "24h"
+
+destinationRule:
+  enabled: true
+  loadBalancerPolicy: STICKY_SESSIONS
 
 kubeit:
   env: nonprod

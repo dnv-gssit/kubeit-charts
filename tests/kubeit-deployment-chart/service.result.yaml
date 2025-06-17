@@ -9,10 +9,15 @@ metadata:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
+    kubeitTcpServiceEnabled: "true"
+    kubeitTcpServicePort: "10001"
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout: "30"
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 8080
       targetPort: tcp
       protocol: TCP
       name: tcp
@@ -53,7 +58,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: tcp
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
           resources:
             limits:

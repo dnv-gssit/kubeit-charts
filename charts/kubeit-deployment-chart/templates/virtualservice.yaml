@@ -1,4 +1,4 @@
-{{- if .Values.defaultRouting.create -}}
+{{- if .Values.defaultRouting.enabled -}}
 {{- range $host := $.Values.defaultRouting.hosts }}
 {{- if eq $host "auto" -}}
 {{- $host = include "services-chart.autoFQDNexternal" $ -}}
@@ -18,7 +18,7 @@ spec:
 {{- include "services-chart.virtualserviceContent" $ | indent 2 }}
 {{- end }}
 ---
-{{- range $host := $.Values.defaultRouting.hosts }}
+{{- range $host := $.Values.defaultRouting.internalHosts }}
 {{- if eq $host "auto" -}}
 {{- $host = include "services-chart.autoFQDNinternal" $ -}}
 {{- end }}
@@ -35,5 +35,21 @@ spec:
   gateways:
     - {{ $.Values.gateway.internalName }}
 {{- include "services-chart.virtualserviceContent" $ | indent 2 }}
+{{- end }}
+---
+{{- if $.Values.destinationRule.enabled }}
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ include "services-chart.fullname" $ }}-mesh
+spec:
+  hosts:
+    - {{ include "services-chart.fullFQDN" $ }}
+  gateways:
+    - mesh
+  http:
+    - route:
+      - destination:
+          host: {{ include "services-chart.fullFQDN" $ }}
 {{- end }}
 {{- end }}

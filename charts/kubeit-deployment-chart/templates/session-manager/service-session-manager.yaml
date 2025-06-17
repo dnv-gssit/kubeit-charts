@@ -1,0 +1,23 @@
+{{- if .Values.sessionManagerDeployment }}
+{{- range $i, $host := .Values.defaultRouting.hosts }}
+{{- if eq $host "auto" -}}
+{{- $host = include "services-chart.autoFQDNexternal" $ -}}
+{{- end -}}
+{{ $namePostfix := $host | replace "." "-" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-manager-{{ $namePostfix }}
+  labels:
+    {{- include "services-chart.labels" $ | nindent 4 }}
+spec:
+  ports:
+    - port: {{ $.Values.service.port }}
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: {{ include "services-chart.name" $ }}
+{{- end }}
+{{- end }}

@@ -113,14 +113,14 @@ hpa:
 
 # K8S configMap config
 configMap:
-  create: false
+  enabled: false
   # If not set and create is true, a name is generated from the helm chart
   name: ""
-  data: {}
+  data: []
 
 # K8S serviceaccount config
 serviceAccount:
-  create: false
+  enabled: false
   # If not set and create is true, a name is generated from the helm chart
   name: ""
   # Annotations for service account
@@ -130,7 +130,7 @@ serviceAccount:
 
 # K8S service config
 service:
-  create: true
+  enabled: true
   # type of service: ClusterIP for most cases
   #                  LoadBalancer for TCP services exposed via F5
   # https://docs.kubeit-int.dnv.com/documentation/components/networking/#f5-tcp-virtualservers
@@ -156,21 +156,21 @@ gateway:
 # Config for service exposure from cluster
 # https://istio.io/latest/docs/reference/config/networking/virtual-service/
 defaultRouting:
-  # create CR virtualservices, only valid if service.create=true
-  create: false
+  # create CR virtualservices, only valid if service.enabled=true
+  enabled: false
 
-  # Once defaultRouting.create=true, hosts or internalHosts or both must be set
+  # IF defaultRouting.enabled=true, hosts or internalHosts or both must be set
 
   # external hosts to take into account for routing rules
   # if set [auto] FQDN will be created based on kubeit parameters and release name
-  hosts: [auto]
+  hosts: []
   # - myhost.dnv.com
 
   # internal hosts to take into account for routing rules
   # <service>.dnv.com - DNS record should be requested to GSS IT / TLS supported (one "dot" level only!)
   # <service>[.<color>].<region>.<environment>.kubeit-int.dnv.com - works immediately / TLS supported
   # if set [auto] FQDN will be created based on kubeit parameters and release name
-  internalHosts: [auto]
+  internalHosts: []
   # - myhost.green.we.nonprod.kubeit-int.dnv.com
 
   # http traffic config
@@ -196,42 +196,47 @@ defaultRouting:
 # Destination rule config
 # https://istio.io/latest/docs/reference/config/networking/destination-rule/
 destinationRule:
-  create: false
-  spec: {}
+  enabled: false
+  # https://istio.io/latest/docs/reference/config/networking/destination-rule/#LoadBalancerSettings
+  # set STICKY_SESSIONS if sessionManagerDeployment is true
+  loadBalancerPolicy: ""
 
 # RequestAuthentication config
 # https://istio.io/latest/docs/reference/config/security/request_authentication/
 requestAuthentication:
-  create: false
+  enabled: false
   jwtRules: []
 
 # AuthorizationPolicy config
 # https://istio.io/latest/docs/reference/config/security/authorization-policy/
 authorizationPolicy:
   # Generate default authorization policy
-  create: false
+  enabled: false
   spec: {}
 
 # Networkpolicy config
 # https://kubernetes.io/docs/concepts/services-networking/network-policies/
 networkPolicy:
-  create: false
-  spec: {}
+  enabled: false
+  # list of applications to allow access this service from the same cluster
+  # based on app: values used in different app
+  appsAllowedAccess: []
 
 # SecretStore is definition how to access Azure Key Vault
-# serviceAccount.create=true and annotations for Workload Identity must be set on the serviceaccount
+# serviceAccount.enabled=true and annotations for Workload Identity must be set on the serviceaccount
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: false
+  enabled: false
   vaultUrl: ""
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
-# secretStore.create=true must be set to use ExternalSecrets
+# secretStore.enabled=true must be set to use ExternalSecrets
 externalSecrets: []
 # support case to create one k8s secret based on many Azure Key Vault secrets
 # - name: k8s-secret-name
-#   key: k8s-secret-key
-#   azureSecretName: name-of-secret-in-azure-key-vault
+#   refs: # list of references from Azure Keyvaults secrets as keys in K8S secret
+#     - keyName: k8s-secret-key
+#       kvSecretName: name-of-secret-in-azure-key-vault
 
 # Support Veracity session manager
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/

@@ -1,4 +1,19 @@
 ---
+# Source: kubeit-deployment-chart/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-configmap
+  labels:
+    app: kubeit-deployment-chart
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+data:
+  file.yaml:
+    key1: value1
+    key2: value2
+---
 # Source: kubeit-deployment-chart/templates/service.yaml
 apiVersion: v1
 kind: Service

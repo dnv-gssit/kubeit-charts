@@ -61,3 +61,26 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/requestauthentication.yaml
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: release-name-kubeit-deployment-chart-ra
+  labels:
+    app: kubeit-deployment-chart
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app: kubeit-deployment-chart
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  jwtRules:
+    - audiences:
+      - 22b9c23f-4a41-4729-8a5d-793f7601dfdb
+      - fe494c14-85d2-4bfa-bb43-92b0ab0a4f72
+      issuer: https://sts.windows.net/.../
+      jwksUri: https://login.microsoftonline.com/common/discovery/keys

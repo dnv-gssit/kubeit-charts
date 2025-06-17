@@ -1,0 +1,21 @@
+---
+authorizationPolicy:
+  enabled: true
+  spec: 
+    action: ALLOW
+    rules:
+    - from:
+      - source:
+          principals: ["cluster.local/ns/default/sa/sleep"]
+      - source:
+          namespaces: ["test"]
+      to:
+      - operation:
+          methods: ["GET"]
+          paths: ["/info*"]
+      - operation:
+          methods: ["POST"]
+          paths: ["/data"]
+      when:
+      - key: request.auth.claims[iss]
+        values: ["https://accounts.google.com"]

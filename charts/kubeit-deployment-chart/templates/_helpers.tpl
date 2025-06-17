@@ -59,7 +59,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the serviceaccount to use
 */}}
 {{- define "services-chart.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
+{{- if .Values.serviceAccount.enabled }}
 {{- default (include "services-chart.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
@@ -70,7 +70,7 @@ Create the name of the serviceaccount to use
 Create the name of the configMap to use
 */}}
 {{- define "services-chart.configMapName" -}}
-{{- if .Values.configMap.create }}
+{{- if .Values.configMap.enabled }}
 {{- default (include "services-chart.fullname" .) .Values.configMap.name }}
 {{- else }}
 {{- default "default" .Values.configMap.name }}
@@ -108,6 +108,13 @@ Create the automatic internal FQDN for virtualService
 {{- end }}
 
 {{/*
+Create full FQDN for internal service
+*/}}
+{{- define "services-chart.fullFQDN" -}}
+{{- printf "%s.%s.svc.cluster.local" (include "services-chart.fullname" .) (.Release.Namespace|lower) -}}
+{{- end }}
+
+{{/*
 Create the content of the virtualService
 */}}
 {{- define "services-chart.virtualserviceContent" -}}
@@ -117,7 +124,7 @@ http:
 {{- toYaml (list $httpRoute) | nindent 2 }}
     route:
       - destination:
-          host: {{ include "services-chart.fullname" $ }}
+          host: {{ include "services-chart.fullFQDN" $ }}
           port:
             number: {{ $.Values.service.port }}
 {{- end }}
@@ -132,7 +139,7 @@ http:
         prefix: /
     route:
       - destination:
-          host: {{ include "services-chart.fullname" $ }}
+          host: {{ include "services-chart.fullFQDN" $ }}
           port:
             number: {{ $.Values.service.port }}
 {{- if $.Values.defaultRouting.corsPolicy }}

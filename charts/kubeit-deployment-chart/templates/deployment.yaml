@@ -28,7 +28,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
-      {{- if .Values.serviceAccount.create }}
+      {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "services-chart.serviceAccountName" . }}
       {{- end }}
       {{- if .Values.podSecurityContext }}

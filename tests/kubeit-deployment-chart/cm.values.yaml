@@ -1,6 +1,6 @@
 ---
 configMap:
-  create: true
+  enabled: true
   name: "test-configmap"
   data: |
     file.yaml:
