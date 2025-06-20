@@ -3,6 +3,12 @@
 # pylint: disable=line-too-long, broad-except, too-many-nested-blocks, too-many-branches, duplicate-code, too-many-locals
 """
 Run helm chart tests
+
+It searches for all tests in the `tests` directory, runs them against the helm charts in the `charts` directory.
+Looks for files with the pattern `*.values.yaml` as test case:folder name is like helm chart name.
+- folder where `*.values.yaml` is found is the helm chart name for tests
+- runs `helm template` with the found values file
+- compares the output with the expected result file `*.result.yaml`
 """
 import argparse
 import difflib

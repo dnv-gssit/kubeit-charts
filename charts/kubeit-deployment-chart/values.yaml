@@ -63,6 +63,10 @@ podSecurityContext: {}
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
 securityContext: {}
 
+# Entrypoint command for the main container
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
+command: []
+
 # List of arguments for the main container
 # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
 args: []
