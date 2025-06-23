@@ -6,8 +6,12 @@ defaultRouting:
 networkPolicy:
   enabled: true
   appsAllowedAccess:
-    - app1
-    - app2
+    - namespace: n1
+      label:
+        app: app1
+    - namespace: n2
+      label:
+        app: app2
 
 kubeit:
   env: nonprod

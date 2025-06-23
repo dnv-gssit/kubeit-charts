@@ -82,7 +82,7 @@ spec:
           startupProbe:
             {{- toYaml .Values.health.startupProbe | nindent 12 }}
           {{- end }}
-          {{- if .Values.valumeMounts }}
+          {{- if .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml .Values.volumeMounts | nindent 12 }}
           {{- end }}

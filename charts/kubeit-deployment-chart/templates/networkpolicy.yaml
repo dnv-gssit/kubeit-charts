@@ -1,4 +1,4 @@
-{{- if .Values.networkPolicy.enabled -}}
+{{- if and (.Values.networkPolicy.enabled) (.Values.networkPolicy.appsAllowedAccess) -}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -13,29 +13,12 @@ spec:
   policyTypes:
     - Ingress
   ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            istio: pilot
-        namespaceSelector:
-          matchLabels:
-            istio-operator-managed: Reconcile
-{{- if .Values.destinationRule.enabled }}
-    - from:
-      - podSelector:
-          matchLabels:
-            istio: ingressgateway
-        namespaceSelector:
-          matchLabels:
-            istio-operator-managed: Reconcile
-{{- end }}
 {{- range .Values.networkPolicy.appsAllowedAccess }}
-    - from:
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/name: {{ . }}
-      ports:
-      - protocol: TCP
-        port: {{ $.Values.service.containerPort }}
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ .namespace }}
+      podSelector:
+        matchLabels:
+          {{- toYaml .label | nindent 10 }}
 {{- end }}
 {{- end }}

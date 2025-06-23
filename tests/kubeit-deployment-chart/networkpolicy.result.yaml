@@ -17,27 +17,18 @@ spec:
   policyTypes:
     - Ingress
   ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            istio: pilot
-        namespaceSelector:
-          matchLabels:
-            istio-operator-managed: Reconcile
-    - from:
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/name: app1
-      ports:
-      - protocol: TCP
-        port: 80
-    - from:
-      - podSelector:
-          matchLabels:
-            app.kubernetes.io/name: app2
-      ports:
-      - protocol: TCP
-        port: 80
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: n1
+      podSelector:
+        matchLabels:
+          app: app1
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: n2
+      podSelector:
+        matchLabels:
+          app: app2
 ---
 # Source: kubeit-deployment-chart/templates/service.yaml
 apiVersion: v1

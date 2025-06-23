@@ -222,9 +222,13 @@ authorizationPolicy:
 # https://kubernetes.io/docs/concepts/services-networking/network-policies/
 networkPolicy:
   enabled: false
-  # list of applications to allow access this service from the same cluster
+  # list of source applications to allow access this service from the same cluster
   # based on app: values used in different app
   appsAllowedAccess: []
+  # appsAllowedAccess:
+  #   - namespace: ns1
+  #     label:
+  #       - app: app1
 
 # SecretStore is definition how to access Azure Key Vault
 # serviceAccount.enabled=true and annotations for Workload Identity must be set on the serviceaccount
