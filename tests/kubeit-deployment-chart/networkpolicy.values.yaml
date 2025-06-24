@@ -7,10 +7,10 @@ networkPolicy:
   enabled: true
   appsAllowedAccess:
     - namespace: n1
-      label:
+      labels:
         app: app1
     - namespace: n2
-      label:
+      labels:
         app: app2
 
 kubeit:

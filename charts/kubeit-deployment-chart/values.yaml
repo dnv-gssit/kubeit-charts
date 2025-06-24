@@ -227,7 +227,7 @@ networkPolicy:
   appsAllowedAccess: []
   # appsAllowedAccess:
   #   - namespace: ns1
-  #     label:
+  #     labels:
   #       - app: app1
 
 # SecretStore is definition how to access Azure Key Vault
