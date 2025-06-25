@@ -34,7 +34,7 @@ persistentVolume:
   # Set to false to use AKS built-in storage classes
   external: true
   # set the storage class name
-  storageClassName: azurefile-csi
+  storageClassName: file.csi.azure.com
   capacity:
   # configure PVC size
     storage: 2Gi
