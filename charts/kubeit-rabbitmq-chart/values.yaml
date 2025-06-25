@@ -109,7 +109,7 @@ serviceAccount:
   create: true
   # Annotations to add to the service account using workload identity
   annotations:
-    azure.workload.identity/client-id: <CLIENT_ID>
+    azure.workload.identity/client-id: 850ed0f2-3b12-4334-934f-b1b168a5ea90
     azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
   name: "rabbitmq-sa"
 
@@ -117,7 +117,7 @@ serviceAccount:
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
 # https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
 secretStore:
-  create: false
+  create: true
   vaultUrl: "https://kubeit-dev-kv-sh-we.vault.azure.net/"
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
