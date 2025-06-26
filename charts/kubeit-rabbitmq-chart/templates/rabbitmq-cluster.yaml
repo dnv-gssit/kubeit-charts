@@ -38,6 +38,8 @@ spec:
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+            serviceAccount: rabbitmq
+            serviceAccountName: rabbitmq-sts
         volumeClaimTemplates:
           - apiVersion: v1
             kind: PersistentVolumeClaim
