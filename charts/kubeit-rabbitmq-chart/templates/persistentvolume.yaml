@@ -31,4 +31,5 @@ spec:
       azureStorageIdentityClientID: af6cdc1c-d797-4d34-b44f-9f0ade9087be
       protocol: smb
       useAAD: "true"
+      AzureStorageAuthType: msi
 {{- end }}
