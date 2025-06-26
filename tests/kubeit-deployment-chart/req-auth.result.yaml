@@ -1,0 +1,79 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubeit-deployment-chart
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: kubeit-deployment-chart
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: tcp
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/requestauthentication.yaml
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: release-name-kubeit-deployment-chart-ra
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  jwtRules:
+    - audiences:
+      - 22b9c23f-4a41-4729-8a5d-793f7601dfdb
+      - fe494c14-85d2-4bfa-bb43-92b0ab0a4f72
+      issuer: https://sts.windows.net/.../
+      jwksUri: https://login.microsoftonline.com/common/discovery/keys

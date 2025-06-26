@@ -1,342 +1,269 @@
-# Default values for platform-service
 ---
-# Application name
-app: app        # Required
+# REQUIRED: image for application
+image:
+  # registry and repository, example: myacr.azurecr.io/repository/imagename
+  # align naming for ArgoCD image updater
+  name: nginx
+  # image tag
+  tag: ""
+  # https://kubernetes.io/docs/concepts/containers/images/#updating-images
+  imagePullPolicy: IfNotPresent
 
-version: v1
+# REQUIRED: resource requests and limits for the main container in pod
+# https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+# note: recommendation is to do NOT set limit for cpu
+resources:
+  requests:
+    cpu: "10m"
+    memory: "64Mi"
+  limits:
+    memory: "64Mi"
+
+# Application name
+# If set, it would be used to render K8S resources names and labels
+app: ""
+
+# Application version
+# If set, it would be used to label for K8S resources
+appVersion: ""
+
+# Number of pod replicas
+# it is not taken into account if hpa.enabled=true
 replicaCount: 1
 
-mergeAppMetrics: false
+# Application upgrade strategy
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+strategy: {}
 
-# sample extra label, you can add as many as you want
+# Additional pod labels
 additionalPodLabels: {}
-  # saml-idp-forward-auth-filter: enabled
-# sample extra annotations
+# Example: https://istio.io/latest/docs/reference/config/labels/
+
+# Additional pod annotations
 additionalPodAnnotations: {}
-  # sidecar.istio.io/inject: "false"
+# Example: https://preliminary.istio.io/latest/docs/reference/config/annotations/
 
-image:
-  # registry: platformteam.azurecr.io (ignored if not specified)
-  registry:
-  # image name without the tag
-  repository:
-  # image tag (i.e. 105389)
-  tag:
-  pullPolicy: IfNotPresent
-  # name of the pullSecret for the registry if used
-  pullSecret:
-  containerPort: 80
+# Additional containers in the pod
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
+additionalContainers: []
 
-# deploymentOnly -- This workload is an addon to another for the same app - only create the deployment and destination rule
-deploymentOnly: false
+# Init containers for the pod
+# https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+initContainers: []
 
-updateStrategy: RollingUpdate
+# Period to terminate the pod gracefully
+# https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
+terminationGracePeriodSeconds: 30
 
-# ConfigMap
-configMap:
-  enabled: false
-  data: |
-# data: |
-#   myconfig.conf: |
-#     my first config line
-#     my second config line
-#     my third config line
+# Pod security context
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+podSecurityContext: {}
 
-service:
-  # unspecified for default microservice (for now at least)
-  type:
-  # port number
-  port: 80
+# The main container security context
+# https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+securityContext: {}
 
-  # provide access to other services
-  liveness:
-    enabled: false
-    path: /healthz
-    initialDelaySeconds: 5
-    periodSeconds: 5
-    timeoutSeconds: 1
-    failureThreshold: 3
+# Entrypoint command for the main container
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
+command: []
 
-# Health check configuration - exposes full k8s api for each probe type. See https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+# List of arguments for the main container
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
+args: []
+
+# List of environment variables for the main container
+# https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+envs: []
+
+# List of environment variables for the main container mapped from K8S secrets or configMaps
+# https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
+envsFrom: []
+
+# Pod probes config for the main container
+# See: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 health:
-  livenessProbe:
-  readinessProbe:
-  startupProbe:
+  livenessProbe: {}
+  readinessProbe: {}
+  startupProbe: {}
 
-serviceAccount:
-  # Specifies whether a ServiceAccount should be created
-  create: true
-  # Prefixes the service account with the release name
-  useReleasePrefix: false
-  # The name of the ServiceAccount to use (the actual service account name
-  # will still be prefixed by the release prefix if that option is enabled.
-  # If not set and create is true, a name is generated from the app
-  name:
-  # ClientId for Workload Identity feature
-  clientId: ""
+# List of volume mounts for the main container
+# names must match the volumes below
+volumeMounts: []
 
-gateway:
-  # map virtual service to a gateway expose this service
-  exposeService: true
-  # gateway name (fully qualified if in a different namespace), default one provided automatically by KubeIT
-  name: istio-system/global-https-internal-default-gateway
+# List of volumes to mount in the pod
+# https://kubernetes.io/docs/concepts/storage/volumes/
+volumes: []
 
-opa:
-  # set to true to enable opa.  requires config in a config map called opa-istio-config and policy in a config map called opa-policy
-  enabled: false
-  image: openpolicyagent/opa:0.28.0-istio
+# Node selectors for the pod
+# https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
 
+# Tolerations for the pod
+# https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+tolerations: []
+
+# Affinity rules for the pod
+# https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
+affinity: {}
+
+# Application auto-scaling config
+# https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 hpa:
   enabled: false
   maxReplicas: 3
   minReplicas: 1
+  targetCPUUtilizationPercentage: 40
+  # targetMemoryUtilizationPercentage: 80
 
-defaultRouting:
-  # Generate default virtual services and destination rules
+# K8S configMap config
+configMap:
+  enabled: false
+  # If not set and create is true, a name is generated from the helm chart
+  name: ""
+  data: []
+
+# K8S serviceaccount config
+serviceAccount:
+  enabled: false
+  # If not set and create is true, a name is generated from the helm chart
+  name: ""
+  # Annotations for service account
+  annotations: {}
+  # azure.workload.identity/client-id: 11111111-2222-3333-4444-555555555555
+  # azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+
+# K8S service config
+service:
   enabled: true
+  # type of service: ClusterIP for most cases
+  #                  LoadBalancer for TCP services exposed via F5
+  # https://docs.kubeit-int.dnv.com/documentation/components/networking/#f5-tcp-virtualservers
+  type: ClusterIP
+  # container port for the main container
+  containerPort: 80
+  # service port
+  port: 80
+  # annotations for service
+  annotations: {}
+  # additional labels for service
+  labels: {}
 
-  kubeitDefaultHosts:
-    enabled: true
-    tenantPrefixEnabled: true
-    dnsDomain: kubeit.dnv.com
-    # hostsPrefix:            # Optional - default app name
+# K8S istio gateway reference config
+gateway:
+  # gateway provided by KubeIT for exposure services via F5
+  # https://docs.kubeit-int.dnv.com/documentation/components/networking/#external-dns
+  name: istio-system/global-https-internal-default-gateway
+  # gateway provided by KubeIT for exposure service internally within DNV network only
+  # https://docs.kubeit-int.dnv.com/documentation/components/internal-exposure/
+  internalName: istio-system/global-internaluse-gateway
 
-  # hosts to take into account for routing rules (ignored if allHosts = true)
-  hosts: []
-    # - myhost.dnvgl.com
-
-  # list of prefixes for route matching - overrides the default prefix (app)
-  urlPrefixes:
-
-  # catch-all route - anything not routed elsewhere will be routed here
-  # When this is used, urlPrefixes are ignored (there should be only catch-all route for this host & gateway)
-  catchAll: false
-
-  # Redirect when a trailing slash is not included in the URL prefix
-  # This is applied for each provided urlPrefix or the default prefix if none provided
-  redirectOnNoTrailingSlash: true
-
-  # options for rewriting the URL to remove the routing prefix before delivering
-  # the request to the target pod
-  rewriteUrlPrefix:
-    # replace the routing prefix when enabled (when disabled, the URL is not adjusted)
-    enabled: true
-    # replace the routing prefix with the provided string
-    # alternate prefixes should begin and end with a "/"
-    # examples: "/", "/api/"
-    replaceWith: "/"
-
-  # Load balancer policy
-  # Also supported are:
-  #   STICKY_SESSIONS: ensures each session will always hit the same pod.
-  #   ROUND_ROBIN: uses the round robin algorithm for load balancing
-  loadBalancerPolicy: RANDOM
-
-  # configure retry settings - the defaults are provided in the template for backward compatibility
-  # providing any settings here will override the defaults
-  retries:
-    enabled: true
-    # settings:
-    #   attempts: 3
-    #   perTryTimeout: 2s
-
-  # Configure CORS policy
-  # corsPolicy:
-  #   allowOrigins:
-  #     - exact: https://example.com
-  #   allowMethods:
-  #     - POST
-  #     - GET
-  #   allowCredentials: false
-  #   allowHeaders:
-  #     - X-Foo-Bar
-  #   maxAge: "24h"
-
-  # Configure request timeout
-  # timeout: 5s
-
-  # Configure connectionPool for DestinationRule
-  # connectionPool:
-  #   tcp:
-  #     maxConnections: 100
-  #     connectTimeout: 30ms
-  #     tcpKeepalive:
-  #       time: 7200s
-  #       interval: 75
-  #   http:
-  #     idleTimeout: 1h
-
-  # route from all hosts (typically only common services)
-  allHosts: false
-
-  # Istio tls modes
-  # Recommendation is to not change default TLS setup for the security reason
-  tls:
-    mode: ISTIO_MUTUAL
-
-# Specify network policies
-networkPolicy:
-  # Enable default network policy (set false and create your own if needed)
+# Config for service exposure from cluster
+# https://istio.io/latest/docs/reference/config/networking/virtual-service/
+defaultRouting:
+  # create CR virtualservices, only valid if service.enabled=true
   enabled: false
 
-  # List of workloads allowed access to this workload. Identifiers are matched
-  # to the app label.
-  appsAllowedAccess:
-  #  - app1
-  #  - app2
+  # IF defaultRouting.enabled=true, hosts or internalHosts or both must be set
 
-# Settings for request authentication (Jwt authentication)
+  # external hosts to take into account for routing rules
+  # if set [auto] FQDN will be created based on kubeit parameters and release name
+  hosts: []
+  # - myhost.dnv.com
+
+  # internal hosts to take into account for routing rules
+  # <service>.dnv.com - DNS record should be requested to GSS IT / TLS supported (one "dot" level only!)
+  # <service>[.<color>].<region>.<environment>.kubeit-int.dnv.com - works immediately / TLS supported
+  # if set [auto] FQDN will be created based on kubeit parameters and release name
+  internalHosts: []
+  # - myhost.green.we.nonprod.kubeit-int.dnv.com
+
+  # http traffic config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-http
+  # Possible to set all except `route` and `corsPolicy`
+  # if not set, create default match.uri.prefix=/
+  http: []
+
+  # tcp traffic config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
+  # Possible to set all except `route`
+  tcp: []
+
+  # tsl traffic config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
+  # Possible to set all except `route`
+  tls: []
+
+  # CORS policy config for http config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#CorsPolicy
+  corsPolicy: {}
+
+# Destination rule config
+# https://istio.io/latest/docs/reference/config/networking/destination-rule/
+destinationRule:
+  enabled: false
+  # https://istio.io/latest/docs/reference/config/networking/destination-rule/#LoadBalancerSettings
+  # set STICKY_SESSIONS if sessionManagerDeployment is true
+  loadBalancerPolicy: ""
+
+# RequestAuthentication config
+# https://istio.io/latest/docs/reference/config/security/request_authentication/
 requestAuthentication:
-  # Generate RequestAuthentication
-  enabled: true
+  enabled: false
+  jwtRules: []
 
-  # JwtRules - list of rules
-  jwtRules:
-    # JWT Rule body - these are typical
-    # For full api see https://istio.io/docs/reference/config/security/jwt/#JWTRule
-    - issuer: "https://sts.windows.net/.../"
-      jwksUri: "https://login.microsoftonline.com/common/discovery/keys"
-      audiences:
-        - 22b9c23f-4a41-4729-8a5d-793f7601dfdb
-        - fe494c14-85d2-4bfa-bb43-92b0ab0a4f72
-
-sessionManagement:
-  enabled: true
-  redirectToLogin: false
-  enabledWithRedirectLabel: "session-management: frontend"
-  enabledWithoutRedirectLabel: "session-management: backend"
-
+# AuthorizationPolicy config
+# https://istio.io/latest/docs/reference/config/security/authorization-policy/
 authorizationPolicy:
   # Generate default authorization policy
-  enabled: true
+  enabled: false
+  spec: {}
 
-  # List of authorized service principals. Valid map values are
-  #   servicePrincipalName - short name to service account (required if full name not used)
-  #   servicePrincipalNamespace - namespace defaults to current
-  #   servicePrincipalFullName - alternative to first two - provide full service
-  #     principal name (i.e. cluster.local/ns/mynamespace/sa/myserviceaccount)
-  #   requireJwt - (default true) set to false to allow peer connections from
-  #     this service principal without a jwt
-  authorizedServices:
-  # Examples:
-    # 1) allow access from app "myapp" with default service account only with jwt
-    # - servicePrincipalName: myapp
+# Networkpolicy config
+# https://kubernetes.io/docs/concepts/services-networking/network-policies/
+networkPolicy:
+  enabled: false
+  # list of source applications to allow access this service from the same cluster
+  # based on app: values used in different app
+  appsAllowedAccess: []
+  # appsAllowedAccess:
+  #   - namespace: ns1
+  #     labels:
+  #       - app: app1
 
-    # 2) allow access from app "myapp" with default service account without jwt
-    # - servicePrincipalName: myapp
-    #   requireJwt: false
+# SecretStore is definition how to access Azure Key Vault
+# serviceAccount.enabled=true and annotations for Workload Identity must be set on the serviceaccount
+# https://docs.kubeit.dnv.com/documentation/components/access-management/?h=workload#workload-identity
+secretStore:
+  enabled: false
+  vaultUrl: ""
 
-    # 3) allow access from service account "myotherappsa" in namespace "other" (only with jwt)
-    # - servicePrincipalName: myotherappsa
-    #   servicePrincipalNamespace: other
+# ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
+# secretStore.enabled=true must be set to use ExternalSecrets
+externalSecrets: []
+# support case to create one k8s secret based on many Azure Key Vault secrets
+# - name: k8s-secret-name
+#   refs: # list of references from Azure Keyvaults secrets as keys in K8S secret
+#     - keyName: k8s-secret-key
+#       kvSecretName: name-of-secret-in-azure-key-vault
 
-    # 4) alternate form of 3
-    # - servicePrincipalFullName: "cluster.local/ns/other/sa/myotherappsa"
-    #   servicePrincipalNamespace: other
-
-# Environment variables are given as a map - key is the name - either followed by the actual value
-# or a valueFrom component which is literally translated
-# env:
-#   valueName: "the value"
-#   mySecret:
-#     valueFrom:
-#       secretKeyRef:
-#         name: mysecret
-#         key: username
-
-# OPA environment variables are given as a map - key is the name - either followed by the actual value
-# or a valueFrom component which is literally translated
-# opaenv:
-#   envName: "envValue"
-
-# deprecated
-environmentVariables:
-#  - name: Serilog__MinimumLevel
-#    value: Debug
-#    valueFrom:
-#      secretKeyRef:
-#        name: mysecret
-#        key: username
-
-# Declare any volumes: name and mountPath are used for volumeMount at the container level
-# volumeDefinition string underneath is copied verbatim into volumes
-volumes:
-#  - name:
-#    mountPath:
-#    volumeDefinition: |
-#      azureFile:
-
-# Resource requests and limits for primary container in pod
-resources:
-  requests:
-    cpu: 250m
-    memory: 64Mi
-  limits:
-    cpu: 500m
-    memory: 128Mi
-
-# Adjust resources requested for proxy sidecar (see https://istio.io/docs/concepts/performance-and-scalability/#cpu-and-memory)
-proxyResources: {}
-  # request values are passed to the envoy proxy through annotations
-  # these may be set globally at the istio level, so only override by service if necessary
-  # requests:
-  # cpu: 10m
-  # memory: 64Mi
-  # limits are not currently supported
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
-
-# To use secrets with the Deployment, use KubeIT Secrets chart from the same repository
-azureKeyVaultSecrets:
-  type: none
-# azureKeyVaultSecrets:
-#   type: external-secrets                               # Type of the secret controller used to deploy the secrets inside the KubeIT cluster
-#   tenantId: "adf10e2b-b6e9-41d6-be2f-c12bb566019c"     # Azure Active Directory Tenant ID
-#   clientId: "1234"                                     # Managed Identity Application ID - use Active Directory to pull this value or ask the Cluster Admin team to provide it
-#   azureKeyVaults:
-#     - azureKeyVaultName: testkeyvault                  # Name of the Azure KeyVault
-#       secrets:
-#         - k8sSecretName: testSecret                    # Name of the Kubernetes secret resource that is going to be created inside the cluster
-#           data:
-#             - k8sSecretKey: k8sSecretKey               # Name of the key in Kubernetes secret resource
-#               azureKeyVaultSecretName: SecretName      # Name of the secret in Azure KeyVault to pull the secret value from
-#             - k8sSecretKey: k8sSecretKey2              # It is possible to define multiple secret keys and values in one secretproviderclass - lines below show example how to do that
-#               azureKeyVaultSecretName: SecretName2
-#         - k8sSecretName: testSecret2
-#           data:
-#             - k8sSecretKey: k8sSecretKey3
-#               azureKeyVaultSecretName: SecretName3
-#             - k8sSecretKey: k8sSecretKey3
-#               azureKeyVaultSecretName: SecretName3
-
-securityContext: {}
-#   fsGroup: 1000
-#   runAsUser: 1000
-#   runAsNonRoot: true
-
-containerSecurityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-
-debugEnvoyFilters: true
-
-kubeit:
-  tenantPrefixEnabled: true
-  clusterSubdomain: dev001
-  environmentName: dev
-  shortRegion: we
-  clusterColour: red
-  tenantName: tenant
-
+# Support Veracity session manager
+# https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
 sessionManagerDeployment: false
 
-initContainersDefinitions: []
-
-workloadIdentity: false
+# KubeIT injected values
+# https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments
+# kubeit:
+#   env: nonprod
+#   region: we
+#   dnsDomain: kubeit.dnv.com
+#   internalDnsDomain: kubeit-int.dnv.com
+#   clusterSubdomain: nonprod005
+#   clusterColour: green
+#   ingressType: default
+#   shortRegion: we
+#   tenantName: tenant
+#   targetRevision: main
+#   repoURL: https://github.com/example.git
+#   networkPlugin: azure
+#   tenantMultiRegion: false
+#   managementNamespace: management-tenant

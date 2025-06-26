@@ -1,0 +1,97 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubeit-deployment-chart
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: kubeit-deployment-chart
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: tcp
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/authorizationpolicy.yaml
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: release-name-kubeit-deployment-chart-ap
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        principals:
+        - cluster.local/ns/default/sa/sleep
+    - source:
+        namespaces:
+        - test
+    to:
+    - operation:
+        methods:
+        - GET
+        paths:
+        - /info*
+    - operation:
+        methods:
+        - POST
+        paths:
+        - /data
+    when:
+    - key: request.auth.claims[iss]
+      values:
+      - https://accounts.google.com

@@ -1,0 +1,148 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "v2"
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: test
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: tcp
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/destinationrules.yaml
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: test-dr
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  host: test.default.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpCookie:
+          name: onegateway_sessid
+          ttl: 0s
+    tls:
+      mode: ISTIO_MUTUAL
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: a-dnv-com-ext
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  hosts:
+    - a.dnv.com
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+        - destination:
+            host: test.default.svc.cluster.local
+            port:
+              number: 80
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: b-dnv-com-ext
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  hosts:
+    - b.dnv.com
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /
+      route:
+        - destination:
+            host: test.default.svc.cluster.local
+            port:
+              number: 80
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: test-mesh
+spec:
+  hosts:
+    - test.default.svc.cluster.local
+  gateways:
+    - mesh
+  http:
+    - route:
+      - destination:
+          host: test.default.svc.cluster.local

@@ -1,0 +1,14 @@
+{{- if .Values.requestAuthentication.enabled -}}
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: {{ include "services-chart.fullname" . }}-ra
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "services-chart.selectorLabels" . | nindent 6 }}
+  jwtRules:
+{{ toYaml .Values.requestAuthentication.jwtRules | indent 4 }}
+{{- end }}

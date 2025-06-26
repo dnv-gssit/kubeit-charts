@@ -3,6 +3,12 @@
 # pylint: disable=line-too-long, broad-except, too-many-nested-blocks, too-many-branches, duplicate-code, too-many-locals
 """
 Run helm chart tests
+
+It searches for all tests in the `tests` directory, runs them against the helm charts in the `charts` directory.
+Looks for files with the pattern `*.values.yaml` as test case:folder name is like helm chart name.
+- folder where `*.values.yaml` is found is the helm chart name for tests
+- runs `helm template` with the found values file
+- compares the output with the expected result file `*.result.yaml`
 """
 import argparse
 import difflib
@@ -54,10 +60,10 @@ def run_test(chart, test):
         result = False
         return (result, output)
 
-    command = f"diff -cwB {result_file} {result_output}"
+    command = f"diff -Ba --context=10 {result_file} {result_output}"
     out, err = cmd(command)
     if err:
-        output = f"Error running command {command}: {err.decode('utf-8')}"
+        output = f"Error running command {command}: {err.decode()}"
         result = False
         return (result, output)
 

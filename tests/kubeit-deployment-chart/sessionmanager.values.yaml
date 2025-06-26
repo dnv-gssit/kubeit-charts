@@ -1,0 +1,27 @@
+---
+app: test
+sessionManagerDeployment: true
+
+defaultRouting:
+  enabled: true
+  hosts: [auto]
+
+destinationRule:
+  enabled: true
+  loadBalancerPolicy: STICKY_SESSIONS
+
+kubeit:
+  env: nonprod
+  region: we
+  dnsDomain: kubeit.dnv.com
+  internalDnsDomain: kubeit-int.dnv.com
+  clusterSubdomain: nonprod004
+  clusterColour: green
+  ingressType: default
+  shortRegion: we
+  tenantName: tenant
+  targetRevision: main
+  repoURL: https://github.com/example.git
+  networkPlugin: azure
+  tenantMultiRegion: false
+  managementNamespace: management-tenant

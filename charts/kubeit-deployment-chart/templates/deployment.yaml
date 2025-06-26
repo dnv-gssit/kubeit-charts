@@ -1,224 +1,107 @@
-{{- define "image" -}}
-{{- if .Values.image.full -}}
-  {{ .Values.image.full }}
-{{- else if .Values.image.registry -}}
-  {{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}
-{{- else -}}
-  {{ .Values.image.repository }}:{{ .Values.image.tag }}
-{{- end -}}
-{{- end -}}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "platform-service.fullname" . }}
+  name: {{ include "services-chart.fullname" . }}
   labels:
-{{ include "appLabels" . | trim | indent 4 }}
+    {{- include "services-chart.labels" . | nindent 4 }}
 spec:
-  {{- if eq .Values.updateStrategy "NoSurge" }}
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
-    type: RollingUpdate
-  {{- end }}
-  {{- if eq .Values.updateStrategy "Recreate" }}
-  strategy:
-    type: Recreate
-  {{- end }}
+  {{- if not .Values.hpa.enabled }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "platform-service.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "services-chart.selectorLabels" . | nindent 6 }}
+  {{- if .Values.strategy }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  {{- end }}
   template:
     metadata:
       labels:
-{{ include "appLabels" . | trim | indent 8 }}
-        {{- if .Values.opa.enabled }}
-        sidecar.opa-istio.io/inject: "true"
-        {{- end }}
-        {{- if .Values.sessionManagement.enabled }}
-        {{- if .Values.sessionManagement.redirectToLogin }}
-        {{ .Values.sessionManagement.enabledWithRedirectLabel }}
-        {{- else }}
-        {{ .Values.sessionManagement.enabledWithoutRedirectLabel }}
-        {{- end }}
-        {{- end }}
+        {{- include "services-chart.labels" . | nindent 8 }}
         {{- with .Values.additionalPodLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      {{- with .Values.additionalPodAnnotations }}
       annotations:
-        {{- if .Values.service.liveness.enabled }}
-        sidecar.istio.io/rewriteAppHTTPProbers: "true"
-        {{- end }}
-        {{- if .Values.mergeAppMetrics }}
-        prometheus.io/scrape: "true"
-        {{- end }}
-        {{- if .Values.proxyResources.requests }}
-        {{- if .Values.proxyResources.requests.cpu }}
-        sidecar.istio.io/proxyCPU: {{ .Values.proxyResources.requests.cpu }}
-        {{- end }}
-        {{- if .Values.proxyResources.requests.memory }}
-        sidecar.istio.io/proxyMemory: {{ .Values.proxyResources.requests.memory }}
-        {{- end }}
-        {{- end }}
-        {{- with .Values.additionalPodAnnotations }}
-        {{ toYaml . | indent 8 }}
-        {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
-      serviceAccountName: {{ include "platform-service.serviceAccountName" . }}
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "services-chart.serviceAccountName" . }}
+      {{- end }}
+      {{- if .Values.podSecurityContext }}
       securityContext:
-        {{- toYaml .Values.securityContext | nindent 8 }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- end }}
+      {{- if .Values.initContainers }}
       initContainers:
-      {{- range .Values.initContainers }}
-        - name: {{ .name }}
-          image: "{{ include "image" . }}"
-          imagePullPolicy: {{ .image.pullPolicy }}
-          env:
-{{- with .envVariables }}
-{{ toYaml . | indent 12 }}
-{{- end }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
       {{- end }}
-      {{- toYaml .Values.initContainersDefinitions | nindent 8 }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
-{{ if .Values.opa.enabled }}
-        - name: opa-istio
-          image: {{ .Values.opa.image }}
-          imagePullPolicy: IfNotPresent
-          args:
-          - run
-          - --server
-          - --addr=localhost:8181
-          - --diagnostic-addr=0.0.0.0:8282
-          - --config-file=/config/config.yaml
-          - /policy/policy.rego
-          volumeMounts:
-          - mountPath: /config
-            name: opa-istio-config
-          - mountPath: /policy
-            name: opa-policy
-
-          livenessProbe:
-            exec:
-              command:
-              - "/app/opa_envoy_linux_amd64"
-              - "eval"
-              - "1"
-          readinessProbe:
-            exec:
-              command:
-              - "/app/opa_envoy_linux_amd64"
-              - "eval"
-              - "1"
-
-          env:
-{{- range $key, $value := .Values.opaenv }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-{{- end }}
-
-{{ if .Values.opa.resources }}
-          resources:
-{{ toYaml .Values.opa.resources | indent 12 }}
-{{ end }}
-
-{{ end }}
-        - name: {{ include "platform-service.name" . }}
-          image: "{{ include "image" . }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{ if .Values.envFrom }}
-          envFrom:
-{{- with .Values.envFrom }}
-{{ toYaml . | indent 12 }}
-{{- end }}
-{{ end }}
-          env:
-{{- range $key, $value := .Values.env }}
-            - name: {{ $key }}
-{{- if contains "valueFrom" ($value | toString) }}
-{{ $value | toYaml | trim | indent 14 }}
-{{- else }}
-              value: {{ $value | quote }}
-{{- end }}
-{{- end }}
-
-{{- if .Values.command }}
-          command:
-            {{- range .Values.command }}
-            - {{ . }}
-            {{- end }}
-{{- end }}
-
-{{- if .Values.workingDir }}
-          workingDir: {{ .Values.workingDir }}
-{{- end }}
-          securityContext:
-            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+        - name: {{ include "services-chart.name" . }}
+          image: {{ .Values.image.name }}:{{ default "latest" .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.image.containerPort }}
+            - name: tcp
+              containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
-          {{- if .Values.service.liveness.enabled }}
-          livenessProbe:
-            httpGet:
-              path: {{ .Values.service.liveness.path }}
-              port: {{ .Values.image.containerPort }}
-            initialDelaySeconds: {{ .Values.service.liveness.initialDelaySeconds }}
-            periodSeconds: {{ .Values.service.liveness.periodSeconds }}
-            timeoutSeconds: {{ .Values.service.liveness.timeoutSeconds }}
-            failureThreshold: {{ .Values.service.liveness.failureThreshold }}
-
+          {{- if .Values.securityContext }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           {{- end }}
-{{- if .Values.health.livenessProbe }}
-{{- if .Values.service.liveness.enabled -}} {{- fail "Liveness must either be defined in service or health but not both"}} {{- end }}
-          livenessProbe:
-{{ .Values.health.livenessProbe | toYaml | trim | indent 12 }}
-{{- end }}
-{{- if .Values.health.readinessProbe }}
-          readinessProbe:
-{{ .Values.health.readinessProbe | toYaml | trim | indent 12 }}
-{{- end }}
-{{- if .Values.health.startupProbe }}
-          startupProbe:
-{{ .Values.health.startupProbe | toYaml | trim | indent 12 }}
-{{- end }}
-          volumeMounts:
-          {{- range .Values.volumes }}
-            - name: {{ .name }}
-              mountPath: {{ .mountPath }}
-{{- if .subPath }}
-              subPath: {{ .subPath }}
-{{- end }}
-          {{- end }}
-
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.command }}
+          command:
+            {{- toYaml .Values.command | nindent 10 }}
+          {{- end }}
+          {{- if .Values.args }}
+          args:
+            {{- toYaml .Values.args | nindent 10 }}
+          {{- end }}
+          {{- if .Values.envs }}
+          env:
+            {{- toYaml .Values.envs | nindent 12 }}
+          {{- end }}
+          {{- if .Values.envsFrom }}
+          envFrom:
+            {{- toYaml .Values.envsFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.health.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.health.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.health.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.health.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.health.startupProbe }}
+          startupProbe:
+            {{- toYaml .Values.health.startupProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+          {{- end }}
+        {{- if .Values.additionalContainers }}
+          {{- toYaml .Values.additionalContainers | nindent 10 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-{{ toYaml . | indent 8 }}
-    {{- end }}
-      {{- if .Values.image.pullSecret }}
-      imagePullSecrets:
-      - name: "{{ .Values.image.pullSecret }}"
+        {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.volumes }}
       volumes:
-{{ if .Values.opa.enabled }}
-      - name: opa-istio-config
-        configMap:
-          name: opa-istio-config
-      - name: opa-policy
-        configMap:
-          name: opa-policy
-{{ end }}
-{{- range .Values.volumes }}
-      - name: {{ .name }}
-{{ tpl .volumeDefinition $ | indent 8 }}
-{{- end }}
+        {{- toYaml .Values.volumes | nindent 8 }}
+      {{- end }}

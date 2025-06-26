@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $.Values.app }}-config-map
+  name: {{ include "services-chart.configMapName" . }}
   labels:
-{{ include "appLabels" . | trim | indent 4 }}
+    {{- include "services-chart.labels" . | nindent 4 }}
 data:
 {{ tpl .Values.configMap.data $ | indent 2 }}
 {{- end }}

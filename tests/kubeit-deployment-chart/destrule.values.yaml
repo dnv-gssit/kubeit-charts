@@ -1,0 +1,13 @@
+---
+app: test
+appVersion: v2
+
+defaultRouting:
+  enabled: true
+  hosts:
+    - a.dnv.com
+    - b.dnv.com
+
+destinationRule:
+  enabled: true
+  loadBalancerPolicy: STICKY_SESSIONS

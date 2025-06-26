@@ -1,0 +1,68 @@
+---
+service:
+  port: 443
+
+defaultRouting:
+  enabled: true
+  hosts:
+    - y.dnv.com
+    - a.green.we.nonprod.kubeit.dnv.com
+    - auto
+  internalHosts:
+    - a.green.we.nonprod.kubeit-int.dnv.com
+    - z.dnv.com
+    - auto
+  http:
+    - match:
+        - uri:
+            prefix: /api
+        - uri:
+            prefix: /v2
+      rewrite:
+        uri: "/newcatalog"
+    - match:
+        - uri:
+            prefix: /v1
+  tcp:
+    - match:
+        - port: 443
+  tls:
+    - match:
+        - port: 443
+          sniHosts:
+          - login.bookinfo.com
+  corsPolicy:
+    allowOrigins:
+      - exact: http://localhost:4200
+      - exact: https://dev.example.com
+      - exact: https://test.example.com
+    allowMethods:
+      - POST
+      - GET
+      - OPTIONS
+    allowCredentials: true
+    allowHeaders:
+      - Content-Type
+      - Authorization
+      - Accept
+    exposeHeaders:
+      - Authorization
+      - Content-Type
+      - X-Custom-Header
+    maxAge: "24h"
+
+kubeit:
+  env: nonprod
+  region: we
+  dnsDomain: kubeit.dnv.com
+  internalDnsDomain: kubeit-int.dnv.com
+  clusterSubdomain: nonprod004
+  clusterColour: green
+  ingressType: default
+  shortRegion: we
+  tenantName: tenant
+  targetRevision: main
+  repoURL: https://github.com/example.git
+  networkPlugin: azure
+  tenantMultiRegion: false
+  managementNamespace: management-tenant

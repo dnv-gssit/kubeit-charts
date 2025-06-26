@@ -1,0 +1,30 @@
+---
+defaultRouting:
+  enabled: true
+  hosts: [auto]
+
+networkPolicy:
+  enabled: true
+  appsAllowedAccess:
+    - namespace: n1
+      labels:
+        app: app1
+    - namespace: n2
+      labels:
+        app: app2
+
+kubeit:
+  env: nonprod
+  region: we
+  dnsDomain: kubeit.dnv.com
+  internalDnsDomain: kubeit-int.dnv.com
+  clusterSubdomain: nonprod004
+  clusterColour: green
+  ingressType: default
+  shortRegion: we
+  tenantName: tenant
+  targetRevision: main
+  repoURL: https://github.com/example.git
+  networkPlugin: azure
+  tenantMultiRegion: false
+  managementNamespace: management-tenant

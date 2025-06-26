@@ -1,0 +1,63 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    kubeitTcpServiceEnabled: "true"
+    kubeitTcpServicePort: "10001"
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-tcp-idle-timeout: "30"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubeit-deployment-chart
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: kubeit-deployment-chart
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: tcp
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi

@@ -1,5 +1,8 @@
 {{- if .Values.sessionManagerDeployment }}
 {{- range $i, $host := .Values.defaultRouting.hosts }}
+{{- if eq $host "auto" -}}
+{{- $host = include "services-chart.autoFQDNexternal" $ -}}
+{{- end -}}
 {{ $namePostfix := $host | replace "." "-" }}
 ---
 apiVersion: v1
@@ -7,19 +10,14 @@ kind: Service
 metadata:
   name: session-manager-{{ $namePostfix }}
   labels:
-    app.kubernetes.io/name: session-manager-{{ $namePostfix }}
-    app.kubernetes.io/instance: session-manager-{{ $namePostfix }}
-    app.kubernetes.io/managed-by: {{ $.Release.Service }}
-    app: {{ required "app is required" $.Values.app | trunc 63 | trimSuffix "-" }}
-    tenant: {{ $.Values.kubeit.tenantName }}
+    {{- include "services-chart.labels" $ | nindent 4 }}
 spec:
   ports:
-    - port: {{ required "service.port must be specified" $.Values.service.port }}
-      targetPort: http
+    - port: {{ $.Values.service.port }}
+      targetPort: tcp
       protocol: TCP
-      name: http
+      name: tcp
   selector:
-    app.kubernetes.io/name: {{ $.Values.app }}
-    app: {{ $.Values.app }}
+    app.kubernetes.io/name: {{ include "services-chart.name" $ }}
 {{- end }}
 {{- end }}

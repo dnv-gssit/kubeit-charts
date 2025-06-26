@@ -1,0 +1,446 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      targetPort: tcp
+      protocol: TCP
+      name: tcp
+  selector:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubeit-deployment-chart
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kubeit-deployment-chart
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+        tenant: tenant
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: kubeit-deployment-chart
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: tcp
+              containerPort: 80
+              protocol: TCP
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: y-dnv-com-ext
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - y.dnv.com
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: a-green-we-nonprod-kubeit-dnv-com-ext
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - a.green.we.nonprod.kubeit.dnv.com
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: release-name-green-we-nonprod-kubeit-dnv-com-ext
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - release-name.green.we.nonprod.kubeit.dnv.com
+  gateways:
+    - istio-system/global-https-internal-default-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: a-green-we-nonprod-kubeit-int-dnv-com-int
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - a.green.we.nonprod.kubeit-int.dnv.com
+  gateways:
+    - istio-system/global-internaluse-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: z-dnv-com-int
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - z.dnv.com
+  gateways:
+    - istio-system/global-internaluse-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com
+---
+# Source: kubeit-deployment-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: release-name-green-we-nonprod-kubeit-int-dnv-com-int
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  hosts:
+    - release-name.green.we.nonprod.kubeit-int.dnv.com
+  gateways:
+    - istio-system/global-internaluse-gateway
+  http:
+    - match:
+      - uri:
+          prefix: /api
+      - uri:
+          prefix: /v2
+      rewrite:
+        uri: /newcatalog
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+    - match:
+      - uri:
+          prefix: /v1
+      route:
+        - destination:
+            host: release-name-kubeit-deployment-chart.default.svc.cluster.local
+            port:
+              number: 443
+      corsPolicy:
+        allowCredentials: true
+        allowHeaders:
+        - Content-Type
+        - Authorization
+        - Accept
+        allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        allowOrigins:
+        - exact: http://localhost:4200
+        - exact: https://dev.example.com
+        - exact: https://test.example.com
+        exposeHeaders:
+        - Authorization
+        - Content-Type
+        - X-Custom-Header
+        maxAge: 24h
+  tcp:
+    - match:
+      - port: 443
+  tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - login.bookinfo.com

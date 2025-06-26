@@ -1,0 +1,8 @@
+---
+configMap:
+  enabled: true
+  name: "test-configmap"
+  data: |
+    file.yaml:
+      key1: value1
+      key2: value2
