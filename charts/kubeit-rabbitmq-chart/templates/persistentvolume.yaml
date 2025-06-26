@@ -28,7 +28,7 @@ spec:
       shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }} # name of Azure File Share
       storageAccount: rabbitmqtenant2dev  # name of Azure Storage Account
       resourceGroup: KubeITSharedSVC-DEV-RG-WE
-      azureStorageIdentityClientID: af6cdc1c-d797-4d34-b44f-9f0ade9087be
+      azureStorageIdentityClientID: 1fc5a586-6a13-4c02-82b2-753ccd28ee78
       protocol: smb
       useAAD: "true"
       AzureStorageAuthType: msi
