@@ -433,6 +433,15 @@ entries:
     version: 0.0.1
   kubeit-deployment-chart:
   - apiVersion: v2
+    created: "2025-06-26T06:47:47.915903676Z"
+    description: KubeIT service deployment chart
+    digest: 18e83a63a531845b66e13e9a2173f18e47aab079e5db4a495f81c3aa39ca28be
+    name: kubeit-deployment-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-deployment-chart-2.0.0/kubeit-deployment-chart-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     created: "2025-03-25T10:14:02.324066136Z"
     description: KubeIT workload deployment chart
     digest: 1dfd6880a1047584a72d53b2a0ee47f1f59488bcab87201a5ad0907a8bf27602
@@ -823,4 +832,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-06-09T10:37:47.95757786Z"
+generated: "2025-06-26T06:47:48.293342778Z"
