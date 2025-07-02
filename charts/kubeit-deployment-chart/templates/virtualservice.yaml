@@ -51,5 +51,9 @@ spec:
     - route:
       - destination:
           host: {{ include "services-chart.fullFQDN" $ }}
+{{- if $.Values.defaultRouting.retries }}
+      retries:
+        {{- toYaml $.Values.defaultRouting.retries | nindent 8 }}
+{{- end }}
 {{- end }}
 {{- end }}

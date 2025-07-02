@@ -7,7 +7,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/version: v2
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -28,7 +28,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/version: v2
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -41,7 +41,7 @@ spec:
       labels:
         app.kubernetes.io/name: test
         app.kubernetes.io/instance: release-name
-        app.kubernetes.io/version: "v2"
+        app.kubernetes.io/version: v2
         app.kubernetes.io/managed-by: Helm
     spec:
       terminationGracePeriodSeconds: 30
@@ -68,7 +68,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/version: v2
     app.kubernetes.io/managed-by: Helm
 spec:
   host: test.default.svc.cluster.local
@@ -89,7 +89,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/version: v2
     app.kubernetes.io/managed-by: Helm
 spec:
   hosts:
@@ -114,7 +114,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "v2"
+    app.kubernetes.io/version: v2
     app.kubernetes.io/managed-by: Helm
 spec:
   hosts:

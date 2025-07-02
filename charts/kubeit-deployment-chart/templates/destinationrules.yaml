@@ -18,5 +18,5 @@ spec:
       simple: {{ default "RANDOM" .Values.destinationRule.loadBalancerPolicy }}
       {{- end }}
     tls:
-      mode: ISTIO_MUTUAL
+      {{- toYaml .Values.destinationRule.tls | nindent 6 }}
 {{- end }}

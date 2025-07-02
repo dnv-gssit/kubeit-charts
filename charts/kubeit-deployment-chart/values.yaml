@@ -197,6 +197,14 @@ defaultRouting:
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#CorsPolicy
   corsPolicy: {}
 
+  # Retry for http config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRetry
+  retries: {}
+
+  # Request headers for http config
+  # https://istio.io/latest/docs/reference/config/networking/virtual-service/#Headers
+  headers: {}
+
 # Destination rule config
 # https://istio.io/latest/docs/reference/config/networking/destination-rule/
 destinationRule:
@@ -204,6 +212,10 @@ destinationRule:
   # https://istio.io/latest/docs/reference/config/networking/destination-rule/#LoadBalancerSettings
   # set STICKY_SESSIONS if sessionManagerDeployment is true
   loadBalancerPolicy: ""
+  # TLS mode
+  # https://istio.io/latest/docs/reference/config/networking/destination-rule/#ClientTLSSettings
+  tls:
+    mode: ISTIO_MUTUAL
 
 # RequestAuthentication config
 # https://istio.io/latest/docs/reference/config/security/request_authentication/
