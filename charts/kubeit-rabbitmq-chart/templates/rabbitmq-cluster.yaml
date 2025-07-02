@@ -52,6 +52,10 @@ spec:
   rabbitmq:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
+    {{- if .Values.rabbitmqCluster.advancedConfig }}
+    advancedConfig: |
+      {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}
+    {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
