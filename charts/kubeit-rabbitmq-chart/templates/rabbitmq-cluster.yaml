@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
 spec:
+  autoEnableAllFeatureFlags: true
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   resources:
     requests:
@@ -21,7 +22,6 @@ spec:
 {{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
-        autoEnableAllFeatureFlags: true
         template:
           spec:
             containers:
