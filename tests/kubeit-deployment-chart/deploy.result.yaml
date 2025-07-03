@@ -70,10 +70,9 @@ spec:
               memory: 64Mi
           env:
             - name: ENV_VAR_1
-              value: value1
+              value: "value1"
             - name: ENV_VAR_2
-              value: value2
-          envFrom:
+              value: "value2"
             - configMapRef:
                 name: my-config-map
             - secretRef:

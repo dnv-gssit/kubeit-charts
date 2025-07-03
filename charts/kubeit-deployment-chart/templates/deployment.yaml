@@ -64,10 +64,12 @@ spec:
           {{- end }}
           {{- if .Values.envs }}
           env:
-            {{- toYaml .Values.envs | nindent 12 }}
+            {{- range .Values.envs }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
           {{- end }}
           {{- if .Values.envsFrom }}
-          envFrom:
             {{- toYaml .Values.envsFrom | nindent 12 }}
           {{- end }}
           {{- if .Values.health.livenessProbe }}

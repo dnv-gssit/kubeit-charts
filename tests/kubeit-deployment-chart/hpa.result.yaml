@@ -7,7 +7,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "1.1.1"
+    app.kubernetes.io/version: 1.1.1
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -28,7 +28,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "1.1.1"
+    app.kubernetes.io/version: 1.1.1
     app.kubernetes.io/managed-by: Helm
 spec:
   selector:
@@ -40,7 +40,7 @@ spec:
       labels:
         app.kubernetes.io/name: test
         app.kubernetes.io/instance: release-name
-        app.kubernetes.io/version: "1.1.1"
+        app.kubernetes.io/version: 1.1.1
         app.kubernetes.io/managed-by: Helm
     spec:
       terminationGracePeriodSeconds: 30
@@ -67,7 +67,7 @@ metadata:
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
-    app.kubernetes.io/version: "1.1.1"
+    app.kubernetes.io/version: 1.1.1
     app.kubernetes.io/managed-by: Helm
 spec:
   scaleTargetRef:

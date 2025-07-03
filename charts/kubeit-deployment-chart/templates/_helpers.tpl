@@ -36,7 +36,7 @@ Common labels
 {{- define "services-chart.labels" -}}
 {{ include "services-chart.selectorLabels" . }}
 {{- if .Values.appVersion }}
-app.kubernetes.io/version: {{ .Values.appVersion | quote }}
+app.kubernetes.io/version: {{ .Values.appVersion }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if $.Values.kubeit }}
@@ -82,7 +82,11 @@ Create the automatic external FQDN for virtualService
 {{- define "services-chart.autoFQDNexternal" -}}
 {{- if (hasKey .Values "kubeit") -}}
 {{- if and (hasKey .Values.kubeit "dnsDomain") (hasKey .Values.kubeit "shortRegion") (hasKey .Values.kubeit "clusterColour") (hasKey .Values.kubeit "env") -}}
+{{- if eq .Values.kubeit.clusterColour (default "" .Values.kubeit.clusterSubdomain) -}}
+{{- printf "%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.dnsDomain -}}
+{{- else -}}
 {{- printf "%s.%s.%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.shortRegion .Values.kubeit.env .Values.kubeit.dnsDomain -}}
+{{- end -}}
 {{- else -}}
 {{- fail "kubeit.dnsDomain and kubeit.shortRegion and kubeit.clusterColour and kubeit.env are required" }}
 {{- end -}}
@@ -97,7 +101,11 @@ Create the automatic internal FQDN for virtualService
 {{- define "services-chart.autoFQDNinternal" -}}
 {{- if (hasKey .Values "kubeit") -}}
 {{- if and (hasKey .Values.kubeit "internalDnsDomain") (hasKey .Values.kubeit "shortRegion") (hasKey .Values.kubeit "clusterColour") (hasKey .Values.kubeit "env") -}}
+{{- if eq .Values.kubeit.clusterColour (default "" .Values.kubeit.clusterSubdomain) -}}
+{{- printf "%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.internalDnsDomain -}}
+{{- else -}}
 {{- printf "%s.%s.%s.%s.%s" (default .Release.Name .Values.app) .Values.kubeit.clusterColour .Values.kubeit.shortRegion .Values.kubeit.env .Values.kubeit.internalDnsDomain -}}
+{{- end -}}
 {{- else -}}
 {{- fail "kubeit.internalDnsDomain and kubeit.shortRegion and kubeit.clusterColour and kubeit.env are required" }}
 {{- end -}}
@@ -126,6 +134,14 @@ http:
           host: {{ include "services-chart.fullFQDN" $ }}
           port:
             number: {{ $.Values.service.port }}
+{{- if $.Values.defaultRouting.retries }}
+    retries:
+      {{- toYaml $.Values.defaultRouting.retries | nindent 6 }}
+{{- end }}
+{{- if $.Values.defaultRouting.headers }}
+    headers:
+      {{- toYaml $.Values.defaultRouting.headers | nindent 6 }}
+{{- end }}
 {{- end }}
 {{- if $.Values.defaultRouting.corsPolicy }}
     corsPolicy:
@@ -141,6 +157,14 @@ http:
           host: {{ include "services-chart.fullFQDN" $ }}
           port:
             number: {{ $.Values.service.port }}
+{{- if $.Values.defaultRouting.retries }}
+    retries:
+      {{- toYaml $.Values.defaultRouting.retries | nindent 6 }}
+{{- end }}
+{{- if $.Values.defaultRouting.headers }}
+    headers:
+      {{- toYaml $.Values.defaultRouting.headers | nindent 6 }}
+{{- end }}
 {{- if $.Values.defaultRouting.corsPolicy }}
     corsPolicy:
       {{- toYaml .Values.defaultRouting.corsPolicy | nindent 6 }}
