@@ -21,7 +21,11 @@ rabbitmqCluster:
       volumeMount:
         name: persistence-testmq
 
-  additionalConfig: ""
+  additionalConfig: |
+    log.console.level = info
+    channel_max = 1700
+    default_user_tags.administrator = true
+    vm_memory_high_watermark.absolute = 4Gi
 
   advancedConfig: ""
 
