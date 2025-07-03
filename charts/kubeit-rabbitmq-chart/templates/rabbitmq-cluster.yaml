@@ -21,6 +21,7 @@ spec:
 {{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
+        autoEnableAllFeatureFlags: true
         template:
           spec:
             containers:
@@ -51,7 +52,7 @@ spec:
 {{- end }}
   rabbitmq:
     additionalConfig: |
-      {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
+      {{ .Files.Get "files/rabbitmq.conf"| quote }}
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
       {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}

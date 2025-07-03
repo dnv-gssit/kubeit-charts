@@ -21,17 +21,11 @@ rabbitmqCluster:
       volumeMount:
         name: persistence-testmq
 
-  additionalConfig: |
-    log.console.level = info
-    channel_max = 1700
-    default_user_tags.administrator = true
-    vm_memory_high_watermark.absolute = 4Gi
+  additionalConfig: ""
 
   advancedConfig: ""
 
-  additionalPlugins:
-    - rabbitmq_management
-    - rabbitmq_prometheus
+  additionalPlugins: []
 
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
