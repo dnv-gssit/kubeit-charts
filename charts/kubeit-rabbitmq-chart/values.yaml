@@ -29,6 +29,10 @@ rabbitmqCluster:
 
   advancedConfig: ""
 
+  additionalPlugins:
+    - rabbitmq_management
+    - rabbitmq_prometheus
+
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
