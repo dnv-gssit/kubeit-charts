@@ -62,10 +62,10 @@ spec:
       - {{ . }}
     {{- end }}
     {{- end }}
-    {{- if .Values.rabbitmqCluster.tls.enabled }}
-    tls:
-      secretName: rabbitmq-server-tls
-    {{- end }}
+  {{- if .Values.rabbitmqCluster.tls.enabled }}
+  tls:
+    secretName: rabbitmq-server-tls
+  {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
