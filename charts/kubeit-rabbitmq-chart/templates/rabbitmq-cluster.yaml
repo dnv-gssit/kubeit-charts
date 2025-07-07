@@ -43,7 +43,6 @@ spec:
                 - {{ . }}
                 {{- end }}
               storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
-              volumeName: {{ printf "pv-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
