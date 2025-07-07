@@ -1,12 +1,12 @@
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: azurefile-csi-rmq
+  name: azurefile-csi-{{ .Values.tenantName }}-rmq
 provisioner: file.csi.azure.com
 parameters:
   skuName: Standard_LRS
   secretName: rabbitmq-storageaccount-secret  # must exist in each tenant namespace
-  secretNamespace: ${pvc.namespace}           # dynamic per namespace
+  secretNamespace: {{ .Release.Namespace }}
   shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }}           # optional: dynamic share name
 mountOptions:
   - dir_mode=0777
@@ -19,3 +19,4 @@ mountOptions:
   - nobrl
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
+allowVolumeExpansion: true
