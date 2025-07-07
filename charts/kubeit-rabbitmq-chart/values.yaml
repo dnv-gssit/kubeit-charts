@@ -45,15 +45,15 @@ persistentVolume:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  mountOptions:
-    - dir_mode=0777
-    - file_mode=0777
-    - uid=0
-    - gid=0
-    - mfsymlinks
-    - cache=strict
-    - nosharesock
-    - nobrl
+  # mountOptions:
+  #   - dir_mode=0777
+  #   - file_mode=0777
+  #   - uid=0
+  #   - gid=0
+  #   - mfsymlinks
+  #   - cache=strict
+  #   - nosharesock
+  #   - nobrl
   csi:
     driver: file.csi.azure.com
     volumeHandle: rabbitmq-tenant
