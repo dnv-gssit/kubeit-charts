@@ -31,6 +31,8 @@ rabbitmqCluster:
 
   additionalPlugins: []
 
+  tls: {}
+
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
@@ -45,15 +47,15 @@ persistentVolume:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  # mountOptions:
-  #   - dir_mode=0777
-  #   - file_mode=0777
-  #   - uid=0
-  #   - gid=0
-  #   - mfsymlinks
-  #   - cache=strict
-  #   - nosharesock
-  #   - nobrl
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl
   csi:
     driver: file.csi.azure.com
     volumeHandle: rabbitmq-tenant
