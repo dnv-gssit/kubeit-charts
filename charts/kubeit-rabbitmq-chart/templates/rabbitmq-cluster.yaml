@@ -62,7 +62,7 @@ spec:
       - {{ . }}
     {{- end }}
     {{- end }}
-    {{- if eq .Values.rabbitmqCluster.tls.enabled "true" }}
+    {{- if eq .Values.rabbitmqCluster.tls.enabled }}
     tls:
       secretName: rabbitmq-server-tls
     {{- end }}
