@@ -3,7 +3,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: session-manager-{{ .Values.app }}
+  name: {{ printf "session-manager-%s"  .Values.app | trunc 63 | trimSuffix "-" }}
 spec:
   action: ALLOW
   rules:
