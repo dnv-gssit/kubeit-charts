@@ -17,5 +17,5 @@ spec:
         - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{ include "services-chart.selectorLabels" . }}
+      {{ include "services-chart.selectorLabels" . | nindent 6 }}
 {{- end }}
