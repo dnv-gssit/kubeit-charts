@@ -1,9 +1,8 @@
-{{- if .Values.sessionManagerDeployment }}
----
-apiVersion: security.istio.io/v1
+{{ $platformService := index .Values "platform-service" }}
+apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
-  name: {{ printf "session-manager-%s"  .Values.app | trunc 63 | trimSuffix "-" }}
+  name: {{ .Release.Name }}
 spec:
   action: ALLOW
   rules:
@@ -17,5 +16,5 @@ spec:
         - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{ include "services-chart.selectorLabels" . | nindent 6 }}
-{{- end }}
+      app: {{ $platformService.app }}
+      version: {{ $platformService.version }}

@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: "2.0"
+description: Session and token manager for OneGateway
+name: session-manager
+version: 1.4.8
+dependencies:
+  - name: platform-service
+    version: ~1.2.4
+    repository: https://dnvgl.github.io/service-mesh-chart
+  - name: redis
+    version: ~18.17.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
