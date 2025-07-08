@@ -18,6 +18,7 @@ spec:
       protocol: TCP
       name: tcp
   selector:
-    app.kubernetes.io/name: {{ include "services-chart.name" $ }}
+    app.kubernetes.io/name: session-manager
+    app: session-manager
 {{- end }}
 {{- end }}

@@ -179,7 +179,6 @@ defaultRouting:
 
   # http traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-http
-  # Possible to set all except `route` and `corsPolicy`
   # if not set, create default match.uri.prefix=/
   http: []
 

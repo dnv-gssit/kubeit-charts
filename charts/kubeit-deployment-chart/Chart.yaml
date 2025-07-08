@@ -3,4 +3,9 @@ apiVersion: v2
 name: kubeit-deployment-chart
 description: KubeIT service deployment chart
 type: application
-version: 2.0.1
+version: 2.0.2
+dependencies:
+  - name: redis
+    version: ~18.17.0
+    repository: https://charts.bitnami.com/bitnami
+    condition: sessionManagerDeployment
