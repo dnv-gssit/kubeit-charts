@@ -128,6 +128,11 @@ Create the content of the virtualService
 {{- if $.Values.defaultRouting.http -}}
 http:
 {{- range $httpRoute := $.Values.defaultRouting.http }}
+    route:
+      - destination:
+          host: {{ include "services-chart.fullFQDN" $ }}
+          port:
+            number: {{ $.Values.service.port }}
 {{- toYaml (list $httpRoute) | nindent 2 }}
 {{- if $.Values.defaultRouting.retries }}
     retries:
