@@ -9,9 +9,9 @@ metadata:
 spec:
   ports:
     - port: 80
-      targetPort: http
+      targetPort: tcp
       protocol: TCP
-      name: http
+      name: tcp
   selector:
     {{- include "services-chart.selectorLabels" . | nindent 4 }}
 {{- end }}
