@@ -1,9 +1,11 @@
 {{- if .Values.sessionManagerDeployment }}
+{{- range $host := $.Values.defaultRouting.hosts }}
+{{ $namePostfix := $host | replace "." "-" }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: session-manager
+  name: sm-{{ $namePostfix }}
   labels:
     {{- include "services-chart.labels" . | nindent 4 }}
 spec:
@@ -14,4 +16,5 @@ spec:
       name: http
   selector:
     {{- include "services-chart.selectorLabels" . | nindent 4 }}
+{{- end }}
 {{- end }}
