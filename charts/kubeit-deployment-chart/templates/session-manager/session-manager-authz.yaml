@@ -4,6 +4,8 @@ apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: {{ printf "session-manager-%s"  .Values.app | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
 spec:
   action: ALLOW
   rules:

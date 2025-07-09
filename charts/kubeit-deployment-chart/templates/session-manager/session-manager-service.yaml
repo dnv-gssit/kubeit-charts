@@ -1,0 +1,17 @@
+{{- if .Values.sessionManagerDeployment }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-manager
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "services-chart.selectorLabels" . | nindent 4 }}
+{{- end }}
