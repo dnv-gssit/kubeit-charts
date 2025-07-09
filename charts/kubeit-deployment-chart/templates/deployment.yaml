@@ -47,7 +47,7 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.containerPort }}
-              protocol: http
+              protocol: TCP
           {{- if .Values.securityContext }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}

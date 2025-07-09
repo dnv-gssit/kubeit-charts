@@ -10,7 +10,7 @@ spec:
   ports:
     - port: 80
       targetPort: http
-      protocol: http
+      protocol: TCP
       name: http
   selector:
     {{- include "services-chart.selectorLabels" . | nindent 4 }}
