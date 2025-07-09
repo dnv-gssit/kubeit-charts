@@ -7,7 +7,7 @@ kind: Service
 metadata:
   name: sm-{{ $namePostfix }}
   labels:
-    {{- include "services-chart.labels" . | nindent 4 }}
+    {{- include "services-chart.labels" $ | nindent 4 }}
 spec:
   ports:
     - port: 80
@@ -15,6 +15,6 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "services-chart.selectorLabels" . | nindent 4 }}
+    {{- include "services-chart.selectorLabels" $ | nindent 4 }}
 {{- end }}
 {{- end }}
