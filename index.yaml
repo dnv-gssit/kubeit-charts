@@ -850,4 +850,24 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-secrets-chart-1.0.0/kubeit-secrets-chart-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-10T09:05:57.514350596Z"
+  session-manager:
+  - apiVersion: v2
+    appVersion: 2.0.0
+    created: "2025-07-10T10:15:04.440371748Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: ~21.2.9
+    - alias: deploy
+      name: kubeit-deployment-chart
+      repository: https://dnv-gssit.github.io/kubeit-charts
+      version: ~2.1.0
+    description: DNV session manager chart
+    digest: 0fcd8772183d7db0b99a25d875b4ec5dfcf03a62ea8afc93ddb4110a7e3474c1
+    name: session-manager
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
+    version: 0.0.1
+generated: "2025-07-10T10:15:04.440477377Z"
