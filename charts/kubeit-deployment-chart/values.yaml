@@ -79,6 +79,9 @@ envs: []
 # https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
 envsFrom: []
 
+# Additional list of environments for the main container - to add from parent helm chart
+additionalEnvsFrom: []
+
 # Pod probes config for the main container
 # See: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 health:
@@ -179,7 +182,6 @@ defaultRouting:
 
   # http traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-http
-  # Possible to set all except `route` and `corsPolicy`
   # if not set, create default match.uri.prefix=/
   http: []
 
@@ -258,9 +260,14 @@ externalSecrets: []
 #     - keyName: k8s-secret-key
 #       kvSecretName: name-of-secret-in-azure-key-vault
 
-# Support Veracity session manager
+# DNV Veracity integration using Session Manager
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
-sessionManagerDeployment: false
+# https://enable.dnv.com/guidelines/cdog/deploying-to-the-cloud/kubernetes-security/session_manager
+sessionManager:
+  deploy: false
+  use: false
+  sessionManagerName: ""
+  debugEnvoyFilters: true
 
 # KubeIT injected values
 # https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments

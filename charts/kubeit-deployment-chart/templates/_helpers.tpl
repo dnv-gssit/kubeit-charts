@@ -129,11 +129,13 @@ Create the content of the virtualService
 http:
 {{- range $httpRoute := $.Values.defaultRouting.http }}
 {{- toYaml (list $httpRoute) | nindent 2 }}
+{{- if not (hasKey $httpRoute "redirect") }}
     route:
       - destination:
           host: {{ include "services-chart.fullFQDN" $ }}
           port:
             number: {{ $.Values.service.port }}
+{{- end }}
 {{- if $.Values.defaultRouting.retries }}
     retries:
       {{- toYaml $.Values.defaultRouting.retries | nindent 6 }}

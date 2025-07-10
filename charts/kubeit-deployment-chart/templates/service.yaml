@@ -17,9 +17,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: tcp
+      targetPort: http
       protocol: TCP
-      name: tcp
+      name: http
   selector:
     {{- include "services-chart.selectorLabels" . | nindent 4 }}
 {{- end }}

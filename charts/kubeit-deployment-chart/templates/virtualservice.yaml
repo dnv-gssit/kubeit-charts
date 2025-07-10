@@ -7,7 +7,7 @@
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: {{ $host  | replace "." "-" | trimSuffix "-" | trunc 59 }}-ext
+  name: {{ printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 }}-ext
   labels:
     {{- include "services-chart.labels" $ | nindent 4 }}
 spec:
@@ -26,7 +26,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: {{ $host  | replace "." "-" | trimSuffix "-" | trunc 59 }}-int
+  name: {{ printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 }}-int
   labels:
     {{- include "services-chart.labels" $ | nindent 4 }}
 spec:
