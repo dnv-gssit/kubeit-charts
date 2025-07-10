@@ -1,0 +1,14 @@
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/auth-policy.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/auth-policy.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/cm.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/cm.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/deploy.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/deploy.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/destrule.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/destrule.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/empty.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/empty.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/external-secret.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/external-secret.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/hpa.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/hpa.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/networkpolicy.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/networkpolicy.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/req-auth.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/req-auth.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/service.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/service.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/serviceaccount.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/serviceaccount.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/sessionmanager.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/sessionmanager.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/vs-complex.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/vs-complex.result.yaml
+helm template -f /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/vs.values.yaml charts/kubeit-deployment-chart > /mnt/c/git/kubeit-charts2/tests/kubeit-deployment-chart/vs.result.yaml

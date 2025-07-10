@@ -13,9 +13,9 @@ spec:
   type: ClusterIP
   ports:
     - port: 443
-      targetPort: tcp
+      targetPort: http
       protocol: TCP
-      name: tcp
+      name: http
   selector:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -50,7 +50,7 @@ spec:
           image: nginx:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: tcp
+            - name: http
               containerPort: 80
               protocol: TCP
           resources:
@@ -64,7 +64,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: y-dnv-com-ext
+  name: y-dnv-com-release-name-ext
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -128,7 +128,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: a-green-we-nonprod-kubeit-dnv-com-ext
+  name: a-green-we-nonprod-kubeit-dnv-com-release-name-ext
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -192,7 +192,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: release-name-green-we-nonprod-kubeit-dnv-com-ext
+  name: release-name-green-we-nonprod-kubeit-dnv-com-release-name-ext
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -257,7 +257,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: a-green-we-nonprod-kubeit-int-dnv-com-int
+  name: a-green-we-nonprod-kubeit-int-dnv-com-release-name-int
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -321,7 +321,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: z-dnv-com-int
+  name: z-dnv-com-release-name-int
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -385,7 +385,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: release-name-green-we-nonprod-kubeit-int-dnv-com-int
+  name: release-name-green-we-nonprod-kubeit-int-dnv-com-release-na-int
   labels:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
