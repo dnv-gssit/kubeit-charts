@@ -1,0 +1,28 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: {{ printf "session-backend-filter-%s" .Release.Name | trunc 63 }}
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  workloadSelector:
+    labels:
+      session-management: backend
+      session-manager-name: {{ .Values.deploy.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+  configPatches:
+  # adds the lua filter to the listener/http connection manager
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+            subFilter:
+              name: "envoy.filters.http.jwt_authn"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.session-backend-filter-{{ .Values.app }}
+{{- include "filter.lua" (dict "namespace" .Release.Namespace "redirect" false "debugEnvoyFilters" .Values.deploy.sessionManager.debugEnvoyFilters ) | nindent 8 }}
