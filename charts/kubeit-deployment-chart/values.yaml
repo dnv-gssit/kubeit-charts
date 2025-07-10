@@ -79,6 +79,9 @@ envs: []
 # https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
 envsFrom: []
 
+# Additional list of environments for the main container - to add from parent helm chart
+additionalEnvsFrom: []
+
 # Pod probes config for the main container
 # See: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 health:

@@ -81,6 +81,9 @@ spec:
           {{- if .Values.envsFrom }}
             {{- toYaml .Values.envsFrom | nindent 12 }}
           {{- end }}
+          {{- if .Values.additionalEnvsFrom }}
+            {{- toYaml .Values.additionalEnvsFrom | nindent 12 }}
+          {{- end }}
           {{- if .Values.sessionManager.deploy }}
             - name: SESSION_MANAGER_ID
               value: {{ .Values.sessionManager.sessionManagerName | replace "-" "" | quote }}
