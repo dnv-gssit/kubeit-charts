@@ -1,0 +1,18 @@
+{{- range $host := $.Values.deploy.defaultRouting.hosts }}
+{{ $namePostfix := $host | replace "." "-" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sm-{{ $namePostfix }}
+  labels:
+    {{- include "services-chart.labels" $ | nindent 4 }}
+spec:
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "services-chart.selectorLabels" $ | nindent 4 }}
+{{- end }}
