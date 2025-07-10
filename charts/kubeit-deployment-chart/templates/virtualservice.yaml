@@ -1,13 +1,15 @@
 {{- if .Values.defaultRouting.enabled -}}
 {{- range $host := $.Values.defaultRouting.hosts }}
+{{- $vsName := printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 -}}
 {{- if eq $host "auto" -}}
 {{- $host = include "services-chart.autoFQDNexternal" $ -}}
+{{- $vsName = ($host | trunc 50) | replace "." "-" | trimSuffix "-" | trunc 59 -}}
 {{- end }}
 ---
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: {{ printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 }}-ext
+  name: {{ $vsName }}-ext
   labels:
     {{- include "services-chart.labels" $ | nindent 4 }}
 spec:
@@ -19,14 +21,16 @@ spec:
 {{- end }}
 ---
 {{- range $host := $.Values.defaultRouting.internalHosts }}
+{{- $vsName := printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 -}}
 {{- if eq $host "auto" -}}
 {{- $host = include "services-chart.autoFQDNinternal" $ -}}
+{{- $vsName = ($host | trunc 50) | replace "." "-" | trimSuffix "-" | trunc 59 -}}
 {{- end }}
 ---
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: {{ printf "%s-%s" ($host | trunc 50) $.Release.Name | replace "." "-" | trimSuffix "-" | trunc 59 }}-int
+  name: {{ $vsName}}-int
   labels:
     {{- include "services-chart.labels" $ | nindent 4 }}
 spec:

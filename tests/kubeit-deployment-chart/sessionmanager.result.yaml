@@ -92,7 +92,7 @@ spec:
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: test-green-we-nonprod-kubeit-dnv-com-release-name-ext
+  name: test-green-we-nonprod-kubeit-dnv-com-ext
   labels:
     app.kubernetes.io/name: test
     app.kubernetes.io/instance: release-name
