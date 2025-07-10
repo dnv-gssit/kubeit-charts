@@ -43,6 +43,8 @@ spec:
         app.kubernetes.io/instance: release-name
         app.kubernetes.io/managed-by: Helm
         tenant: tenant
+        session-management: backend
+        session-manager-name: test
     spec:
       terminationGracePeriodSeconds: 30
       containers:
@@ -59,6 +61,11 @@ spec:
             requests:
               cpu: 10m
               memory: 64Mi
+          env:
+            - name: CLIENT_ID
+              value: "test"
+            - name: SESSION_MANAGER_ID
+              value: "test"
 ---
 # Source: kubeit-deployment-chart/templates/destinationrules.yaml
 apiVersion: networking.istio.io/v1
