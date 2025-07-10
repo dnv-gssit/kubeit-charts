@@ -1,4 +1,4 @@
-{{- if .Values.sessionManagerDeployment }}
+{{- if .Values.sessionManager.deploy }}
 {{- range $host := $.Values.defaultRouting.hosts }}
 {{ $namePostfix := $host | replace "." "-" }}
 ---

@@ -1,4 +1,4 @@
-{{- if .Values.sessionManagerDeployment }}
+{{- if .Values.sessionManager.deploy }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
@@ -10,6 +10,7 @@ spec:
   workloadSelector:
     labels:
       session-management: frontend
+      session-manager-name: {{ .Values.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
   configPatches:
   # adds the lua filter to the listener/http connection manager
   - applyTo: HTTP_FILTER

@@ -24,7 +24,7 @@ typed_config:
     function logDebug(logger, message)
 {{- if .debugEnvoyFilters }}
         logger:logWarn(message)
-{{- else }} 
+{{- else }}
         logger:logDebug(message)
 {{- end }}
     end
@@ -55,7 +55,7 @@ typed_config:
           end
         end
       end
-      return map 
+      return map
     end
 
     function computeSessionManagerClusterName(handle, hostname)
@@ -75,7 +75,7 @@ typed_config:
       },  nil, 5000)
       if(startsWith(headers[":status"], "2")) then
         return body
-  {{- if .redirect }}                
+  {{- if .redirect }}
       else
         -- No session token, redirect to login
         logDebug(handle, "No session data found. Redirecting to login.")
@@ -148,7 +148,7 @@ typed_config:
           end
         end
 
-{{- if .redirect }}                
+{{- if .redirect }}
       else
         -- No session token, redirect to login
         if(endsWith(requestPath, ".js") == true) then

@@ -257,8 +257,13 @@ externalSecrets: []
 #     - keyName: k8s-secret-key
 #       kvSecretName: name-of-secret-in-azure-key-vault
 
-
-sessionManagerDeployment: false
+# DNV Veracity integration using Session Manager
+# https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
+# https://enable.dnv.com/guidelines/cdog/deploying-to-the-cloud/kubernetes-security/session_manager
+sessionManager:
+  deploy: false
+  use: false
+  sessionManagerNname: ""
 
 # KubeIT injected values
 # https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments

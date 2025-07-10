@@ -6,6 +6,6 @@ type: application
 version: 2.0.2
 dependencies:
   - name: redis
-    version: ~18.17.0
+    version: ~21.2.9
     repository: https://charts.bitnami.com/bitnami
-    condition: sessionManagerDeployment
+    condition: sessionManager.deploy
