@@ -23,6 +23,15 @@ spec:
         {{- with .Values.additionalPodLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .Values.sessionManager.deploy }}
+        session-management: backend
+        session-manager-name: {{ .Values.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+        {{- end }}
+        {{- if .Values.sessionManager.use }}
+        session-management: frontend
+        authn-redirect: enabled
+        session-manager-name: {{ .Values.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+        {{- end }}
       {{- with .Values.additionalPodAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}

@@ -263,7 +263,8 @@ externalSecrets: []
 sessionManager:
   deploy: false
   use: false
-  sessionManagerNname: ""
+  sessionManagerName: ""
+  debugEnvoyFilters: true
 
 # KubeIT injected values
 # https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments

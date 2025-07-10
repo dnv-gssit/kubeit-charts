@@ -26,5 +26,5 @@ spec:
       operation: INSERT_BEFORE
       value:
         name: envoy.filters.http.session-backend-filter-{{ .Values.app }}
-{{- include "filter.lua" (dict "namespace" .Release.Namespace "redirect" false "debugEnvoyFilters" .Values.debugEnvoyFilters ) | nindent 8 }}
+{{- include "filter.lua" (dict "namespace" .Release.Namespace "redirect" false "debugEnvoyFilters" .Values.sessionManager.debugEnvoyFilters ) | nindent 8 }}
 {{- end }}
