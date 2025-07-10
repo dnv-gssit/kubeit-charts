@@ -12,3 +12,21 @@ spec:
   jwtRules:
 {{ toYaml .Values.requestAuthentication.jwtRules | indent 4 }}
 {{- end }}
+---
+{{- if .Values.sessionManager.use }}
+apiVersion: security.istio.io/v1
+kind: RequestAuthentication
+metadata:
+  name: {{ include "services-chart.fullname" . }}-sm
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "services-chart.selectorLabels" . | nindent 6 }}
+  jwtRules:
+    - issuer: "https://login.veracity.com/a68572e3-63ce-4bc1-acdc-b64943502e9d/v2.0/"
+      jwksUri: "https://login.veracity.com/te/a68572e3-63ce-4bc1-acdc-b64943502e9d/b2c_1a_signinwithadfsidp/discovery/v2.0/keys"
+      audiences: [83054ebf-1d7b-43f5-82ad-b2bde84d7b75]
+      forwardOriginalToken: true
+{{- end }}

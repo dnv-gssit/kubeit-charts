@@ -15,9 +15,7 @@ repos:
     hooks:
       - id: yamllint
         args: ['-s']
-  - repo: local
+  - repo: https://github.com/gruntwork-io/pre-commit
+    rev: v0.1.30
     hooks:
-      - id: ct
-        name: Run ct lint
-        entry: ct lint --config=test-config.yaml
-        language: system
+      - id: helmlint

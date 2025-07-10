@@ -1,6 +1,12 @@
 ---
 app: test
-sessionManagerDeployment: true
+sessionManager:
+  deploy: true
+  sessionManagerName: test
+
+envs:
+  - name: CLIENT_ID
+    value: test
 
 defaultRouting:
   enabled: true
