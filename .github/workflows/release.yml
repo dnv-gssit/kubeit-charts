@@ -26,8 +26,22 @@ jobs:
         with:
           version: v3.8.1
 
+      - name: Update dependencies for each chart
+        run: |
+          for chart in charts/*; do
+            if [ -f "$chart/Chart.yaml" ]; then
+              echo "Updating dependencies for $chart"
+              helm dependency update "$chart"
+            fi
+          done
+
+      - name: Add helm repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add kubeit-charts https://dnv-gssit.github.io/kubeit-charts
+
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.1
+        uses: helm/chart-releaser-action@v1.7.0
         with:
           charts_dir: charts
           config: cr.yaml
