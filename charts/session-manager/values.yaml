@@ -155,3 +155,6 @@ redis:
     appendonly yes
     save ""
     loglevel verbose
+  secretAnnotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
