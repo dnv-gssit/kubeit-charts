@@ -4,7 +4,7 @@ kind: EnvoyFilter
 metadata:
   name: {{ printf "session-frontend-filter-%s" .Release.Name | trunc 63 }}
   labels:
-    {{- include "sessionmanager.labels" . | nindent 4 }}
+    {{- include "sessionmanager-chart.labels" . | nindent 4 }}
 spec:
   workloadSelector:
     labels:
