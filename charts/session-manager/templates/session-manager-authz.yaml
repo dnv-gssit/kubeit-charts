@@ -4,7 +4,7 @@ kind: AuthorizationPolicy
 metadata:
   name: {{ printf "session-manager-%s" .Release.Name | trunc 63 | trimSuffix "-" }}
   labels:
-    {{- include "services-chart.labels" . | nindent 4 }}
+    {{- include "sessionmanager-chart.labels" . | nindent 4 }}
 spec:
   action: ALLOW
   rules:
@@ -18,4 +18,4 @@ spec:
         - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      {{ include "services-chart.selectorLabels" . | nindent 6 }}
+      {{ include "sessionmanager-chart.selectorLabels" . | nindent 6 }}
