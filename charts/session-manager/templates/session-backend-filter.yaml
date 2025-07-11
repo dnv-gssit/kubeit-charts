@@ -9,7 +9,7 @@ spec:
   workloadSelector:
     labels:
       session-management: backend
-      session-manager-name: {{ .Values.deploy.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+      session-manager-name: {{ .Values.deploy.sessionManager.name | trunc 63 | trimSuffix "-" }}
   configPatches:
   # adds the lua filter to the listener/http connection manager
   - applyTo: HTTP_FILTER
