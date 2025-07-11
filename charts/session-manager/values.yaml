@@ -3,7 +3,7 @@ deploy:
   sessionManager:
     deploy: true
     # Required: provide name of session manager, recommended: sm-<namespace>
-    sessionManagerName: ""
+    name: ""
     debugEnvoyFilters: true
 
   secretStore:
