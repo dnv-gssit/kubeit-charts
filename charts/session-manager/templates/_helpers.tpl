@@ -35,8 +35,8 @@ Common labels
 */}}
 {{- define "sessionmanager-chart.labels" -}}
 {{ include "sessionmanager-chart.selectorLabels" . }}
-{{- if .Values.appVersion }}
-app.kubernetes.io/version: {{ .Values.appVersion }}
+{{- if .Values.deploy.appVersion }}
+app.kubernetes.io/version: {{ .Values.deploy.appVersion }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if $.Values.kubeit }}
