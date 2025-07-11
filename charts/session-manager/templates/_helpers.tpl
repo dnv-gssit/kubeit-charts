@@ -12,7 +12,7 @@ If release name contains chart name it will be used as a full name.
 */}}
 {{- define "sessionmanager-chart.fullname" -}}
 {{- if .Values.deploy.app }}
-{{- .Values.app | trunc 63 | trimSuffix "-" }}
+{{- .Values.deploy.app | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.deploy.app }}
 {{- if contains $name .Release.Name }}
