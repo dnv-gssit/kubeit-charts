@@ -37,7 +37,7 @@ spec:
   commonName: rabbitmqcluster
   dnsNames:
   {{- range .Values.rabbitmqCluster.tls.dnsNames}}
-    - {{ . | quote }}
+    - {{ . }}
   {{- end }}
   isCA: false
   revisionHistoryLimit: 1
@@ -50,4 +50,5 @@ spec:
   subject:
     organizations:
     - rabbitmqcluster
+---
 {{- end }}
