@@ -264,10 +264,15 @@ externalSecrets: []
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
 # https://enable.dnv.com/guidelines/cdog/deploying-to-the-cloud/kubernetes-security/session_manager
 sessionManager:
-  deploy: false
+  # set to true if service using session manager should be deployed using this chart
   use: false
-  sessionManagerName: ""
-  debugEnvoyFilters: true
+  # name of session manager
+  name: ""
+  # set to true if session manager should be deployed using this chart
+  # used by session-manager helm chart only
+  deploy: false
+  # set to true to debug session manager envoy filters
+  debugEnvoyFilters: false
 
 # KubeIT injected values
 # https://docs.kubeit-int.dnv.com/onboarding/deployments-scenarios/?h=ingresstype#helm-chart-deployments

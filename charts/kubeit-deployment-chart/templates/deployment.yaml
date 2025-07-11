@@ -25,12 +25,12 @@ spec:
         {{- end }}
         {{- if .Values.sessionManager.deploy }}
         session-management: backend
-        session-manager-name: {{ .Values.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+        session-manager-name: {{ .Values.sessionManager.name | trunc 63 | trimSuffix "-" }}
         {{- end }}
         {{- if .Values.sessionManager.use }}
         session-management: frontend
         authn-redirect: enabled
-        session-manager-name: {{ .Values.sessionManager.sessionManagerName | trunc 63 | trimSuffix "-" }}
+        session-manager-name: {{ .Values.sessionManager.name | trunc 63 | trimSuffix "-" }}
         {{- end }}
       {{- with .Values.additionalPodAnnotations }}
       annotations:
@@ -86,7 +86,7 @@ spec:
           {{- end }}
           {{- if .Values.sessionManager.deploy }}
             - name: SESSION_MANAGER_ID
-              value: {{ .Values.sessionManager.sessionManagerName | replace "-" "" | quote }}
+              value: {{ .Values.sessionManager.name | replace "-" "" | quote }}
           {{- end }}
           {{- if .Values.health.livenessProbe }}
           livenessProbe:
