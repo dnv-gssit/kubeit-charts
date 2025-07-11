@@ -266,10 +266,9 @@ externalSecrets: []
 sessionManager:
   # set to true if service using session manager should be deployed using this chart
   use: false
-  # name of session manager
+  # name of session manager, required if `use` or `deploy` is set to true
   name: ""
-  # set to true if session manager should be deployed using this chart
-  # used by session-manager helm chart only
+  # set to true if session manager should be deployed using this chart, used by session-manager helm chart only
   deploy: false
   # set to true to debug session manager envoy filters
   debugEnvoyFilters: false
