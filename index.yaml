@@ -853,6 +853,25 @@ entries:
   session-manager:
   - apiVersion: v2
     appVersion: 2.0.0
+    created: "2025-07-11T08:09:55.044146638Z"
+    dependencies:
+    - condition: redis.enabled
+      name: redis
+      repository: https://charts.bitnami.com/bitnami
+      version: ~21.2.9
+    - alias: deploy
+      name: kubeit-deployment-chart
+      repository: https://dnv-gssit.github.io/kubeit-charts
+      version: ~2.1.0
+    description: DNV session manager chart
+    digest: 7fb5c59a88b19fbf1a3e54c9167b9f2a60c621a3ed3464e82f5b7743c2dd463f
+    name: session-manager
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.2/session-manager-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 2.0.0
     created: "2025-07-10T10:15:04.440371748Z"
     dependencies:
     - condition: redis.enabled
@@ -870,4 +889,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
     version: 0.0.1
-generated: "2025-07-10T10:15:04.440477377Z"
+generated: "2025-07-11T08:09:55.044303974Z"
