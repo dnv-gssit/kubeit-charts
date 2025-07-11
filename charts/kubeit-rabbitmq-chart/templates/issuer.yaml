@@ -20,6 +20,12 @@ spec:
   issuerRef:
     name: {{ printf "%s-ca-issuer" (include "kubeit-rabbit-chart.fullname" .) | trunc 63 | trimSuffix "-" }}
     kind: Issuer
+  secretTemplate:
+    annotations:
+      reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
+      reflector.v1.k8s.emberstack.com/reflection-allowed-namespaces: "rabbitmq"
+      reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
+      reflector.v1.k8s.emberstack.com/reflection-auto-namespaces: "rabbitmq"
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
