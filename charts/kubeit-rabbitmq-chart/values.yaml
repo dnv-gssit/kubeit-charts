@@ -33,6 +33,11 @@ rabbitmqCluster:
 
   tls:
     enabled: false
+    secretName: rabbitmq-server-tls
+    caSecretName: rabbitmq-ca
+    dnsNames: []
+    commonName: ''
+
 
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share

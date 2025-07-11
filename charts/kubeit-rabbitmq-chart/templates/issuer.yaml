@@ -1,0 +1,53 @@
+{{- if .Values.rabbitmqCluster.tls.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ printf "%s-ca-issuer" .name | trunc 63 | trimSuffix "-" }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ printf "%s-ca-issuer" .name | trunc 63 | trimSuffix "-" }}
+spec:
+  duration: 1hr
+  renewBefore: 30m
+  secretName: rabbitmq-ca
+  commonName: {{ .Values.rabbitmqCluster.tls.commonName | quote }}
+  isCA: true
+  revisionHistoryLimit: 1
+  issuerRef:
+    name: {{ printf "%s-ca-issuer" .name | trunc 63 | trimSuffix "-" }}
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ printf "%s-tls-issuer" .name | trunc 63 | trimSuffix "-" }}
+spec:
+  ca:
+    secretName: rabbitmq-ca
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name:  rabbitmqcluster-tls
+spec:
+  commonName: rabbitmqcluster
+  dnsNames:
+  {{- range .Values.rabbitmqCluster.tls.dnsNames}}
+    - {{ . | squote }}
+  {{- end }}
+  isCA: false
+  revisionHistoryLimit: 1
+  issuerRef:
+    kind: Issuer
+    name: {{ printf "%s-tls-issuer" .name | trunc 63 | trimSuffix "-" }}
+  duration: 1hr
+  renewBefore: 30m
+  secretName:  rabbitmq-server-tls
+  subject:
+    organizations:
+    - rabbitmqcluster
+{{- end }}
