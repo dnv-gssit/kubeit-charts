@@ -26,17 +26,17 @@ rabbitmqCluster:
     channel_max = 1700
     default_user_tags.administrator = true
     vm_memory_high_watermark.absolute = 4Gi
+    ssl_options.fail_if_no_peer_cert = false
+    ssl_options.verify = verify_none
+
 
   advancedConfig: ""
 
   additionalPlugins: []
-
   tls:
-    enabled: false
+    enabled: true
     secretName: rabbitmq-server-tls
     caSecretName: rabbitmq-ca
-    dnsNames: []
-    commonName: ''
 
 
 # it should be optionally to use external Azure File Share
@@ -100,8 +100,8 @@ users:
 service:
   create: true
   type: ClusterIP
-  uiPort: 15672
-  tcpPort: 5672
+  uiPort: 15671
+  tcpPort: 5671
 
 virtualService:
   create: true
@@ -154,3 +154,8 @@ externalSecrets:
         azureSecretName: rabbitmq-admin-user
       - key: password
         azureSecretName: rabbitmq-admin-pass
+  - data:
+    - azureSecretName: rabbitMQCA
+    name: rabbitmq-server-tls
+    type: certificate
+
