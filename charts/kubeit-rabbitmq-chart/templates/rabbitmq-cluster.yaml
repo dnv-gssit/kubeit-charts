@@ -64,7 +64,6 @@ spec:
     {{- end }}
   {{- if .Values.rabbitmqCluster.tls.enabled }}
   tls:
-    caSecretName: rabbitmq-ca
     secretName: rabbitmq-server-tls
   {{- end }}
   persistence:
