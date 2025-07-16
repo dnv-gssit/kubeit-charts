@@ -101,7 +101,8 @@ service:
   create: true
   type: ClusterIP
   uiPort: 15672
-  tcpPort: 5671
+  tcpPort: 5672
+  amqpsPort: 5671
 
 virtualService:
   create: true
