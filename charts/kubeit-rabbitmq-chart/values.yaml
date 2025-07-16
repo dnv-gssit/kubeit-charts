@@ -100,8 +100,8 @@ users:
 service:
   create: true
   type: ClusterIP
-  uiPort: 15671
-  tcpPort: 5671
+  uiPort: 15672
+  tcpPort: 5672
 
 virtualService:
   create: true
