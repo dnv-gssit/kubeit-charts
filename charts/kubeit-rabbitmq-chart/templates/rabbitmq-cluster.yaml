@@ -24,6 +24,8 @@ spec:
       spec:
         template:
           spec:
+            sececurityContext:
+              allowPrivilegeEscalation: false
             containers:
               - name: rabbitmq
                 volumeMounts:
@@ -48,6 +50,13 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: persistence-testmq
+{{- else }}
+    statefulSet:
+      spec:
+        template:
+          spec:
+            securityContext:
+              allowPrivilegeEscalation: false
 {{- end }}
   rabbitmq:
     additionalConfig: |
