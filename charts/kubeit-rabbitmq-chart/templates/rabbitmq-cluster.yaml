@@ -24,15 +24,17 @@ spec:
       spec:
         template:
           spec:
-            securityContext:
-              allowPrivilegeEscalation: false
             containers:
               - name: rabbitmq
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+                    securityContext:
+                      allowPrivilegeEscalation: false
             initContainers:
               - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
@@ -50,13 +52,6 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: persistence-testmq
-{{- else }}
-    statefulSet:
-      spec:
-        template:
-          spec:
-            securityContext:
-              allowPrivilegeEscalation: false
 {{- end }}
   rabbitmq:
     additionalConfig: |
