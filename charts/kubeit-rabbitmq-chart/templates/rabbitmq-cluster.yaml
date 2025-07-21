@@ -24,7 +24,7 @@ spec:
       spec:
         template:
           spec:
-            sececurityContext:
+            securityContext:
               allowPrivilegeEscalation: false
             containers:
               - name: rabbitmq
