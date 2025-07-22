@@ -6,6 +6,8 @@ metadata:
   name: {{ .name }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
+  annotations:
+    reconcile-trigger: "true"
 spec:
   tags:
   {{- range .tags }}
