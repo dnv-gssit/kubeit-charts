@@ -94,3 +94,4 @@ spec:
         host: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
         port:
           number: {{ .Values.service.amqpsPort }}
+{{- end }}
