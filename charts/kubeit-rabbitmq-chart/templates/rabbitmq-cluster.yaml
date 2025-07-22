@@ -35,7 +35,7 @@ spec:
                           - key: default_user.conf
                             path: default_user.conf
                     - configMap:
-                        name: rabbitmq-cluster-server-conf
+                        name: {{ printf "%s-%s-server-conf" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
                         items:
                           - key: operatorDefaults.conf
                             path: operatorDefaults.conf
