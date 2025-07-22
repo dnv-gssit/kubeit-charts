@@ -24,23 +24,23 @@ spec:
       spec:
         template:
           spec:
-            volumes:
-              - name: rabbitmq-confd
-                projected:
-                  defaultMode: 420
-                  sources:
-                    - secret:
-                        name: rabbitmq-creds
-                        items:
-                          - key: default_user.conf
-                            path: default_user.conf
-                    - configMap:
-                        name: {{ printf "%s-%s-server-conf" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
-                        items:
-                          - key: operatorDefaults.conf
-                            path: operatorDefaults.conf
-                          - key: userDefinedConfiguration.conf
-                            path: userDefinedConfiguration.conf
+            # volumes:
+            #   - name: rabbitmq-confd
+            #     projected:
+            #       defaultMode: 420
+            #       sources:
+            #         - secret:
+            #             name: rabbitmq-creds
+            #             items:
+            #               - key: default_user.conf
+            #                 path: default_user.conf
+            #         - configMap:
+            #             name: {{ printf "%s-%s-server-conf" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
+            #             items:
+            #               - key: operatorDefaults.conf
+            #                 path: operatorDefaults.conf
+            #               - key: userDefinedConfiguration.conf
+            #                 path: userDefinedConfiguration.conf
             containers:
               - name: rabbitmq
                 volumeMounts:
