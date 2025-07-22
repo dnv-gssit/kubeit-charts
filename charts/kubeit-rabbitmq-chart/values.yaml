@@ -103,7 +103,7 @@ service:
   uiPort: 15672
   tcpPort: 5672
   amqpsPort: 5671
-  httpPort: 5672
+  httpPort: 15672
 
 virtualService:
   create: true
