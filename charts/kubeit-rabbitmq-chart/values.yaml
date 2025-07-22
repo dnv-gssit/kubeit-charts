@@ -84,18 +84,18 @@ queue:
       x_message_ttl: 60000
 
 # Configure RabbitMQ users with permissions
-users:
+users: []
   # Default admin user
-  - name: default-admin
-    vhost: /
-    tags:
-      - administrator
-    permissions:
-      configure: .*
-      write: .*
-      read: .*
-    # Create external secret via KeyVault
-    userK8sSecretName: admin-user-creds
+  # - name: default-admin
+  #   vhost: /
+  #   tags:
+  #     - administrator
+  #   permissions:
+  #     configure: .*
+  #     write: .*
+  #     read: .*
+  #   # Create external secret via KeyVault
+  #   userK8sSecretName: admin-user-creds
 
 service:
   create: true
@@ -150,14 +150,14 @@ externalSecrets:
         azureSecretName: azurestorageaccountname
       - key: azurestorageaccountkey
         azureSecretName: azurestorageaccountkey
-  - name: admin-user-creds
-    data:
-      - key: username
-        azureSecretName: rabbitmq-admin-user
-      - key: password
-        azureSecretName: rabbitmq-admin-pass
-  - data:
-    - azureSecretName: rabbitMQCA
-    name: rabbitmq-server-tls
-    type: certificate
+  # - name: admin-user-creds
+  #   data:
+  #     - key: username
+  #       azureSecretName: rabbitmq-admin-user
+  #     - key: password
+  #       azureSecretName: rabbitmq-admin-pass
+  # - data:
+  #   - azureSecretName: rabbitMQCA
+  #   name: rabbitmq-server-tls
+  #   type: certificate
 
