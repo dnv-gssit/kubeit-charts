@@ -29,8 +29,12 @@ spec:
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+                securityContext:
+                  allowPrivilegeEscalation: false
             initContainers:
               - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
