@@ -30,10 +30,17 @@ spec:
                   defaultMode: 420
                   sources:
                     - secret:
-                      name: rabbitmq-creds
-                      items:
-                        - key: default_user.conf
-                          path: default_user.conf
+                        name: rabbitmq-creds
+                        items:
+                          - key: default_user.conf
+                            path: default_user.conf
+                    - configMap:
+                        name: rabbitmq-cluster-server-conf
+                        items:
+                          - key: operatorDefaults.conf
+                            path: operatorDefaults.conf
+                          - key: userDefinedConfiguration.conf
+                            path: userDefinedConfiguration.conf
             containers:
               - name: rabbitmq
                 volumeMounts:
