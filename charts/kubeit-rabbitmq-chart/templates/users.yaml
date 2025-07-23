@@ -16,7 +16,7 @@ spec:
   rabbitmqClusterReference:
     name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
   importCredentialsSecret:
-    name: {{ printf "%s-%s-default-user" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
+    name: rabbitmq-credentials
 ---
 apiVersion: rabbitmq.com/v1beta1
 kind: Permission
