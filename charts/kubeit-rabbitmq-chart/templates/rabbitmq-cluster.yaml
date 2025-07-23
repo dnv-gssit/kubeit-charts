@@ -5,6 +5,8 @@ metadata:
   name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   # autoEnableAllFeatureFlags: true
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}

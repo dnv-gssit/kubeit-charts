@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
   annotations:
-    reconcile-trigger: "true"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   tags:
   {{- range .tags }}
@@ -22,6 +22,8 @@ apiVersion: rabbitmq.com/v1beta1
 kind: Permission
 metadata:
   name: rabbit-{{ .name }}-permission
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   vhost: {{ .vhost | quote }}
   userReference:
