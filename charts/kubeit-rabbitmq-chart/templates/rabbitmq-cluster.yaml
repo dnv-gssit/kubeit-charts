@@ -37,10 +37,10 @@ spec:
                     - configMap:
                         name: {{ printf "%s-%s-server-conf" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
                         items:
-                          - key: operatorDefaults.conf
-                            path: operatorDefaults.conf
-                          - key: userDefinedConfiguration.conf
-                            path: userDefinedConfiguration.conf
+                        - key: operatorDefaults.conf
+                          path: operatorDefaults.conf
+                        - key: userDefinedConfiguration.conf
+                          path: userDefinedConfiguration.conf
             containers:
               - name: rabbitmq
                 volumeMounts:
