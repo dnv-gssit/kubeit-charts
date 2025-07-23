@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   tags:
   {{- range .tags }}
@@ -23,7 +23,7 @@ kind: Permission
 metadata:
   name: rabbit-{{ .name }}-permission
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   vhost: {{ .vhost | quote }}
   userReference:
