@@ -77,3 +77,6 @@ spec:
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
   service:
     type: {{ .Values.service.type }}
+  secretBackend:
+    externalSecret:
+      name: rabbitmq-default-creds
