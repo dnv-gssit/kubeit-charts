@@ -79,4 +79,4 @@ spec:
     type: {{ .Values.service.type }}
   secretBackend:
     externalSecret:
-      name: rabbitmq-default-creds
+      name: rabbitmq-test-spi-default-user
