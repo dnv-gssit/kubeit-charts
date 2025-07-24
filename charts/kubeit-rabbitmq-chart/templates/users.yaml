@@ -35,4 +35,4 @@ spec:
   rabbitmqClusterReference:
     name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
 ---
-{{- end }}
+# {{- end }}
