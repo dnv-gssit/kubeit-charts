@@ -1,29 +1,26 @@
-# {{- range .Values.users }}
-# ---
-# apiVersion: rabbitmq.com/v1beta1
-# kind: User
-# metadata:
-#   name: {{ .name }}
-#   labels:
-#     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
-#   annotations:
-#     argocd.argoproj.io/sync-wave: "0"
-# spec:
-#   tags:
-#   {{- range .tags }}
-#   - {{ . }}
-#   {{- end }}
-#   rabbitmqClusterReference:
-#     name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
-#   importCredentialsSecret:
-#     name: rabbitmq-test-spi-default-user
-# ---
+{{- range .Values.users }}
+---
+apiVersion: rabbitmq.com/v1beta1
+kind: User
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
+  annotations:
+spec:
+  tags:
+  {{- range .tags }}
+  - {{ . }}
+  {{- end }}
+  rabbitmqClusterReference:
+    name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
+  importCredentialsSecret:
+    name: {{ .userK8sSecretName }}
+---
 apiVersion: rabbitmq.com/v1beta1
 kind: Permission
 metadata:
   name: rabbit-{{ .name }}-permission
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
   vhost: {{ .vhost | quote }}
   userReference:
@@ -35,4 +32,4 @@ spec:
   rabbitmqClusterReference:
     name: {{ printf "%s-%s" $.Release.Name $.Values.tenantName | trunc 63 | trimSuffix "-" }}
 ---
-# {{- end }}
+{{- end }}
