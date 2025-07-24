@@ -1,5 +1,5 @@
 # {{- range .Values.users }}
----
+# ---
 # apiVersion: rabbitmq.com/v1beta1
 # kind: User
 # metadata:
