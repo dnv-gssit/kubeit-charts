@@ -71,6 +71,7 @@ spec:
   {{- if .Values.rabbitmqCluster.tls.enabled }}
   tls:
     secretName: rabbitmq-tls
+    caSecretName: rabbitmq-ca
   {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
