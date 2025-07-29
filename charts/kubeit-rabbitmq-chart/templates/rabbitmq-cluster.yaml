@@ -70,7 +70,7 @@ spec:
     {{- end }}
   {{- if .Values.rabbitmqCluster.tls.enabled }}
   tls:
-    secretName: rabbitmq-tls
+    secretName: {{ .Values.rabbitmqCluster.tls.secretName }}
   {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
