@@ -70,18 +70,18 @@ persistentVolume:
       shareName: rabbitmq
 
 # Create rabbitmq queue via RabbitMQ CRD
-queue:
-  - name: testmq-tenant
-    replicas: 1
-    resources:
-      requests:
-        cpu: 500m
-        memory: 500Mi
-      limits:
-        memory: 800Mi
-    arguments:
-      x_max_length_bytes: 1000000000
-      x_message_ttl: 60000
+queue: []
+  # - name: testmq-tenant
+  #   replicas: 1
+  #   resources:
+  #     requests:
+  #       cpu: 500m
+  #       memory: 500Mi
+  #     limits:
+  #       memory: 800Mi
+  #   arguments:
+  #     x_max_length_bytes: 1000000000
+  #     x_message_ttl: 60000
 
 # Configure RabbitMQ users with permissions
 users: []
