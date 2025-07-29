@@ -91,7 +91,7 @@ spec:
       {{- end }}
     route:
     - destination:
-        host: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
         port:
           number: {{ .Values.service.amqpsPort }}
 {{- end }}
