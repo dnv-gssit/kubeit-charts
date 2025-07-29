@@ -26,18 +26,13 @@ rabbitmqCluster:
     channel_max = 1700
     default_user_tags.administrator = true
     vm_memory_high_watermark.absolute = 4Gi
-    ssl_options.fail_if_no_peer_cert = false
-    ssl_options.verify = verify_none
-
 
   advancedConfig: ""
 
   additionalPlugins: []
   tls:
     enabled: true
-    secretName: rabbitmq-server-tls
-    caSecretName: rabbitmq-ca
-
+    secretName: rabbitmq-tls
 
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
