@@ -160,4 +160,3 @@ externalSecrets:
   #   - azureSecretName: rabbitMQCA
   #   name: rabbitmq-server-tls
   #   type: certificate
-
