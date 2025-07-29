@@ -82,7 +82,7 @@ spec:
   {{- end }}
   tls:
   - match:
-    - port: 5671
+    - port: {{ .Values.service.amqpsPort }}
       sniHosts:
       {{- if .Values.virtualService.host }}
       - {{ .Values.virtualService.host }}
