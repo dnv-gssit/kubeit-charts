@@ -29,6 +29,11 @@ rabbitmqCluster:
 
   advancedConfig: ""
 
+  additionalPlugins: []
+  tls:
+    enabled: true
+    secretName: rabbitmq-tls
+
 # it should be optionally to use external Azure File Share
 # it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
 persistentVolume:
@@ -42,7 +47,7 @@ persistentVolume:
     storage: 2Gi
   accessModes:
     - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
+  persistentVolumeReclaimPolicy: Delete
   mountOptions:
     - dir_mode=0777
     - file_mode=0777
@@ -61,38 +66,40 @@ persistentVolume:
 
 
 # Create rabbitmq queue via RabbitMQ CRD
-queue:
-  - name: testmq-tenant
-    replicas: 1
-    resources:
-      requests:
-        cpu: 500m
-        memory: 500Mi
-      limits:
-        memory: 800Mi
-    arguments:
-      x_max_length_bytes: 1000000000
-      x_message_ttl: 60000
+queue: []
+  # - name: testmq-tenant
+  #   replicas: 1
+  #   resources:
+  #     requests:
+  #       cpu: 500m
+  #       memory: 500Mi
+  #     limits:
+  #       memory: 800Mi
+  #   arguments:
+  #     x_max_length_bytes: 1000000000
+  #     x_message_ttl: 60000
 
 # Configure RabbitMQ users with permissions
-users:
+users: []
   # Default admin user
-  - name: default-admin
-    vhost: /
-    tags:
-      - administrator
-    permissions:
-      configure: .*
-      write: .*
-      read: .*
-    # Create external secret via KeyVault
-    userK8sSecretName: admin-user-creds
+  # - name: default-admin
+  #   vhost: /
+  #   tags:
+  #     - administrator
+  #   permissions:
+  #     configure: .*
+  #     write: .*
+  #     read: .*
+  #   # Create external secret via KeyVault
+  #   userK8sSecretName: admin-user-creds
 
 service:
   create: true
   type: ClusterIP
   uiPort: 15672
   tcpPort: 5672
+  amqpsPort: 5671
+  httpPort: 15672
 
 virtualService:
   create: true
@@ -139,9 +146,13 @@ externalSecrets:
         azureSecretName: azurestorageaccountname
       - key: azurestorageaccountkey
         azureSecretName: azurestorageaccountkey
-  - name: admin-user-creds
-    data:
-      - key: username
-        azureSecretName: rabbitmq-admin-user
-      - key: password
-        azureSecretName: rabbitmq-admin-pass
+  # - name: admin-user-creds
+  #   data:
+  #     - key: username
+  #       azureSecretName: rabbitmq-admin-user
+  #     - key: password
+  #       azureSecretName: rabbitmq-admin-pass
+  # - data:
+  #   - azureSecretName: rabbitMQCA
+  #   name: rabbitmq-server-tls
+  #   type: certificate

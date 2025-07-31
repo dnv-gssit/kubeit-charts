@@ -5,7 +5,10 @@ metadata:
   name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
+  # autoEnableAllFeatureFlags: true
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   resources:
     requests:
@@ -32,6 +35,8 @@ spec:
                   allowPrivilegeEscalation: false
             initContainers:
               - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
@@ -46,7 +51,6 @@ spec:
                 - {{ . }}
                 {{- end }}
               storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
-              volumeName: {{ printf "pv-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
@@ -60,6 +64,16 @@ spec:
     advancedConfig: |
       {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}
     {{- end }}
+    {{- if .Values.rabbitmqCluster.additionalPlugins }}
+    additionalPlugins: |
+    {{- range .Values.rabbitmqCluster.additionalPlugins }}
+      - {{ . }}
+    {{- end }}
+    {{- end }}
+  {{- if .Values.rabbitmqCluster.tls.enabled }}
+  tls:
+    secretName: {{ .Values.rabbitmqCluster.tls.secretName }}
+  {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}

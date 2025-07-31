@@ -6,6 +6,7 @@ metadata:
   name: {{ .name }}
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
+  annotations:
 spec:
   tags:
   {{- range .tags }}

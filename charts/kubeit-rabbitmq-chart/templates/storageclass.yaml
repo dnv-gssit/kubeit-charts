@@ -1,0 +1,19 @@
+{{- if .Values.persistentVolume.external }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: azurefile-csi-{{ .Values.tenantName }}-rmq
+provisioner: file.csi.azure.com
+parameters:
+  skuName: Standard_LRS
+  secretName: rabbitmq-storageaccount-secret  # must exist in each tenant namespace
+  secretNamespace: {{ .Release.Namespace }}
+  shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }}           # optional: dynamic share name
+mountOptions:
+{{- range .Values.persistentVolume.mountOptions }}
+  - {{ . }}
+{{- end }}
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+{{- end }}

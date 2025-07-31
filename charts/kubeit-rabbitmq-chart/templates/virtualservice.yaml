@@ -67,4 +67,31 @@ spec:
         port:
           number: {{ .Values.service.tcpPort }}
 ---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "kubeit-rabbit-chart.fullname" . | trunc 55 | trimSuffix "-" }}-amqps
+spec:
+  gateways:
+  - {{ $useGateway }}
+  hosts:
+  {{- if .Values.virtualService.host }}
+  - {{ .Values.virtualService.host }}
+  {{- else }}
+  - {{ include "internaldns.host" . }}
+  {{- end }}
+  tls:
+  - match:
+    - port: {{ .Values.service.amqpsPort }}
+      sniHosts:
+      {{- if .Values.virtualService.host }}
+      - {{ .Values.virtualService.host }}
+      {{- else }}
+      - {{ include "internaldns.host" . }}
+      {{- end }}
+    route:
+    - destination:
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
+        port:
+          number: {{ .Values.service.amqpsPort }}
 {{- end }}

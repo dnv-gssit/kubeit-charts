@@ -3,5 +3,5 @@ apiVersion: v2
 name: kubeit-rabbitmq-chart
 description: KubeIT RabbitMQ chart
 type: application
-version: 0.1.1
+version: 0.2.0
 appVersion: 0.1.0
