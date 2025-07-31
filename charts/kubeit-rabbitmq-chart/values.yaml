@@ -59,6 +59,7 @@ persistentVolume:
       # name of Azure File Share
       shareName: rabbitmq
 
+
 # Create rabbitmq queue via RabbitMQ CRD
 queue:
   - name: testmq-tenant
