@@ -23,6 +23,15 @@ spec:
         {{- with .Values.additionalPodLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        {{- if .Values.sessionManager.deploy }}
+        session-management: backend
+        session-manager-name: {{ .Values.sessionManager.name | trunc 63 | trimSuffix "-" }}
+        {{- end }}
+        {{- if .Values.sessionManager.use }}
+        session-management: frontend
+        authn-redirect: enabled
+        session-manager-name: {{ .Values.sessionManager.name | trunc 63 | trimSuffix "-" }}
+        {{- end }}
       {{- with .Values.additionalPodAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -45,7 +54,7 @@ spec:
           image: {{ .Values.image.name }}:{{ default "latest" .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
-            - name: tcp
+            - name: http
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
           {{- if .Values.securityContext }}
@@ -71,6 +80,13 @@ spec:
           {{- end }}
           {{- if .Values.envsFrom }}
             {{- toYaml .Values.envsFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.additionalEnvsFrom }}
+            {{- toYaml .Values.additionalEnvsFrom | nindent 12 }}
+          {{- end }}
+          {{- if .Values.sessionManager.deploy }}
+            - name: SESSION_MANAGER_ID
+              value: {{ .Values.sessionManager.name | replace "-" "" | quote }}
           {{- end }}
           {{- if .Values.health.livenessProbe }}
           livenessProbe:

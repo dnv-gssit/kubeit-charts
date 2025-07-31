@@ -1,17 +1,19 @@
-{{- define "bootstrap.application" }}
+{{ define "bootstrap.application" }}
 {{- $values := . -}}
 {{- $targetEnv := .env -}}
 {{- $targetRegion := .shortRegion -}}
 {{- $targetColour := .clusterColour -}}
-{{- if hasKey $values $targetEnv -}}
+{{- if hasKey $values $targetEnv }}
 {{- $logicalEnvs := index $values $targetEnv -}}
-{{- range $logicalEnv := $logicalEnvs -}}
+{{- range $logicalEnv := $logicalEnvs }}
 {{- $logicalEnvName := $logicalEnv.name -}}
 {{- $region := index $logicalEnv "shortRegion" -}}
 {{- $color := index $logicalEnv "clusterColour" -}}
-{{- if eq $region $targetRegion -}}
-{{- if eq $color $targetColour -}}
-{{- $appName := printf "%s-%s" $values.tenantName $logicalEnvName | trunc 63 | trimSuffix "-" }}
+{{- $type := index $logicalEnv "type" -}}
+{{- $targetNamespace := index $logicalEnv "namespace" -}}
+{{- if eq $region $targetRegion }}
+{{- if eq $color $targetColour }}
+{{- $appName := printf "%s-%s" $values.tenantName $logicalEnvName | trunc 63 | trimSuffix "-" -}}
 {{- $repoURL := $values.bootstrap.appLogicalEnvChart.repoURL -}}
 {{- $chartName := $values.bootstrap.appLogicalEnvChart.chart -}}
 {{- $targetRevision := $values.bootstrap.appLogicalEnvChart.targetRevision -}}
@@ -35,6 +37,7 @@ spec:
     namespace: {{ $values.managementNamespace }}
     server: https://kubernetes.default.svc
   sources:
+    {{- if ne $type "manifest" }}
     - repoURL: {{ $repoURL }}
       chart: {{ $chartName }}
       targetRevision: {{ $targetRevision }}
@@ -59,6 +62,18 @@ spec:
     - repoURL: {{ $values.repoURL }}
       targetRevision: {{ $values.targetRevision }}
       ref: values
+    {{- else }}
+    - repoURL: {{ $values.repoURL }}
+      targetRevision: {{ $values.targetRevision }}
+      path: {{ $targetEnv }}/{{ $logicalEnvName }}
+  destination:
+    server: https://kubernetes.default.svc
+    {{- if $targetNamespace }}
+    namespace: {{ $targetNamespace }}
+    {{- else }}
+    namespace: {{ $values.managementNamespace }}
+    {{- end }}
+    {{- end }}
   syncPolicy:
     automated:
       prune: true
@@ -74,8 +89,9 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=false
-{{- end -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+---
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}

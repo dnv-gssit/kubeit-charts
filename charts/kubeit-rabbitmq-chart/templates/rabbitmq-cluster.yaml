@@ -40,6 +40,8 @@ spec:
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+                securityContext:
+                  allowPrivilegeEscalation: false
         volumeClaimTemplates:
           - apiVersion: v1
             kind: PersistentVolumeClaim

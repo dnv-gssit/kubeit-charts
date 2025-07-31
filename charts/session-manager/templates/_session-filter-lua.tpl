@@ -13,6 +13,7 @@ typed_config:
     sessionManagerLogoutRoute = sessionManagerRoutePrefix .. "/logout";
     tokenRefresherRouteSuffix = "/refresh";
     tokenRefresherKeepAliveRouteSuffix = "/envoykeepalive";
+
     function startsWith(strToCheck, strSubsection)
       local sub = strToCheck:sub(1, strSubsection:len())
       return sub == strSubsection
@@ -27,6 +28,7 @@ typed_config:
         logger:logDebug(message)
 {{- end }}
     end
+
     function trim(s)
       return (s:gsub("^%s*(.-)%s*$", "%1"))
     end
@@ -55,13 +57,14 @@ typed_config:
       end
       return map
     end
+
     function computeSessionManagerClusterName(handle, hostname)
       local escapedHost = string.gsub(hostname, "[.]", "-")
-      local clusterName = "outbound|80||session-manager-"..escapedHost.."."..sessionManagerNS..".svc.cluster.local"
+      local clusterName = "outbound|80||sm-"..escapedHost.."."..sessionManagerNS..".svc.cluster.local"
       logDebug(handle, clusterName)
       return clusterName
     end
-    function requestSessionData(handle, key)
+    function requestSessionData(handle, key, requestPath)
       local origRequestHost = handle:headers():get(":authority")
       local sessionManagerClusterName = computeSessionManagerClusterName(handle, origRequestHost)
       local headers, body = handle:httpCall(sessionManagerClusterName,
@@ -72,9 +75,18 @@ typed_config:
       },  nil, 5000)
       if(startsWith(headers[":status"], "2")) then
         return body
+  {{- if .redirect }}
+      else
+        -- No session token, redirect to login
+        logDebug(handle, "No session data found. Redirecting to login.")
+        handleInternalRedirectToLogin(handle, requestPath)
+  {{- end }}
+
       end
       return nil
+
     end
+
     function requestRefreshedToken(handle, sessionId)
       local origRequestHost = handle:headers():get(":authority")
       local sessionManagerClusterName = computeSessionManagerClusterName(handle, origRequestHost)
@@ -87,26 +99,35 @@ typed_config:
       },  nil, 15000)
       return headers, body
     end
-    function handleInternalRedirect(request, relativePath, setCookie)
-      local url = "https://" .. request:headers():get(":authority") .. relativePath
+    function handleInternalRedirectToLogin(request, requestPath)
+      logDebug(request, "handling login redirect for " .. requestPath)
+      local cookies = getMapFromString(request:headers():get("cookie"), ";")
+      local origRequestHost = request:headers():get(":authority")
+      setCookieHeader = returnUrlCookieName .. "=https://"..origRequestHost..requestPath.."; HttpOnly; Secure; Path=/; SameSite=Lax"
+
+      local url = "https://" .. origRequestHost .. sessionManagerLoginRoute
       local headers = {
             [":status"] = "302",
             ["Location"] = url,
             ["Content-Security-Policy"] = "default-src 'none'"
             };
-      if(setCookie ~= nil) then
-        headers["Set-Cookie"] = setCookie;
+
+      if (cookies[returnUrlCookieName] == nil) then
+        logDebug(request, "setting cookie: " .. setCookieHeader)
+        headers["Set-Cookie"] = setCookieHeader;
+      else
+        logDebug(request, "cookie already exists - not replacing")
       end
       logDebug(request, "Redirecting to " .. url)
       request:respond(headers, nil)
     end
     function handleNoAuthHeader(request_handle, requestPath, headers)
-      -- Use session cookie if prvovided to lookup up token
+      -- Use session cookie if provided to lookup up token
       local cookies = getMapFromString(request_handle:headers():get("cookie"), ";")
       local sessid = cookies[sessidCookieName]
       local error = nil
       if(sessid ~= nil) then
-        local sessionData = requestSessionData(request_handle, sessid)
+        local sessionData = requestSessionData(request_handle, sessid, requestPath)
         if(sessionData ~= nil) then
           local currentTime = os.time() + 30 -- add 30 seconds to ensure token is valid when it reaches the intended destination
           local session = getMapFromString(sessionData, ";")
@@ -126,6 +147,7 @@ typed_config:
             request_handle:headers():add("Authorization", "Bearer ".. accessToken) -- add access token to Authorization header
           end
         end
+
 {{- if .redirect }}
       else
         -- No session token, redirect to login
@@ -133,7 +155,7 @@ typed_config:
           logDebug(request_handle, "Request for .js resource - doing nothing. (passthru)")
         else
           logDebug(request_handle, "No session or access token. Redirecting to login.")
-          handleInternalRedirect(request_handle, sessionManagerLoginRoute, returnUrlCookieName .. "=https://"..headers:get(":authority")..requestPath.."; HttpOnly; Secure; Path=/; SameSite=Lax")
+          handleInternalRedirectToLogin(request_handle, requestPath)
         end
 {{- end }}
       end
@@ -148,20 +170,18 @@ typed_config:
         path = originalPath
       end
       local error = nil
-      if(path == "/login") then
-        handleInternalRedirect(request_handle, sessionManagerLoginRoute, nil)
-      elseif(path == "/logout") then
-        handleInternalRedirect(request_handle, sessionManagerLogoutRoute, nil)
-      elseif(startsWith(path, authCallbackRoutePrefix)) then
+
+      if(startsWith(path, authCallbackRoutePrefix)) then
         logDebug(request_handle, "Authentication callback request detected - doing nothing (passthru)")
       elseif(authz == nil) then
         error = handleNoAuthHeader(request_handle, path, headers)
       else
         logDebug(request_handle, "Authorization header detected - doing nothing (passthru)")
       end
+
       if(error ~= nil) then
         request_handle:logErr("Error while processing request: "..error)
         request_handle:respond({[":status"] = "503"}, nil)
       end
     end
-{{- end}}
+{{- end }}

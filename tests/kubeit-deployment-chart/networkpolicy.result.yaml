@@ -44,9 +44,9 @@ spec:
   type: ClusterIP
   ports:
     - port: 80
-      targetPort: tcp
+      targetPort: http
       protocol: TCP
-      name: tcp
+      name: http
   selector:
     app.kubernetes.io/name: kubeit-deployment-chart
     app.kubernetes.io/instance: release-name
@@ -81,7 +81,7 @@ spec:
           image: nginx:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - name: tcp
+            - name: http
               containerPort: 80
               protocol: TCP
           resources:

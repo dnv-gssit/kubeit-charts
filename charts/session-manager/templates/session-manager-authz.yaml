@@ -1,9 +1,10 @@
-{{- if .Values.sessionManagerDeployment }}
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: session-manager-{{ .Values.app }}
+  name: {{ printf "session-manager-%s" .Release.Name | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "sessionmanager-chart.labels" . | nindent 4 }}
 spec:
   action: ALLOW
   rules:
@@ -17,5 +18,4 @@ spec:
         - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app: {{ include "services-chart.name" . }}
-{{- end }}
+      {{ include "sessionmanager-chart.selectorLabels" . | nindent 6 }}

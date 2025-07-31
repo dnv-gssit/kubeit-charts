@@ -1,0 +1,160 @@
+# Values injected to kubeit-deployment-chart
+deploy:
+  sessionManager:
+    deploy: true
+    # Required: provide name of session manager, recommended: sm-<namespace>
+    name: ""
+    debugEnvoyFilters: true
+
+  secretStore:
+    enabled: true
+    # Required: URL to KV with Veracity App Client Secret
+    vaultUrl: ""
+
+  # Required: create k8s secret based on KV secret
+  externalSecrets: []
+#    - name: sm-app-secret                        # name of k8s secret to create
+#      refs:
+#        - keyName: client-secret                 # key name in k8s secret
+#          kvSecretName: ancris3-session-dev033   # secret name in Azure KV
+
+  # Required: attach k8s secret to session manager
+  envsFrom: []
+#    - name: CLIENT_SECRET
+#      valueFrom:
+#        secretKeyRef:
+#          name: ""                               # name of k8s secret
+#          key: client-secret                     # key name in k8s secret
+#    - name: CLIENT_ID
+#      value: ""                                  # Veracity App ID
+
+  defaultRouting:
+    enabled: true
+    # Required: provide FQDN to be secured by session manager
+    hosts: []
+    http:
+      - match:
+          - uri:
+              exact: /session
+        redirect:
+          uri: /session/
+      - match:
+          - uri:
+              prefix: /session/
+    headers:
+      request:
+        add:
+          x-appname: session
+    retries:
+      attempts: 3
+      perTryTimeout: 15s
+
+  image:
+    name: "kubeitglobalsvcauxacrwe.azurecr.io/test/sessionmanager"
+    tag: "master-20240229.1"
+
+  service:
+    containerPort: 8000
+
+  destinationRule:
+    enabled: true
+
+  initContainers:
+    - name: wait-for-redis
+      image: kubeitglobalsvcauxacrwe.azurecr.io/owncloudci/wait-for
+      args:
+        - "-it"
+        - "sm-redis-master:6379"
+        - "-t"
+        - "30"
+      resources:
+        requests:
+          cpu: "5m"
+          memory: "32Mi"
+        limits:
+          memory: "128Mi"
+
+  health:
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8000
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 1
+      failureThreshold: 3
+
+  envs:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: ASPNETCORE_URLS
+      value: http://*:8000
+    - name: AUTHORITY
+      value: https://login.veracity.com/te/dnvglb2cprod.onmicrosoft.com/B2C_1A_SignInWithADFSIdp/v2.0
+    - name: SCOPE
+      value: https://dnvglb2cprod.onmicrosoft.com/83054ebf-1d7b-43f5-82ad-b2bde84d7b75/user_impersonation
+    - name: REDIS_HOST
+      value: sm-redis-master
+    - name: REDIS_PORT
+      value: 6379
+    - name: LOGIN_LANDING_URL
+      value: "/"
+    - name: LOGOUT_ENDPOINT
+      value: https://www.veracity.com/auth/logout
+    - name: REPLY_URL_SUFFIX
+      value: veracity
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsGroup: 1654
+    runAsNonRoot: true
+    runAsUser: 1654
+
+  additionalEnvsFrom:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: sm-redis
+          key: redis-password
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+
+# Values injected to redis chart
+redis:
+  enabled: true
+  fullnameOverride: "sm-redis"
+  global:
+    imageRegistry: kubeitglobalsvcauxacrwe.azurecr.io
+    security:
+      allowInsecureImages: true
+  architecture: standalone
+  master:
+    persistence:
+      enabled: false
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+  replica:
+    persistence:
+      enabled: false
+  commonConfiguration: |-
+    appendonly yes
+    save ""
+    loglevel verbose
+  secretAnnotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false

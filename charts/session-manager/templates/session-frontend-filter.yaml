@@ -1,14 +1,15 @@
-{{- if .Values.sessionManagerDeployment }}
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: session-frontend-filter-{{ .Values.app }}
+  name: {{ printf "session-frontend-filter-%s" .Release.Name | trunc 63 }}
+  labels:
+    {{- include "sessionmanager-chart.labels" . | nindent 4 }}
 spec:
   workloadSelector:
     labels:
       session-management: frontend
-      session-manager-name: {{ .Values.app | trunc 63 | trimSuffix "-" }}
+      session-manager-name: {{ .Values.deploy.sessionManager.name | trunc 63 | trimSuffix "-" }}
   configPatches:
   # adds the lua filter to the listener/http connection manager
   - applyTo: HTTP_FILTER
@@ -23,6 +24,5 @@ spec:
     patch:
       operation: INSERT_BEFORE
       value:
-        name: envoy.filters.http.session-frontend-filter-{{ .Values.app }}
-{{- include "filter.lua" (dict "namespace" .Release.Namespace "redirect" true "debugEnvoyFilters" .Values.debugEnvoyFilters ) | nindent 8 }}
-{{- end }}
+        name: envoy.filters.http.{{ printf "session-frontend-filter-%s" .Release.Name | trunc 63 }}
+{{- include "filter.lua" (dict "namespace" .Release.Namespace "redirect" true "debugEnvoyFilters" .Values.deploy.sessionManager.debugEnvoyFilters ) | nindent 8 }}
