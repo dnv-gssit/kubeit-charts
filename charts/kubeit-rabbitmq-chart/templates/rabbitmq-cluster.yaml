@@ -43,6 +43,7 @@ spec:
                   capabilities:
                     drop:
                       - ALL
+
             initContainers:
               - name: setup-container
                 securityContext:
