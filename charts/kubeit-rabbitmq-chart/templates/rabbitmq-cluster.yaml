@@ -33,7 +33,6 @@ spec:
               runAsGroup: 999
               privileged: false
               runAsNonRoot: true
-              readOnlyRootFilesystem: true
             containers:
               - name: rabbitmq
                 volumeMounts:
