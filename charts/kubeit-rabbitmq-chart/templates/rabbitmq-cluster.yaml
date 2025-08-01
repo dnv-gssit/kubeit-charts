@@ -28,13 +28,19 @@ spec:
           spec:
             securityContext:
               runAsUser: 999
+              runAsGroup: 999
+              fsGroup: 999
             containers:
               - name: rabbitmq
+                securityContext:
+                  allowPrivilegeEscalation: false
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
               - name: setup-container
+                securityContext:
+                  allowPrivilegeEscalation: false
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
