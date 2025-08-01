@@ -28,11 +28,9 @@ spec:
           spec:
             securityContext:
               allowPrivilegeEscalation: false
-              fsGroup: 999
-              runAsUser: 999
-              runAsGroup: 999
+              runAsUser: 0
+              runAsGroup: 0
               privileged: false
-              runAsNonRoot: true
             containers:
               - name: rabbitmq
                 volumeMounts:
@@ -42,7 +40,6 @@ spec:
                   capabilities:
                     drop:
                       - ALL
-
             initContainers:
               - name: setup-container
                 securityContext:
