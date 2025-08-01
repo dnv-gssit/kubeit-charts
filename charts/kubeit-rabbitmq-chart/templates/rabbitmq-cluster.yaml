@@ -9,6 +9,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   image: {{ .Values.rabbitmqCluster.image }}
+  autoEnableAllFeatureFlags: false
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   resources:
     requests:
@@ -24,7 +25,6 @@ spec:
 {{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
-        autoEnableAllFeatureFlags: false
         template:
           spec:
             securityContext:
