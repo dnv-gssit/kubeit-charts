@@ -26,22 +26,32 @@ spec:
       spec:
         template:
           spec:
+            securityContext:
+              allowPrivilegeEscalation: false
+              fsGroup: 999
+              runAsUser: 999
+              runAsGroup: 999
+              privileged: false
+              runAsNonRoot: true
+              readOnlyRootFilesystem: true
             containers:
               - name: rabbitmq
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
                 securityContext:
-                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
             initContainers:
               - name: setup-container
                 securityContext:
-                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                      - ALL
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
-                securityContext:
-                  allowPrivilegeEscalation: false
         volumeClaimTemplates:
           - apiVersion: v1
             kind: PersistentVolumeClaim
