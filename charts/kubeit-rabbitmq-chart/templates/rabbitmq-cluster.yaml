@@ -8,7 +8,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  image: {{ .Values.RabbitmqCluster.image }}
+  image: {{ .Values.rabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   resources:
     requests:
