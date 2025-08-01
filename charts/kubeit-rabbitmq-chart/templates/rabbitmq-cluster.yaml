@@ -8,7 +8,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  # autoEnableAllFeatureFlags: true
+  image: {{ .Values.RabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   resources:
     requests:
@@ -30,22 +30,16 @@ spec:
               allowPrivilegeEscalation: false
               runAsUser: 0
               runAsGroup: 0
+              fsGroup: 0
               privileged: false
             containers:
               - name: rabbitmq
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
-                securityContext:
-                  capabilities:
-                    drop:
-                      - ALL
+
             initContainers:
               - name: setup-container
-                securityContext:
-                  capabilities:
-                    drop:
-                      - ALL
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
