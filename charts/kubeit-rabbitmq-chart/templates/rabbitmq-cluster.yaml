@@ -24,6 +24,7 @@ spec:
 {{- if .Values.persistentVolume.external }}
     statefulSet:
       spec:
+        autoEnableAllFeatureFlags: false
         template:
           spec:
             securityContext:
