@@ -27,10 +27,7 @@ spec:
         template:
           spec:
             securityContext:
-              allowPrivilegeEscalation: false
-              runAsUser: 1001
-              runAsGroup: 1001
-              fsGroup: 1001
+              runAsUser: 999
             containers:
               - name: rabbitmq
                 volumeMounts:
