@@ -16,6 +16,7 @@ spec:
       memory: {{ .Values.rabbitmqCluster.spec.resources.requests.memory }}
     limits:
      memory: {{ .Values.rabbitmqCluster.spec.resources.limits.memory }}
+     cpu: {{ .Values.rabbitmqCluster.spec.resources.limits.cpu }}
   override:
     service:
       metadata:
