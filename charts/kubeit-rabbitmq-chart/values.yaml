@@ -15,6 +15,7 @@ rabbitmqCluster:
         memory: 500Mi
       limits:
         memory: 800Mi
+        cpu: 800m
     containers:
       volumeMount:
         name: persistence-testmq
