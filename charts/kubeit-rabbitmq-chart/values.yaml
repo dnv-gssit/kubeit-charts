@@ -159,7 +159,7 @@ externalSecrets:
   #   name: rabbitmq-server-tls
   #   type: certificate
   - name: rabbitmq-test-spi-default-user
-    string:
+    data:
       - key: username
         azureSecretName: rabbitmq-user-nonprod-green
       - key: password
@@ -167,10 +167,10 @@ externalSecrets:
       - key: default_user.conf
         azureSecretName: default-test-user-creds
       - key: host
-        azureSecretName:
+        azureSecretName: host
       - key: port
-        azureSecretName: rabbitmq-port
+        azureSecretName: port
       - key: provider
-        azureSecretName: rabbitmq-provider
+        azureSecretName: provider
       - key: type
-        azureSecretName: rabbitmq-type
+        azureSecretName: type
