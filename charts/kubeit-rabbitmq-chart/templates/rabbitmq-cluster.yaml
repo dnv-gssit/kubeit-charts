@@ -12,7 +12,7 @@ spec:
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
   secretBackend:
     externalSecret:
-      name: user-override
+      name: rabbitmq-test-spi-default-user
   resources:
     requests:
       cpu: {{ .Values.rabbitmqCluster.spec.resources.requests.cpu }}
