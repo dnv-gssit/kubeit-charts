@@ -31,6 +31,8 @@ rabbitmqCluster:
 
   advancedConfig: ""
 
+  defaultUserSecret: rabbitmq-test-spi-default-user
+
   additionalPlugins: []
   tls:
     enabled: true
@@ -65,6 +67,7 @@ persistentVolume:
     volumeAttributes:
       # name of Azure File Share
       shareName: rabbitmq
+
 
 
 # Create rabbitmq queue via RabbitMQ CRD
@@ -141,36 +144,22 @@ secretStore:
 #       ....
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
-    # Name of storage account must not be changed
-  - name: rabbitmq-storageaccount-secret
-    data:
-      - key: azurestorageaccountname
-        azureSecretName: azurestorageaccountname
-      - key: azurestorageaccountkey
-        azureSecretName: azurestorageaccountkey
-  # - name: admin-user-creds
-  #   data:
-  #     - key: username
-  #       azureSecretName: rabbitmq-admin-user
-  #     - key: password
-  #       azureSecretName: rabbitmq-admin-pass
-  # - data:
-  #   - azureSecretName: rabbitMQCA
-  #   name: rabbitmq-server-tls
-  #   type: certificate
-  - name: rabbitmq-test-spi-default-user
-    data:
-      - key: username
-        azureSecretName: rabbitmq-user-nonprod-green
-      - key: password
-        azureSecretName: rabbitmq-passwd-nonprod-green
-      - key: default_user.conf
-        azureSecretName: default-test-user-creds
-      - key: host
-        azureSecretName: host
-      - key: port
-        azureSecretName: port
-      - key: provider
-        azureSecretName: provider
-      - key: type
-        azureSecretName: type
+  - data:
+    - azureSecretName: tst-azurestorageaccountname
+      key: azurestorageaccountname
+    - azureSecretName: tst-azurestorageaccountkey
+      key: azurestorageaccountkey
+    name: rabbitmq-storageaccount-secret
+  - data:
+    - azureSecretName: rabbitmq-user-nonprod-green
+      key: username
+    - azureSecretName: rabbitmq-passwd-nonprod-green
+      key: password
+    - azureSecretName: default-test-user-creds
+      key: default_user.conf
+    name: rabbitmq-test-spi-default-user
+  - data:
+    - azureSecretName: rabbitMQTLS
+      key: data
+    name: rabbitmq-tls
+    type: certificate
