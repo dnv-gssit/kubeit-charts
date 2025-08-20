@@ -8,6 +8,6 @@ metadata:
 spec:
   tracing:
   - providers:
-    - name: zipkin-{{ .Values.kubeit.tenant }}
+    - name: zipkin-{{ .Values.kubeit.tenantName }}
     randomSamplingPercentage: {{ .Values.tracing.sampling }}
 {{- end }}
