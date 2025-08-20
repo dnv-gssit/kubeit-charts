@@ -66,7 +66,8 @@ If you want to contribute to the charts, please follow these steps:
 
 Below rules for bumping semantic versioning for helm charts
 Remember to not bump all at once.
-If you bump minor there is no sense to bump patch as well. Below example.
+If you bump minor there is no sense to bump patch as well. Patch will start from 0 after minor change.
+Below example.
 
 ```
 #incorrect bump
