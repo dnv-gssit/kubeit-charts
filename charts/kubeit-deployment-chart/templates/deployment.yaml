@@ -42,7 +42,7 @@ spec:
           tracing:
             sampling: {{ .Values.tracing.sampling }}
             zipkin:
-              address: collector.{{ .Values.kubeit.managementNamespace }}.svc.cluster.local:941
+              address: collector.{{ .Values.kubeit.managementNamespace }}.svc.cluster.local:9411
       {{- end }}
       {{- end }}
     spec:
