@@ -11,6 +11,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: kubeit-deployment-chart
-    version: feature/externalsecres-apiversion-check
+    version: ~2.2.0
     repository: https://dnv-gssit.github.io/kubeit-charts
     alias: deploy
