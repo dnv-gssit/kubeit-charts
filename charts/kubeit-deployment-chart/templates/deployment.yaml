@@ -113,6 +113,10 @@ spec:
           volumeMounts:
             {{- toYaml .Values.volumeMounts | nindent 12 }}
           {{- end }}
+          {{- if and (.Values.resizePolicy) (semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version) }}
+          resizePolicy:
+            {{- toYaml .Values.resizePolicy | nindent 12 }}
+          {{- end }}
         {{- if .Values.additionalContainers }}
           {{- toYaml .Values.additionalContainers | nindent 10 }}
         {{- end }}
@@ -131,8 +135,4 @@ spec:
       {{- if .Values.volumes }}
       volumes:
         {{- toYaml .Values.volumes | nindent 8 }}
-      {{- end }}
-      {{- if and (.Values.resizePolicy) (semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version) }}
-      resizePolicy:
-        {{- toYaml .Values.resizePolicy | nindent 8 }}
       {{- end }}
