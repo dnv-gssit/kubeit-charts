@@ -60,3 +60,25 @@ If you want to contribute to the charts, please follow these steps:
 4. Remember to bump chart version in `Chart.yaml` file
 5. Do PR and ask KubeIT team for review
 6. Merge after approval
+
+
+## Semantic Versioning Rules
+
+Below rules for bumping semantic versioning for helm charts
+Remember to not bump all at once.
+If you bump minor there is no sense to bump patch as well. Below example.
+
+```
+#incorrect bump
+0.1.1 -> 0.2.1
+
+#correct bump
+0.1.1 -> 0.2.0
+```
+
+
+| Type of change                                        | Release type |
+| ----------------------------------------------------- | ------------ |
+| fix, internal improvements, change default values     | Patch        |
+| Backward-compatible, new feature, dependencies change | Minor        |
+| BREAKING CHANGE                                       | Major        |
