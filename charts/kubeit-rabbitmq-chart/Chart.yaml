@@ -4,4 +4,4 @@ name: kubeit-rabbitmq-chart
 description: KubeIT RabbitMQ chart
 type: application
 version: 0.2.29
-appVersion: 0.1.0
+appVersion: 0.2.0
