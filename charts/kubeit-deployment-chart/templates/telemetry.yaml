@@ -1,0 +1,13 @@
+{{- if .Values.tracing.enabled -}}
+---
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: {{ include "services-chart.fullname" . }}-tracing
+  namespace: {{ .Values.kubeit.managementNamespace }}
+spec:
+  tracing:
+  - providers:
+    - name: zipkin-{{ .Values.kubeit.tenantName }}
+    randomSamplingPercentage: {{ .Values.tracing.sampling }}
+{{- end }}
