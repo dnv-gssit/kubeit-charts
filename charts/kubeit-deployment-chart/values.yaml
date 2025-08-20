@@ -109,6 +109,10 @@ tolerations: []
 # https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes-using-node-affinity/
 affinity: {}
 
+# Pod resize policy, supported from k8s 1.33+
+# https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/
+resizePolicy: {}
+
 # Application auto-scaling config
 # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 hpa:
@@ -259,6 +263,12 @@ externalSecrets: []
 #   refs: # list of references from Azure Keyvaults secrets as keys in K8S secret
 #     - keyName: k8s-secret-key
 #       kvSecretName: name-of-secret-in-azure-key-vault
+
+# Tracing using istio and grafana-tempo
+# https://docs.kubeit-int.dnv.com/documentation/components/monitoring/#traces-via-opentelemetry-collector-and-grafana-tempo
+tracing:
+  enabled: false
+  sampling: 10
 
 # DNV Veracity integration using Session Manager
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
