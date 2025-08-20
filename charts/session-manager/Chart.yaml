@@ -11,6 +11,6 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: kubeit-deployment-chart
-    version: ~2.2.0
+    version: ~2.1.1
     repository: https://dnv-gssit.github.io/kubeit-charts
     alias: deploy
