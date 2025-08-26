@@ -10,9 +10,11 @@ metadata:
 spec:
   image: {{ .Values.rabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
+{{- if .Values.rabbitmqCluster.defaultUserSecret }}
   secretBackend:
     externalSecret:
-      name: user-override
+      name: {{ .Values.rabbitmqCluster.defaultUserSecret }}
+{{- end }}
   resources:
     requests:
       cpu: {{ .Values.rabbitmqCluster.spec.resources.requests.cpu }}
