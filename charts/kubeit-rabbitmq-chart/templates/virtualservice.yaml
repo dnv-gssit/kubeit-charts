@@ -23,6 +23,11 @@ spec:
         host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
         port:
           number: {{ .Values.service.uiPort }}
+    timeout: 10s
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: "503,reset"
     {{- if .Values.virtualService.useCors }}
     corsPolicy:
       allowOrigins:

@@ -1,0 +1,252 @@
+---
+# Source: kubeit-rabbitmq-chart/templates/pdb.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-rabbitmq
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: release-name-tenant2
+---
+# Source: kubeit-rabbitmq-chart/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rabbitmq-sa
+  labels:
+    helm.sh/chart: kubeit-rabbitmq-chart-0.2.29
+    app.kubernetes.io/name: "release-name-tenant2"
+    app.kubernetes.io/component: rabbitmq
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    azure.workload.identity/client-id: <CLIENT_ID>
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+---
+# Source: kubeit-rabbitmq-chart/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: release-name-rabbitmq-test-spi-default-user
+  labels:
+    helm.sh/chart: kubeit-rabbitmq-chart-0.2.29
+    app.kubernetes.io/name: "release-name-tenant2"
+    app.kubernetes.io/component: rabbitmq
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: release-name-kubeit-rabbitmq-chart
+    kind: SecretStore
+  target:
+    name: rabbitmq-test-spi-default-user
+    creationPolicy: Owner
+  data:
+  - secretKey: username
+    remoteRef:
+       key: rabbitmq-user-nonprod-green
+  - secretKey: password
+    remoteRef:
+       key: rabbitmq-passwd-nonprod-green
+  - secretKey: default_user.conf
+    remoteRef:
+       key: default-test-user-creds
+---
+# Source: kubeit-rabbitmq-chart/templates/externalsecret.yaml
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: release-name-rabbitmq-tls
+  labels:
+    helm.sh/chart: kubeit-rabbitmq-chart-0.2.29
+    app.kubernetes.io/name: "release-name-tenant2"
+    app.kubernetes.io/component: rabbitmq
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: release-name-kubeit-rabbitmq-chart
+    kind: SecretStore
+  target:
+    name: rabbitmq-tls
+    creationPolicy: Owner
+    template:
+      type: kubernetes.io/tls
+      engineVersion: v2
+      data:
+        tls.crt: '{{ .data | filterPEM "CERTIFICATE" }}'
+        tls.key: '{{ .data | filterPEM "PRIVATE KEY" }}'
+  data:
+  - secretKey: data
+    remoteRef:
+       key: rabbitMQTLS
+---
+# Source: kubeit-rabbitmq-chart/templates/peerauthentication.yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: release-name-kubeit-rabbitmq-chart
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "release-name-tenant2"
+      app.kubernetes.io/component: rabbitmq
+  mtls:
+    mode: PERMISSIVE
+---
+# Source: kubeit-rabbitmq-chart/templates/rabbitmq-cluster.yaml
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: release-name-tenant2
+  labels:
+    helm.sh/chart: kubeit-rabbitmq-chart-0.2.29
+    app.kubernetes.io/name: "release-name-tenant2"
+    app.kubernetes.io/component: rabbitmq
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  image: kubeitglobalsvcauxacrwe.azurecr.io/bitnami/rabbitmq:4.1.0-debian-12-r0
+  replicas: 1
+  secretBackend:
+    externalSecret:
+      name: rabbitmq-test-spi-default-user
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+     memory: 800Mi
+     cpu: 800m
+  override:
+    service:
+      metadata:
+        labels:
+          app.kubernetes.io/name: "release-name-tenant2"
+          app.kubernetes.io/component: rabbitmq
+  rabbitmq:
+    additionalConfig: |
+      
+      log.console.level = info
+      channel_max = 1700
+      default_user_tags.administrator = true
+      vm_memory_high_watermark.absolute = 4Gi
+      
+  tls:
+    secretName: rabbitmq-tls
+  persistence:
+    storage: 2Gi
+    storageClassName: azurefile-csi
+  service:
+    type: ClusterIP
+---
+# Source: kubeit-rabbitmq-chart/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: sm-release-name-tenant2
+  labels:
+    helm.sh/chart: kubeit-rabbitmq-chart-0.2.29
+    app.kubernetes.io/name: "release-name-tenant2"
+    app.kubernetes.io/component: rabbitmq
+    app.kubernetes.io/version: "0.1.0"
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant2
+spec:
+  endpoints:
+  - port: prometheus-tls
+    scheme: https
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  - port: prometheus-tls
+    scheme: https
+    path: /metrics/detailed
+    params:
+      family:
+        - queue_coarse_metrics
+        - queue_metrics
+    interval: 5m
+    scrapeTimeout: 1m
+    tlsConfig:
+      caFile: /etc/prom-certs/root-cert.pem
+      certFile: /etc/prom-certs/cert-chain.pem
+      keyFile: /etc/prom-certs/key.pem
+      insecureSkipVerify: true
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: rabbitmq
+  namespaceSelector:
+    matchNames:
+      - default
+---
+# Source: kubeit-rabbitmq-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: release-name-kubeit-rabbitmq-chart-ui
+spec:
+  gateways:
+  - istio-system/global-internaluse-gateway
+  hosts:
+  - rabbitmq-tenant2-release-name.blue.we.dev.kubeit-int.dnv.com
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: release-name-tenant2
+        port:
+          number: 15672
+---
+# Source: kubeit-rabbitmq-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: release-name-kubeit-rabbitmq-chart-tcp
+spec:
+  gateways:
+  - istio-system/global-internaluse-gateway
+  hosts:
+  - rabbitmq-tenant2-release-name.blue.we.dev.kubeit-int.dnv.com
+  tcp:
+  - match:
+    - port: 5672
+    route:
+    - destination:
+        host: release-name-tenant2
+        port:
+          number: 5672
+---
+# Source: kubeit-rabbitmq-chart/templates/virtualservice.yaml
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: release-name-kubeit-rabbitmq-chart-amqps
+spec:
+  gateways:
+  - istio-system/global-internaluse-gateway
+  hosts:
+  - rabbitmq-tenant2-release-name.blue.we.dev.kubeit-int.dnv.com
+  tls:
+  - match:
+    - port: 5671
+      sniHosts:
+      - rabbitmq-tenant2-release-name.blue.we.dev.kubeit-int.dnv.com
+    route:
+    - destination:
+        host: release-name-tenant2
+        port:
+          number: 5671
