@@ -100,3 +100,17 @@ spec:
         port:
           number: {{ .Values.service.amqpsPort }}
 {{- end }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: rabbitmq-mgmt-tls
+spec:
+  host: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
+  trafficPolicy:
+    portLevelSettings:
+    - port:
+        number: 15671
+      tls:
+        mode: SIMPLE   # or MUTUAL if RabbitMQ requires client certs
+        sni: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
