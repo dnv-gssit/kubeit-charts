@@ -22,7 +22,7 @@ spec:
     - destination:
         host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
-          number: 15671
+          number: {{ .Values.service.uiPort }}
     timeout: 30s
     retries:
       attempts: 5
