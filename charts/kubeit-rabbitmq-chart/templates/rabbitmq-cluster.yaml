@@ -31,9 +31,12 @@ spec:
         template:
           spec:
             securityContext:
-              runAsUser: 999
+              runAsUser: 1001
+              runAsNonRoot: true
               runAsGroup: 999
               fsGroup: 999
+              fsGroupChangePolicy: OnRootMismatch
+              supplementalGroups: [0]
             containers:
               - name: rabbitmq
                 securityContext:
