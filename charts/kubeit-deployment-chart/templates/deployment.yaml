@@ -32,9 +32,18 @@ spec:
         authn-redirect: enabled
         session-manager-name: {{ .Values.sessionManager.name | trunc 63 | trimSuffix "-" }}
         {{- end }}
-      {{- with .Values.additionalPodAnnotations }}
+      {{- if or (.Values.additionalPodAnnotations) (.Values.tracing.enabled) }}
       annotations:
+      {{- with .Values.additionalPodAnnotations}}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tracing.enabled }}
+        proxy.istio.io/config: |
+          tracing:
+            sampling: {{ .Values.tracing.sampling }}
+            zipkin:
+              address: collector.{{ .Values.kubeit.managementNamespace }}.svc.cluster.local:9411
+      {{- end }}
       {{- end }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
@@ -103,6 +112,10 @@ spec:
           {{- if .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml .Values.volumeMounts | nindent 12 }}
+          {{- end }}
+          {{- if and (.Values.resizePolicy) (semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version) }}
+          resizePolicy:
+            {{- toYaml .Values.resizePolicy | nindent 12 }}
           {{- end }}
         {{- if .Values.additionalContainers }}
           {{- toYaml .Values.additionalContainers | nindent 10 }}
