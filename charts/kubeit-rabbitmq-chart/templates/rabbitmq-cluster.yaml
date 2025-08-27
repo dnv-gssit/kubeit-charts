@@ -44,7 +44,6 @@ spec:
                   allowPrivilegeEscalation: false
                   privileged: false
                   runAsUser: 1001
-                  fsGroup: 1001
                 volumeMounts:
                   - mountPath: /bitnami/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
@@ -54,7 +53,6 @@ spec:
                   allowPrivilegeEscalation: false
                   privileged: false
                   runAsUser: 1001
-                  fsGroup: 1001
                 volumeMounts:
                   - mountPath: /bitnami/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
