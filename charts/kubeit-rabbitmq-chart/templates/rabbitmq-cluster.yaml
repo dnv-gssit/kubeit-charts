@@ -36,7 +36,6 @@ spec:
               runAsUser: 1001
               runAsNonRoot: true
               runAsGroup: 1001
-              fsGroup: 1001
               fsGroupChangePolicy: OnRootMismatch
             containers:
               - name: rabbitmq
