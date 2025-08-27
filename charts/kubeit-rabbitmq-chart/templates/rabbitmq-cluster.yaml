@@ -99,8 +99,12 @@ spec:
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
       cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
       cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
+      cluster_formation.k8s.hostname_suffix = .rabbitmq-test-spi-nodes.spi-test-rabbitmq
       cluster_formation.node_cleanup.interval = 30
       cluster_formation.node_cleanup.only_log_warning = true
+      cluster_formation.target_cluster_size_hint = {{ .Values.rabbitmqCluster.spec.replicas }}
+      cluster_formation.randomized_startup_delay_range.min = 5
+      cluster_formation.randomized_startup_delay_range.max = 60
       cluster_partition_handling = pause_minority
       mnesia_table_loading_retry_timeout = 30000
       mnesia_table_loading_retry_limit = 10
