@@ -53,7 +53,7 @@ spec:
                   allowPrivilegeEscalation: false
                   privileged: false
                 volumeMounts:
-                  - mountPath: /bitnami/rabbitmq/mnesia/
+                  - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
               - command: ['sh', '-c', 'chown -R 999:999 /var/lib/rabbitmq/mnesia && chmod g+ws /var/lib/rabbitmq/mnesia']
@@ -100,7 +100,6 @@ spec:
       cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
       cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
       cluster_formation.k8s.hostname_suffix = .rabbitmq-test-spi-nodes.spi-test-rabbitmq
-      cluster_formation.k8s.service_name = {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}-nodes
       cluster_formation.node_cleanup.interval = 30
       cluster_formation.node_cleanup.only_log_warning = true
       cluster_formation.target_cluster_size_hint = {{ .Values.rabbitmqCluster.spec.replicas }}
@@ -108,7 +107,7 @@ spec:
       cluster_partition_handling = pause_minority
       mnesia_table_loading_retry_timeout = 30000
       mnesia_table_loading_retry_limit = 10
-      disk_free_limit.absolute = 2GB
+      queue_master_locator = min-masters
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
       {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}
