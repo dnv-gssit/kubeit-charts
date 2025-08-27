@@ -110,7 +110,7 @@ spec:
   trafficPolicy:
     portLevelSettings:
     - port:
-        number: 15671
+        number: 15672
       tls:
         mode: SIMPLE   # or MUTUAL if RabbitMQ requires client certs
         sni: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
