@@ -14,7 +14,7 @@ spec:
   {{- else }}
   - {{ include "internaldns.host" . }}
   {{- end }}
-  https:
+  http:
   - match:
     - uri:
         prefix: /
