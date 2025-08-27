@@ -56,7 +56,7 @@ spec:
                   - mountPath: /bitnami/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
-              - command: ['sh', '-c', 'chown -R 1001:1001 /bitnami/rabbitmq/mnesia && chmod -R 755 /bitnami/rabbitmq/mnesia']
+              - command: ['sh', '-c', 'chown -R 999:999 /var/lib/rabbitmq/mnesia && chmod g+ws /var/lib/rabbitmq/mnesia']
                 image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
                 imagePullPolicy: IfNotPresent
                 name: setup-fix-permissions
@@ -70,14 +70,14 @@ spec:
                   limits:
                     memory: 100Mi
                 volumeMounts:
-                  - mountPath: /bitnami/rabbitmq/mnesia/
+                  - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
               - name: setup-container
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
                 volumeMounts:
-                  - mountPath: /bitnami/rabbitmq/mnesia/
+                  - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
         volumeClaimTemplates:
           - apiVersion: v1
@@ -108,7 +108,6 @@ spec:
       cluster_partition_handling = pause_minority
       mnesia_table_loading_retry_timeout = 30000
       mnesia_table_loading_retry_limit = 10
-      mnesia_schema_recovery = force
       disk_free_limit.absolute = 2GB
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
