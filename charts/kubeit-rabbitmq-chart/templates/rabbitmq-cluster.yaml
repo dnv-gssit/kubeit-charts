@@ -48,6 +48,12 @@ spec:
                 image: busybox:latest
                 imagePullPolicy: IfNotPresent
                 name: setup-fix-permissions
+                resources:
+                  requests:
+                    cpu: 100m
+                    memory: 128Mi
+                  limits:
+                    memory: 300Mi
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
