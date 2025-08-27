@@ -33,17 +33,18 @@ spec:
         template:
           spec:
             securityContext:
-              runAsUser: 1001
+              runAsUser: 999
               runAsNonRoot: true
               runAsGroup: 999
               fsGroup: 999
               fsGroupChangePolicy: OnRootMismatch
-              supplementalGroups: [0]
             containers:
               - name: rabbitmq
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
+                  runAsUser: 999
+                  fsGroup: 999
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
@@ -52,6 +53,8 @@ spec:
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
+                  runAsUser: 999
+                  fsGroup: 999
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
