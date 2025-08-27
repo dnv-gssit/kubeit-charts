@@ -22,7 +22,7 @@ spec:
     - destination:
         host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
-          number: {{ .Values.service.uiPort }}
+          number: 15671
     timeout: 30s
     retries:
       attempts: 5
@@ -110,7 +110,7 @@ spec:
   trafficPolicy:
     portLevelSettings:
     - port:
-        number: 15672
+        number: 15671
       tls:
         mode: SIMPLE   # or MUTUAL if RabbitMQ requires client certs
         sni: rabbitmq-test-spi.spi-test-rabbitmq.svc.cluster.local
