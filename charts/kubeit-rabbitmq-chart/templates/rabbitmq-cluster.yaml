@@ -45,7 +45,7 @@ spec:
                   privileged: false
                   runAsUser: 1001
                 volumeMounts:
-                  - mountPath: /bitnami/rabbitmq/mnesia/
+                  - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
               - name: setup-container
@@ -54,7 +54,7 @@ spec:
                   privileged: false
                   runAsUser: 1001
                 volumeMounts:
-                  - mountPath: /bitnami/rabbitmq/mnesia/
+                  - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
         volumeClaimTemplates:
           - apiVersion: v1
