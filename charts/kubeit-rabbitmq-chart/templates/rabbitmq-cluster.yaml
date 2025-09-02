@@ -32,10 +32,10 @@ spec:
         template:
           spec:
             securityContext:
-              runAsUser: 999
+              runAsUser: 1001
               runAsNonRoot: true
-              runAsGroup: 999
-              fsGroup: 999
+              runAsGroup: 1001
+              fsGroup: 1001
               fsGroupChangePolicy: "OnRootMismatch"
             containers:
               - name: rabbitmq
@@ -46,7 +46,7 @@ spec:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
-              - command: ['sh', '-c', 'chown -R 999:999 /var/lib/rabbitmq/mnesia && chmod g+ws /var/lib/rabbitmq/mnesia']
+              - command: ['sh', '-c', 'chown -R 1001:1001 /var/lib/rabbitmq/mnesia && chmod g+ws /var/lib/rabbitmq/mnesia']
                 image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
                 imagePullPolicy: IfNotPresent
                 name: setup-fix-permissions
