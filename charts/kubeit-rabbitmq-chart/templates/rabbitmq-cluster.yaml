@@ -107,9 +107,7 @@ spec:
       cluster_formation.target_cluster_size_hint = {{ .Values.rabbitmqCluster.spec.replicas }}
       cluster_formation.internal_lock_retries = 30
       cluster_partition_handling = pause_minority
-      mnesia_table_loading_retry_timeout = 30000
-      mnesia_table_loading_retry_limit = 10
-      queue_master_locator = min-masters
+      queue_master_locator = balanced
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
       {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}
