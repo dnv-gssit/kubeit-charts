@@ -106,7 +106,7 @@ spec:
       cluster_formation.node_cleanup.only_log_warning = true
       cluster_formation.target_cluster_size_hint = {{ .Values.rabbitmqCluster.spec.replicas }}
       cluster_formation.internal_lock_retries = 30
-      cluster_partition_handling = pause_minority
+      cluster_partition_handling = autoheal
       queue_master_locator = balanced
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
