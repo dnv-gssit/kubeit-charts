@@ -31,18 +31,6 @@ spec:
       spec:
         template:
           spec:
-            affinity:
-              podAntiAffinity:
-                preferredDuringSchedulingIgnoredDuringExecution:
-                - weight: 100
-                  podAffinityTerm:
-                    labelSelector:
-                      matchExpressions:
-                      - key: app.kubernetes.io/name
-                        operator: In
-                        values:
-                        - rabbitmq
-                    topologyKey: kubernetes.io/hostname
             securityContext:
               runAsUser: 1001
               runAsNonRoot: true
@@ -58,22 +46,22 @@ spec:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
-              - command: ['sh', '-c', 'chown -R 1001:1001 /var/lib/rabbitmq/mnesia']
-                image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
-                imagePullPolicy: IfNotPresent
-                name: setup-fix-permissions
-                securityContext:
-                  runAsUser: 0
-                  runAsNonRoot: false
-                resources:
-                  requests:
-                    cpu: 100m
-                    memory: 50Mi
-                  limits:
-                    memory: 100Mi
-                volumeMounts:
-                  - mountPath: /var/lib/rabbitmq/mnesia/
-                    name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+              # - command: ['sh', '-c', 'chown -R 1001:1001 /var/lib/rabbitmq/mnesia']
+              #   image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
+              #   imagePullPolicy: IfNotPresent
+              #   name: setup-fix-permissions
+              #   securityContext:
+              #     runAsUser: 0
+              #     runAsNonRoot: false
+              #   resources:
+              #     requests:
+              #       cpu: 100m
+              #       memory: 50Mi
+              #     limits:
+              #       memory: 100Mi
+              #   volumeMounts:
+              #     - mountPath: /var/lib/rabbitmq/mnesia/
+              #       name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
               - name: setup-container
                 securityContext:
                   allowPrivilegeEscalation: false
