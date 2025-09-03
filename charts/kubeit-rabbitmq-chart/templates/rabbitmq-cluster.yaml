@@ -42,7 +42,6 @@ spec:
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
-                terminationGracePeriodSeconds: 60
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
