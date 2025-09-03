@@ -46,7 +46,7 @@ spec:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
-              - command: ['sh', '-c', 'dir="/opt/bitnami/rabbitmq/etc/rabbitmq && hown -R 999:999 "$dir" && chmod -R u+rwX,g+rwX "$dir']
+              - command: ['sh', '-c', 'dir="/opt/bitnami/rabbitmq/etc/rabbitmq && chown -R 999:999 "$dir" && chmod -R u+rwX,g+rwX "$dir']
                 image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
                 imagePullPolicy: IfNotPresent
                 name: setup-fix-permissions
