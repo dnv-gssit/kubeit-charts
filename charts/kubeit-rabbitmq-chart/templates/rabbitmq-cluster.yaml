@@ -46,7 +46,7 @@ spec:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
             initContainers:
-              - command: ['sh', '-c', 'chown -R 999:999 /var/lib/rabbitmq/mnesia && chmod -R 755 /var/lib/rabbitmq/mnesia']
+              - command: ['sh', '-c', 'if [ ! -d /var/lib/rabbitmq/mnesia ]; then mkdir -p /var/lib/rabbitmq/mnesia; fi && chown 999:999 /var/lib/rabbitmq/mnesia && chmod 755 /var/lib/rabbitmq/mnesia']
                 image: kubeitglobalsvcauxacrwe.azurecr.io/library/busybox:latest
                 imagePullPolicy: IfNotPresent
                 name: setup-fix-permissions
@@ -55,10 +55,10 @@ spec:
                   runAsNonRoot: false
                 resources:
                   requests:
-                    cpu: 100m
-                    memory: 50Mi
+                    cpu: 50m
+                    memory: 32Mi
                   limits:
-                    memory: 100Mi
+                    memory: 50Mi
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
