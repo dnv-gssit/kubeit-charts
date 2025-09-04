@@ -11,7 +11,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 8080
       targetPort: http
       protocol: TCP
       name: http
@@ -46,21 +46,28 @@ spec:
         some-annotation: some-value
     spec:
       securityContext:
+        runAsGroup: 3000
         runAsNonRoot: true
+        runAsUser: 1000
         seccompProfile:
           type: RuntimeDefault
       terminationGracePeriodSeconds: 30
       containers:
         - name: test
-          image: nginx:latest
+          image: nginxinc/nginx-unprivileged:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
           securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
             fsGroup: 2000
             runAsGroup: 3000
+            runAsNonRoot: true
             runAsUser: 1000
           resources:
             limits:
@@ -83,7 +90,7 @@ spec:
               - name: Custom-Header
                 value: Awesome
               path: /healthz
-              port: 8080
+              port: 808080
             initialDelaySeconds: 3
             periodSeconds: 3
       nodeSelector:
