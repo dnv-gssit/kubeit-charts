@@ -3,7 +3,7 @@
 image:
   # registry and repository, example: myacr.azurecr.io/repository/imagename
   # align naming for ArgoCD image updater
-  name: nginx
+  name: nginxinc/nginx-unprivileged
   # image tag
   tag: ""
   # https://kubernetes.io/docs/concepts/containers/images/#updating-images
@@ -57,22 +57,22 @@ terminationGracePeriodSeconds: 30
 
 # Pod security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-podSecurityContext: 
+podSecurityContext:
+  runAsUser: 101
+  runAsGroup: 101
   runAsNonRoot: true
-  runAsUser: 1001
-  runAsGroup: 1001
 
 # The main container security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-securityContext: 
-  readOnlyRootFilesystem: true 
+securityContext:
+  runAsUser: 101
+  runAsGroup: 101
   runAsNonRoot: true
-  runAsUser: 1001
-  runAsGroup: 1001
   allowPrivilegeEscalation: false
   capabilities:
     drop:
       - ALL
+
 # Entrypoint command for the main container
 # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
 command: []
@@ -157,9 +157,9 @@ service:
   # https://docs.kubeit-int.dnv.com/documentation/components/networking/#f5-tcp-virtualservers
   type: ClusterIP
   # container port for the main container
-  containerPort: 80
+  containerPort: 8080
   # service port
-  port: 80
+  port: 8080
   # annotations for service
   annotations: {}
   # additional labels for service

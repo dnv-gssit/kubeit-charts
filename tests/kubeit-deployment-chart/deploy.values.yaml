@@ -23,11 +23,18 @@ envsFrom:
       name: my-secret
 
 securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
+  runAsNonRoot: true
 
 podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
   runAsNonRoot: true
   seccompProfile:
     type: RuntimeDefault
@@ -36,7 +43,7 @@ health:
   livenessProbe:
     httpGet:
       path: /healthz
-      port: 8080
+      port: 808080
       httpHeaders:
         - name: Custom-Header
           value: Awesome
