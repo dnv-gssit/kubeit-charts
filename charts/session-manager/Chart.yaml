@@ -4,13 +4,13 @@ name: session-manager
 description: DNV session manager chart
 type: application
 appVersion: 2.0.0
-version: 1.1.0
+version: 1.2.0
 dependencies:
   - name: redis
     version: ~21.2.9
     repository: https://charts.bitnami.com/bitnami
     condition: redis.enabled
   - name: kubeit-deployment-chart
-    version: ~2.2.0
+    version: ~2.2.1
     repository: https://dnv-gssit.github.io/kubeit-charts
     alias: deploy
