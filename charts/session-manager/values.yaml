@@ -104,6 +104,12 @@ deploy:
     - name: REPLY_URL_SUFFIX
       value: veracity
 
+
+  podSecurityContext:
+    runAsUser: 1654
+    runAsGroup: 1654
+    runAsNonRoot: true
+
   securityContext:
     allowPrivilegeEscalation: false
     capabilities:
