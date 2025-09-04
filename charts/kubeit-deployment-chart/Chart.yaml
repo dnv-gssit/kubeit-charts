@@ -3,4 +3,4 @@ apiVersion: v2
 name: kubeit-deployment-chart
 description: KubeIT service deployment chart
 type: application
-version: 2.2.0
+version: 2.2.1-security

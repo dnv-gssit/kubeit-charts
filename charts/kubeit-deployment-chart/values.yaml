@@ -57,12 +57,22 @@ terminationGracePeriodSeconds: 30
 
 # Pod security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-podSecurityContext: {}
+podSecurityContext: 
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
 
 # The main container security context
 # https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-securityContext: {}
-
+securityContext: 
+  readOnlyRootFilesystem: true 
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
 # Entrypoint command for the main container
 # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
 command: []
