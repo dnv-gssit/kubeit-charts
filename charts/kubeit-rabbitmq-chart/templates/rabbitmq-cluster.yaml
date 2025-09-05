@@ -38,10 +38,10 @@ spec:
               capabilities:
                 drop:
                   - ALL
-              add:
-                - CHOWN
-                - SETGID
-                - SETUID
+                add:
+                  - CHOWN
+                  - SETGID
+                  - SETUID
             containers:
               - name: rabbitmq
                 securityContext:
