@@ -78,12 +78,12 @@ spec:
                     - CHOWN
                     - SETGID
                     - SETUID
-                  resources:
-                    requests:
-                      cpu: 50m
-                      memory: 32Mi
-                    limits:
-                      memory: 50Mi
+                resources:
+                  requests:
+                    cpu: 50m
+                    memory: 32Mi
+                  limits:
+                    memory: 50Mi
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
