@@ -1,4 +1,4 @@
-
+---
 apiVersion: rabbitmq.com/v1beta1
 kind: RabbitmqCluster
 metadata:
@@ -36,14 +36,18 @@ spec:
               runAsUser: 1001
               runAsNonRoot: true
               runAsGroup: 999
-              fsGroup: 999
-              fsGroupChangePolicy: OnRootMismatch
-              supplementalGroups: [0]
             containers:
               - name: rabbitmq
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
+                  capabilities:
+                    drop:
+                    - ALL
+                    add:
+                    - CHOWN
+                    - SETGID
+                    - SETUID
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
@@ -52,6 +56,20 @@ spec:
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
+                  runAsNonRoot: true
+                  capabilities:
+                    drop:
+                    - ALL
+                    add:
+                    - CHOWN
+                    - SETGID
+                    - SETUID
+                resources:
+                  requests:
+                    cpu: 20m
+                    memory: 32Mi
+                  limits:
+                    memory: 50Mi
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
@@ -73,6 +91,8 @@ spec:
   rabbitmq:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
+      cluster_formation.peer_discovery_backend = rabbit_peer_discovery_k8s
+      cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
     {{- if .Values.rabbitmqCluster.advancedConfig }}
     advancedConfig: |
       {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}

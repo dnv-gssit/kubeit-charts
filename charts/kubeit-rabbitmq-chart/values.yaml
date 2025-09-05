@@ -53,10 +53,10 @@ persistentVolume:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Delete
   mountOptions:
-    - dir_mode=0777
-    - file_mode=0777
-    - uid=0
-    - gid=0
+    - dir_mode=0770
+    - file_mode=0660
+    - uid=1001
+    - gid=999
     - mfsymlinks
     - cache=strict
     - nosharesock

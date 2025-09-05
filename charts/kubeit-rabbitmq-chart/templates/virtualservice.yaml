@@ -20,14 +20,14 @@ spec:
         prefix: /
     route:
     - destination:
-        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: {{ .Values.service.uiPort }}
-    timeout: 10s
+    timeout: 30s
     retries:
-      attempts: 3
-      perTryTimeout: 5s
-      retryOn: "503,reset"
+      attempts: 5
+      perTryTimeout: 10s
+      retryOn: "503,504,reset,connect-failure,refused-stream"
     {{- if .Values.virtualService.useCors }}
     corsPolicy:
       allowOrigins:
@@ -68,7 +68,7 @@ spec:
     - port: {{ .Values.service.tcpPort }}
     route:
     - destination:
-        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: {{ .Values.service.tcpPort }}
 ---
@@ -96,7 +96,7 @@ spec:
       {{- end }}
     route:
     - destination:
-        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}
+        host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
         port:
           number: {{ .Values.service.amqpsPort }}
 {{- end }}
