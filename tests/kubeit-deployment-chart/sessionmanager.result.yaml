@@ -12,7 +12,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 80
+    - port: 8080
       targetPort: http
       protocol: TCP
       name: http
@@ -46,15 +46,27 @@ spec:
         session-management: backend
         session-manager-name: test
     spec:
+      securityContext:
+        runAsGroup: 101
+        runAsNonRoot: true
+        runAsUser: 101
       terminationGracePeriodSeconds: 30
       containers:
         - name: test
-          image: nginx:latest
+          image: nginxinc/nginx-unprivileged:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
           resources:
             limits:
               memory: 64Mi
@@ -111,7 +123,7 @@ spec:
         - destination:
             host: test.default.svc.cluster.local
             port:
-              number: 80
+              number: 8080
 ---
 # Source: kubeit-deployment-chart/templates/virtualservice.yaml
 ---

@@ -30,13 +30,13 @@ To add test, create files in the `tests/<chart_name>` directory of the chart wit
 To test all the chart, you can use the following command:
 
 ```bash
-./run-tests.sh
+./run-tests.py
 ```
 
 To test a specific chart, you can use the following command:
 
 ```bash
-./run-tests.sh --charts=kubeit-deployment-chart
+./run-tests.py --charts=kubeit-deployment-chart
 ```
 
 More charts could be selected by using the `--charts` option. You can specify multiple charts by separating them with commas.
@@ -44,7 +44,7 @@ More charts could be selected by using the `--charts` option. You can specify mu
 To run a specific test, you can use the following command:
 
 ```bash
-./run-tests.sh --charts=kubeit-deployment-chart --tests=test1
+./run-tests.py --charts=kubeit-deployment-chart --tests=test1
 ```
 
 More tests could be selected by using the `--tests` option. You can specify multiple tests by separating them with commas.
@@ -56,7 +56,7 @@ If many charts and tests are selected, the script will run selected tests for ea
 If you want to contribute to the charts, please follow these steps:
 1. Do changes locally
 2. Run `pre-commit run -a -v`
-3. Add or modify tests and run `./run-tests.sh` to ensure everything works as expected
+3. Add or modify tests and run `./run-tests.py` to ensure everything works as expected
 4. Remember to bump chart version in `Chart.yaml` file
 5. Do PR and ask KubeIT team for review
 6. Merge after approval
