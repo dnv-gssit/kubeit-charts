@@ -55,7 +55,7 @@ persistentVolume:
   mountOptions:
     - dir_mode=0770
     - file_mode=0660
-    - uid=999
+    - uid=1001
     - gid=999
     - mfsymlinks
     - cache=strict
