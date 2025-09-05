@@ -80,7 +80,7 @@ spec:
                     - SETUID
                 resources:
                   requests:
-                    cpu: 50m
+                    cpu: 20m
                     memory: 32Mi
                   limits:
                     memory: 50Mi
