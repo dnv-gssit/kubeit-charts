@@ -37,11 +37,11 @@ spec:
               runAsGroup: 999
               capabilities:
                 drop:
-                  - ALL
+                - ALL
                 add:
-                  - CHOWN
-                  - SETGID
-                  - SETUID
+                - CHOWN
+                - SETGID
+                - SETUID
             containers:
               - name: rabbitmq
                 securityContext:
