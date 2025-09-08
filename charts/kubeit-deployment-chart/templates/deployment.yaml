@@ -118,7 +118,7 @@ spec:
             {{- toYaml .Values.resizePolicy | nindent 12 }}
           {{- end }}
         {{- if .Values.additionalContainers }}
-          {{- toYaml .Values.additionalContainers | nindent 10 }}
+          {{- toYaml .Values.additionalContainers | nindent 8 }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
