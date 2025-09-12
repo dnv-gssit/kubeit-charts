@@ -66,6 +66,12 @@
 #      path: charts/kubeit-deployment-chart
 #    values:
 #      # values to service chart
+#    # optional - syncOptions to be used by ArgoCD Application. Leave unset to use defaults.
+#    syncOptions:
+#      - Validate=true
+#      - CreateNamespace=false
+#      - PrunePropagationPolicy=foreground
+#      - PruneLast=false
 applications: []
 
 # default service chart
