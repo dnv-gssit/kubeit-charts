@@ -92,9 +92,13 @@ spec:
         maxDuration: 1m
       limit: 2
     syncOptions:
-    - Validate=true
-    - CreateNamespace=false
-    - PrunePropagationPolicy=foreground
-    - PruneLast=false
+      {{- if $app.syncOptions }}
+      {{- $app.syncOptions | toYaml | nindent 6 }}
+      {{- else }}
+      - Validate=true
+      - CreateNamespace=false
+      - PrunePropagationPolicy=foreground
+      - PruneLast=false
+      {{- end }}
 ---
 {{- end }}
