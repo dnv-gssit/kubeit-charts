@@ -90,3 +90,16 @@ Using an in-built Storage Class to provision a volume will auto-create the Stora
             duration: 5s
             factor: 2
             maxDuration: 1m
+
+## TLS Cert
+
+Create a TLS cert on Azure Key vault  to encrypt  traffice between client and RabbitMQ cluster.
+
+It must be in PEM format
+The certificate's SAN must contain:
+
+- `*.<RabbitMQ cluster name>-nodes.<namespace>.svc.<K8s cluster domain name>`
+- `<RabbitMQ cluster name>.<namespace>.svc.<K8s cluster domain name>`
+
+The Subject should be `CN=<host-of-rabbitmq-cluster>` For example. `CN=rabbitmq-tenant2-rabbitmq-prod.<colour>.<region>.kubeit-int.dnv.com`
+Ref: https://www.rabbitmq.com/kubernetes/operator/using-operator#one-way-tls
