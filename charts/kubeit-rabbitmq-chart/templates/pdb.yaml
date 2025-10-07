@@ -4,7 +4,7 @@ kind: PodDisruptionBudget
 metadata:
   name: pdb-rabbitmq
 spec:
-  maxUnavailable: 1
+  minAvailable: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
