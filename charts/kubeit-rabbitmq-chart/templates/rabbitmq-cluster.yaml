@@ -103,6 +103,7 @@ spec:
       - {{ . }}
     {{- end }}
     {{- end }}
+  terminationGracePeriodSeconds: 60
   {{- if .Values.rabbitmqCluster.tls.enabled }}
   tls:
     secretName: {{ .Values.rabbitmqCluster.tls.secretName }}
