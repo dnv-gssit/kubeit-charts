@@ -31,7 +31,7 @@ rabbitmqCluster:
 
   advancedConfig: ""
 
-  defaultUserSecret: rabbitmq-test-spi-default-user
+  defaultUserSecret: rabbitmq-test-default-user
 
   additionalPlugins: []
   tls:
@@ -157,7 +157,7 @@ externalSecrets:
       key: password
     - azureSecretName: default-test-user-creds
       key: default_user.conf
-    name: rabbitmq-test-spi-default-user
+    name: rabbitmq-test-default-user
   # Must have TLS enabled on rabbitmq server. Create TLS secret from Azure Key Vault certificate to encrypt traffic between client and RabbitMQ cluster
   # - data:
   #   - azureSecretName: rabbitMQTLS
