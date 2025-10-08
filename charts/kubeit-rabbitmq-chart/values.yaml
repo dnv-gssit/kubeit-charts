@@ -98,6 +98,10 @@ users: []
   #   # Create external secret via KeyVault
   #   userK8sSecretName: admin-user-creds
 
+pdb:
+  create: false
+  minAvailable: 1
+
 service:
   create: true
   type: ClusterIP
