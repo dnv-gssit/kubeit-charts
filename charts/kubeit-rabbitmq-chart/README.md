@@ -93,7 +93,7 @@ Using an in-built Storage Class to provision a volume will auto-create the Stora
 
 ## TLS Cert
 
-Create a TLS cert on Azure Key vault  to encrypt  traffice between client and RabbitMQ cluster.
+Create a TLS cert on Azure Key vault  to encrypt  traffic between client and RabbitMQ cluster.
 
 It must be in PEM format
 The certificate's SAN must contain:
