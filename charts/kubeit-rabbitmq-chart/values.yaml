@@ -35,7 +35,7 @@ rabbitmqCluster:
 
   additionalPlugins: []
   tls:
-    enabled: true
+    enabled: false
     secretName: rabbitmq-tls
 
 # it should be optionally to use external Azure File Share
@@ -158,8 +158,9 @@ externalSecrets:
     - azureSecretName: default-test-user-creds
       key: default_user.conf
     name: rabbitmq-test-spi-default-user
-  - data:
-    - azureSecretName: rabbitMQTLS
-      key: data
-    name: rabbitmq-tls
-    type: certificate
+  # Must have TLS enabled on rabbitmq server. Create TLS secret from Azure Key Vault certificate to encrypt traffic between client and RabbitMQ cluster
+  # - data:
+  #   - azureSecretName: rabbitMQTLS
+  #     key: data
+  #   name: rabbitmq-tls
+  #   type: certificate
