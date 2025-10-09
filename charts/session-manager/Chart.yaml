@@ -4,7 +4,7 @@ name: session-manager
 description: DNV session manager chart
 type: application
 appVersion: 2.0.0
-version: 1.2.0
+version: 1.2.1
 dependencies:
   - name: redis
     version: ~21.2.9

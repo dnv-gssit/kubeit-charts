@@ -144,6 +144,8 @@ redis:
       allowInsecureImages: true
   architecture: standalone
   master:
+    pdb:
+      create: false
     persistence:
       enabled: false
     resources:
