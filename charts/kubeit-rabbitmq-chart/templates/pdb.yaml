@@ -1,5 +1,6 @@
 ---
 {{- if .Values.pdb.create }}
+{{- if ge .Values.rabbitmqCluster.spec.replicas 2 }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -9,4 +10,5 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- end }}
