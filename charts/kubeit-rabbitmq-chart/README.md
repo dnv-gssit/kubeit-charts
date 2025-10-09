@@ -103,3 +103,19 @@ The certificate's SAN must contain:
 
 The Subject should be `CN=<host-of-rabbitmq-cluster>` For example. `CN=rabbitmq-tenant2-rabbitmq-prod.<colour>.<region>.kubeit-int.dnv.com`
 Ref: https://www.rabbitmq.com/kubernetes/operator/using-operator#one-way-tls
+
+## Rabbitmq Default User Credentials
+
+When trying to store the default user credentials in Azure KV. KV does not support multi-line secret directly from portal.
+You must store the secret contents in a .txt file like this:
+
+secretfile.txt
+```
+default_user=admin
+default_pass=admin
+```
+
+Create the secret via Azure CLI:
+```
+az keyvault secret set --vault-name "<your-keyvault-name>" --name "default-test-user-creds" --file "secretfile.txt"
+```
