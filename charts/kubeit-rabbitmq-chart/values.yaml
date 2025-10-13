@@ -3,7 +3,10 @@
 tenantName: tenant2
 component: rabbitmq
 rabbitmqCluster:
-  image: kubeitglobalsvcauxacrwe.azurecr.io/bitnami/rabbitmq:4.1.0-debian-12-r0
+  image: kubeitglobalsvcauxacrwe.azurecr.io/library/rabbitmq:4.1-management
+  global:
+    security:
+      allowInsecureImages: true
   metadata:
   # name of the RabbitMQ cluster
     name: testmq-tenant
