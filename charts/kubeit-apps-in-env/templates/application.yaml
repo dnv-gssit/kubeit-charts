@@ -28,7 +28,7 @@ metadata:
   {{- if hasKey $app "annotations" }}
   annotations:
     {{- with $app.annotations }}
-    {{- toYaml . | indent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- else }}
   {{- if $app.useArgoCDimageUpdater }}
