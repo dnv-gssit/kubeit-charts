@@ -31,7 +31,7 @@ jobs:
               echo "Updating dependencies for $chart"
               helm dependency update "$chart"
             fi
-         done
+          done
 
       - uses: pre-commit/action@v3.0.1
 
