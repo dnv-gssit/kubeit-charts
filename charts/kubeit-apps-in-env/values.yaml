@@ -76,6 +76,6 @@ applications: []
 
 # default service chart
 serviceChart:
-  repoURL: https://dnvgl.github.io/service-mesh-chart
-  targetRevision: 1.4.0
-  chart: platform-service
+  repoURL: https://dnv-gssit.github.io/kubeit-charts
+  targetRevision: 2.2.2
+  chart: kubeit-deployment-chart

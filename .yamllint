@@ -15,3 +15,4 @@ rules:
   indentation:
     spaces: consistent
     indent-sequences: whatever
+  comments-indentation: disable
