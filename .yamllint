@@ -3,6 +3,7 @@ extends: default
 
 ignore: |
   charts/*
+  chart-fix/*
 
 rules:
   line-length: disable

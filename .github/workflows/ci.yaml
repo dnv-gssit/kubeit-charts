@@ -26,7 +26,7 @@ jobs:
 
       - name: Update dependencies for each chart
         run: |
-          for chart in charts/*; do
+          for chart in chart-fix/*; do
             if [ -f "$chart/Chart.yaml" ]; then
               echo "Updating dependencies for $chart"
               helm dependency update "$chart"
