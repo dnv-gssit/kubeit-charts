@@ -1,0 +1,68 @@
+
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: {{ printf "%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
+  image: {{ .Values.rabbitmqCluster.spec.image }}
+  resources:
+    requests:
+      cpu: {{ .Values.rabbitmqCluster.spec.resources.requests.cpu }}
+      memory: {{ .Values.rabbitmqCluster.spec.resources.requests.memory }}
+    limits:
+     memory: {{ .Values.rabbitmqCluster.spec.resources.limits.memory }}
+  override:
+    service:
+      metadata:
+        labels:
+          {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
+{{- if .Values.persistentVolume.external }}
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+                securityContext:
+                  allowPrivilegeEscalation: false
+            initContainers:
+              - name: setup-container
+                volumeMounts:
+                  - mountPath: /var/lib/rabbitmq/mnesia/
+                    name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+                securityContext:
+                  allowPrivilegeEscalation: false
+        volumeClaimTemplates:
+          - apiVersion: v1
+            kind: PersistentVolumeClaim
+            spec:
+              accessModes:
+                {{- range .Values.persistentVolume.accessModes }}
+                - {{ . }}
+                {{- end }}
+              storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
+              volumeName: {{ printf "pv-%s-%s" .Release.Name .Values.tenantName | trunc 63 | trimSuffix "-" }}
+              resources:
+                requests:
+                  storage: {{ .Values.persistentVolume.capacity.storage }}
+            metadata:
+              name: persistence-testmq
+{{- end }}
+  rabbitmq:
+    additionalConfig: |
+      {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
+    {{- if .Values.rabbitmqCluster.advancedConfig }}
+    advancedConfig: |
+      {{ .Values.rabbitmqCluster.advancedConfig | nindent 6 }}
+    {{- end }}
+  persistence:
+    storage: {{ .Values.persistentVolume.capacity.storage }}
+    storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
+  service:
+    type: {{ .Values.service.type }}

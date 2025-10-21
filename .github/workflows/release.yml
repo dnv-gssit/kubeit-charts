@@ -28,7 +28,7 @@ jobs:
 
       - name: Update dependencies for each chart
         run: |
-          for chart in charts/*; do
+          for chart in chart-fix/*; do
             if [ -f "$chart/Chart.yaml" ]; then
               echo "Updating dependencies for $chart"
               helm dependency update "$chart"
@@ -43,7 +43,7 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         with:
-          charts_dir: charts
+          charts_dir: chart-fix
           config: cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
