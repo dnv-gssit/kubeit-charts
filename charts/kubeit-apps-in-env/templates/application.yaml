@@ -100,5 +100,8 @@ spec:
       - PrunePropagationPolicy=foreground
       - PruneLast=false
       {{- end }}
+  {{- if $app.ignoreDifferences }}
+  {{- $app.ignoreDifferences | toYaml | nindent 4 }}
+  {{- end }}
 ---
 {{- end }}
