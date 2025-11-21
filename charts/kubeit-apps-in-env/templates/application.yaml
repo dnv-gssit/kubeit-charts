@@ -102,6 +102,6 @@ spec:
       {{- end }}
   {{- if $app.ignoreDifferences }}
   {{- $app.ignoreDifferences | toYaml | nindent 4 }}
-  {{ - end }}
+  {{- end }}
 ---
 {{- end }}
