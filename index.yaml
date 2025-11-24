@@ -315,6 +315,15 @@ entries:
     version: 0.1.0
   kubeit-apps-in-env:
   - apiVersion: v2
+    created: "2025-11-24T12:32:41.681343622Z"
+    description: Deployment applications in one logical environment
+    digest: b0545da2040b88420782eb7fc06d91aa58146eb9671861e90307afe593c77566
+    name: kubeit-apps-in-env
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-apps-in-env-1.0.5/kubeit-apps-in-env-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
     created: "2025-11-21T14:52:06.917950535Z"
     description: Deployment applications in one logical environment
     digest: f74b5034e465bc70b8333ccc166ea2608cd4451e9aa5e74cab7840d104a73058
@@ -1502,4 +1511,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
     version: 0.0.1
-generated: "2025-11-21T14:54:54.171497064Z"
+generated: "2025-11-24T12:32:41.681719708Z"
