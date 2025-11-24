@@ -3,4 +3,4 @@ apiVersion: v2
 name: kubeit-logical-envs
 description: Deployment tenant's all logical envs
 type: library
-version: 1.0.4
+version: 1.0.5
