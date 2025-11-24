@@ -727,6 +727,15 @@ entries:
     version: 1.0.0
   kubeit-logical-envs:
   - apiVersion: v2
+    created: "2025-11-24T12:36:11.779324121Z"
+    description: Deployment tenant's all logical envs
+    digest: 391971bd2f8751934214ce1f24e2d2a32816add4c320d4265c5a33459e301ba2
+    name: kubeit-logical-envs
+    type: library
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-logical-envs-1.0.5/kubeit-logical-envs-1.0.5.tgz
+    version: 1.0.5
+  - apiVersion: v2
     created: "2025-11-21T14:54:54.171223954Z"
     description: Deployment tenant's all logical envs
     digest: 1eb9a1dd9443f978f61884e5b4e342f9347d994a9705cc11e2024e83057abff2
@@ -1511,4 +1520,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
     version: 0.0.1
-generated: "2025-11-24T12:32:41.681719708Z"
+generated: "2025-11-24T12:36:11.779736672Z"
