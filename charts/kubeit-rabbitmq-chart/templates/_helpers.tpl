@@ -40,6 +40,7 @@ helm.sh/chart: {{ include "kubeit-rabbit-chart.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tenant: {{ .Values.tenantName }}
 {{- end }}
 
 {{/*

@@ -9,9 +9,9 @@ metadata:
 provisioner: file.csi.azure.com
 parameters:
   skuName: Standard_LRS
-  secretName: rabbitmq-storageaccount-secret  # must exist in each tenant namespace
+  secretName: rabbitmq-storageaccount-secret-{{ .Values.tenantName }}  # must exist in each tenant namespace
   secretNamespace: {{ .Release.Namespace }}
-  shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }} # optional: dynamic share name
+  shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }}
 mountOptions:
 {{- range .Values.persistentVolume.mountOptions }}
   - {{ . }}

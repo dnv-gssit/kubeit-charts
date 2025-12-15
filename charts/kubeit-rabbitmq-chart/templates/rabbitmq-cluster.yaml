@@ -87,6 +87,8 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: persistence-testmq
+              labels:
+                {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
 {{- end }}
   rabbitmq:
     additionalConfig: |
