@@ -115,7 +115,7 @@ service:
 
 virtualService:
   create: true
-  host: ""
+  host: []
   useCors: false
   allowOrigins: []
 

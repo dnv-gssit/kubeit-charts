@@ -9,8 +9,10 @@ spec:
   gateways:
   - {{ $useGateway }}
   hosts:
-  {{- if .Values.virtualService.host }}
-  - {{ .Values.virtualService.host }}
+  {{- if .Values.virtualService.hosts }}
+  {{- range .Values.virtualService.hosts }}
+  - {{ . }}
+  {{- end }}
   {{- else }}
   - {{ include "internaldns.host" . }}
   {{- end }}
@@ -58,8 +60,10 @@ spec:
   gateways:
   - {{ $useGateway }}
   hosts:
-  {{- if .Values.virtualService.host }}
-  - {{ .Values.virtualService.host }}
+  {{- if .Values.virtualService.hosts }}
+  {{- range .Values.virtualService.hosts }}
+  - {{ . }}
+  {{- end }}
   {{- else }}
   - {{ include "internaldns.host" . }}
   {{- end }}
@@ -80,8 +84,10 @@ spec:
   gateways:
   - {{ $useGateway }}
   hosts:
-  {{- if .Values.virtualService.host }}
-  - {{ .Values.virtualService.host }}
+  {{- if .Values.virtualService.hosts }}
+  {{- range .Values.virtualService.hosts }}
+  - {{ . }}
+  {{- end }}
   {{- else }}
   - {{ include "internaldns.host" . }}
   {{- end }}
