@@ -95,8 +95,10 @@ spec:
   - match:
     - port: {{ .Values.service.amqpsPort }}
       sniHosts:
-      {{- if .Values.virtualService.host }}
-      - {{ .Values.virtualService.host }}
+      {{- if .Values.virtualService.hosts }}
+      {{- range .Values.virtualService.hosts }}
+      - {{ . }}
+      {{- end }}
       {{- else }}
       - {{ include "internaldns.host" . }}
       {{- end }}
