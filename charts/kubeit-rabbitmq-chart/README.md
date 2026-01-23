@@ -109,6 +109,16 @@ The certificate's SAN:
 The Subject should be `CN=<host-of-rabbitmq-cluster>` For example. `CN=<NameofRMQCluster>.<colour>.<region>.kubeit-int.dnv.com`
 Ref: https://www.rabbitmq.com/kubernetes/operator/using-operator#one-way-tls
 
+
+One way TLS settings on RabbitMQ Cluster ensures that client does not require certs. Ensure these settings are enabled:
+
+
+```
+ssl_options.fail_if_no_peer_cert = false
+ssl_options.verify = verify_none
+```
+
+
 ## Rabbitmq Default User Credentials
 
 When trying to store the default user credentials in Azure KV. KV does not support multi-line secret directly from portal.

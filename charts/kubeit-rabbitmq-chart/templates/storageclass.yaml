@@ -14,7 +14,7 @@ mountOptions:
 {{- range .Values.persistentVolume.mountOptions }}
   - {{ . }}
 {{- end }}
-reclaimPolicy: Delete
+reclaimPolicy: Retain
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
 {{- end }}
