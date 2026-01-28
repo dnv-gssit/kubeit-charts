@@ -10,7 +10,10 @@ metadata:
 spec:
   image: {{ .Values.rabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
-{{- $externalScName := default (include "kubeit-rabbit-chart.storageClassName" .) .Values.persistentVolume.storageClassName }}
+{{- $externalScName := include "kubeit-rabbit-chart.storageClassName" . }}
+{{- if and .Values.persistentVolume.storageClassName (ne .Values.persistentVolume.storageClassName "azurefile-csi") }}
+{{- $externalScName = .Values.persistentVolume.storageClassName }}
+{{- end }}
 {{- if .Values.rabbitmqCluster.defaultUserSecret }}
   secretBackend:
     externalSecret:
