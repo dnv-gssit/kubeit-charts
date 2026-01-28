@@ -10,6 +10,7 @@ metadata:
 spec:
   image: {{ .Values.rabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
+{{- $externalScName := default (include "kubeit-rabbit-chart.storageClassName" .) .Values.persistentVolume.storageClassName }}
 {{- if .Values.rabbitmqCluster.defaultUserSecret }}
   secretBackend:
     externalSecret:
@@ -28,7 +29,6 @@ spec:
         labels:
           {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
 {{- if .Values.persistentVolume.external }}
-{{- $scName := default (include "kubeit-rabbit-chart.storageClassName" .) .Values.persistentVolume.storageClassName }}
     statefulSet:
       spec:
         template:
@@ -82,7 +82,7 @@ spec:
                 {{- range .Values.persistentVolume.accessModes }}
                 - {{ . }}
                 {{- end }}
-              storageClassName: {{ required "A storage class name is required" $scName }}
+              storageClassName: {{ required "A storage class name is required" $externalScName }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
@@ -112,7 +112,7 @@ spec:
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     {{- if .Values.persistentVolume.external }}
-    storageClassName: {{ required "A storage class name is required" $scName }}
+    storageClassName: {{ required "A storage class name is required" $externalScName }}
     {{- else }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
     {{- end }}
