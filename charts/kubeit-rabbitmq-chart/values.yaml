@@ -41,12 +41,30 @@ rabbitmqCluster:
     enabled: false
     secretName: rabbitmq-tls
 
-# it should be optionally to use external Azure File Share
-# it should support both: AKS build-in storage class and Azure File Share and external Azure File Share
+# supports both: AKS build-in storage class and Azure File Share
 persistentVolume:
+
+  skuName: Standard_LRS
   # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
   # Set to false to use AKS built-in storage classes
   external: false
+  # StorageClass is cluster-scoped. If you deploy multiple RabbitMQ releases (e.g. dev + test)
+  # in the same cluster, enable unique StorageClass names or manage a shared StorageClass outside this chart.
+  storageClass:
+    # Set to false if a StorageClass already exists and you only want to reference it.
+    create: true
+    # Backwards compatible default: a single per-tenant StorageClass name (cluster-scoped).
+    # Set to true to generate a per-release/per-RabbitMQ-instance StorageClass name so multiple
+    # RabbitMQ installs (dev/test/per environment in the same cluster) can coexist without StorageClass name collisions.
+    perRelease: false
+    # Optional: override the StorageClass name (e.g. a single per-tenant name).
+    name: ""
+  # Storage account secret referenced by the StorageClass (required when external=true).
+  # This secret must exist in the namespace specified by `namespace`.
+  storageAccountSecret:
+    name: rabbitmq-storageaccount-secret
+    # Optional: set to a shared namespace if you keep the secret in a single tenant namespace.
+    namespace: ""
   # set the storage class name
   storageClassName: azurefile-csi
   capacity:
@@ -66,7 +84,6 @@ persistentVolume:
     - nobrl
   csi:
     driver: file.csi.azure.com
-    volumeHandle: rabbitmq-tenant
     volumeAttributes:
       # name of Azure File Share
       shareName: rabbitmq

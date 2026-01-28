@@ -28,6 +28,7 @@ spec:
         labels:
           {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
 {{- if .Values.persistentVolume.external }}
+{{- $scName := default (include "kubeit-rabbit-chart.storageClassName" .) .Values.persistentVolume.storageClassName }}
     statefulSet:
       spec:
         template:
@@ -81,7 +82,7 @@ spec:
                 {{- range .Values.persistentVolume.accessModes }}
                 - {{ . }}
                 {{- end }}
-              storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
+              storageClassName: {{ required "A storage class name is required" $scName }}
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
@@ -110,6 +111,10 @@ spec:
   {{- end }}
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
+    {{- if .Values.persistentVolume.external }}
+    storageClassName: {{ required "A storage class name is required" $scName }}
+    {{- else }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
+    {{- end }}
   service:
     type: {{ .Values.service.type }}
