@@ -55,7 +55,9 @@
 #    image:
 #      name: acr.azurecr.io/appname
 #      tag: latest
-#    helmApiVersions: {}
+#    helmApiVersions:
+#      - external-secrets.io/v1/ExternalSecret
+#      - external-secrets.io/v1/SecretStore
 #    useArgoCDimageUpdater: true  # true if you want to use ArgoCD image updater
 #    annotations: {}              # any annotations you want to add to the application, overrides image updater annotations
 #    serviceChart:
@@ -75,15 +77,11 @@
 #      - PruneLast=false
 #
 # Optional: Helm apiVersions passed to ArgoCD/Helm during manifest generation.
-# Use this when rendering happens without full cluster discovery (e.g., CI/Argo rendering) and charts rely on `.Capabilities.APIVersions`.
-# You can set it globally here, or per-app via `applications[].helmApiVersions`.
 #
 # Example:
 # helmApiVersions:
 #   - external-secrets.io/v1/ExternalSecret
 #   - external-secrets.io/v1/SecretStore
-applications: []
-
 helmApiVersions: []
 
 # default service chart
