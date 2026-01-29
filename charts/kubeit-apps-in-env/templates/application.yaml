@@ -52,6 +52,13 @@ spec:
       targetRevision: {{ $srTargetRevision }}
       helm:
         releaseName: {{ $app.name }}
+        {{- if hasKey $app "helmApiVersions" }}
+        apiVersions:
+          {{- toYaml $app.helmApiVersions | nindent 10 }}
+        {{- else if $.Values.helmApiVersions }}
+        apiVersions:
+          {{- toYaml $.Values.helmApiVersions | nindent 10 }}
+        {{- end }}
         valueFiles:
           - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/global.yaml
           - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/{{ $app.name }}.yaml

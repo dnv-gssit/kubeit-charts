@@ -264,6 +264,9 @@ networkPolicy:
 secretStore:
   enabled: false
   vaultUrl: ""
+  # API version for SecretStore/ExternalSecret resources
+  # Set to external-secrets.io/v1beta1 for legacy clusters
+  apiVersion: external-secrets.io/v1
 
 # ExternalSecrets is definition how to create k8s secret based on Azure Key Vault secret
 # secretStore.enabled=true must be set to use ExternalSecrets
