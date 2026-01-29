@@ -76,8 +76,10 @@ spec:
     {{- end }}
   syncPolicy:
     automated:
+      enabled: true
       prune: true
       selfHeal: true
+      allowEmpty: true
     retry:
       backoff:
         duration: 5s
@@ -88,7 +90,7 @@ spec:
     - Validate=true
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
-    - PruneLast=false
+    - PruneLast=true
 ---
 {{- end }}
 {{- end }}
