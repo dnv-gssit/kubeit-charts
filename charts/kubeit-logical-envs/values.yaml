@@ -3,4 +3,4 @@
 appLogicalEnvChart:
   repoURL: https://dnv-gssit.github.io/kubeit-charts
   chart: kubeit-apps-in-env
-  targetRevision: 1.0.5
+  targetRevision: 1.0.6
