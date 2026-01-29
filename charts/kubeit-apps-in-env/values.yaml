@@ -83,7 +83,7 @@
 #   - external-secrets.io/v1/ExternalSecret
 #   - external-secrets.io/v1/SecretStore
 helmApiVersions: []
-
+applications: []
 # default service chart
 serviceChart:
   repoURL: https://dnv-gssit.github.io/kubeit-charts
