@@ -25,18 +25,17 @@ metadata:
   namespace: {{ $.Values.managementNamespace }}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
-  {{- if hasKey $app "annotations" }}
   annotations:
+    argocd.argoproj.io/project: {{ $.Values.tenantName }}
+  {{- if hasKey $app "annotations" }}
     {{- with $app.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- else }}
+  {{- end }}
   {{- if $app.useArgoCDimageUpdater }}
-  annotations:
     argocd-image-updater.argoproj.io/image-list: alias={{ $app.image.name }}:{{ $app.image.tag }}
     argocd-image-updater.argoproj.io/alias.update-strategy: digest
     argocd-image-updater.argoproj.io/alias.force-update: "true"
-  {{- end }}
   {{- end }}
 spec:
   destination:
@@ -83,8 +82,10 @@ spec:
       ref: values
   syncPolicy:
     automated:
+      enabled: true
       prune: true
       selfHeal: true
+      allowEmpty: true
     retry:
       backoff:
         duration: 5s
@@ -98,7 +99,7 @@ spec:
       - Validate=true
       - CreateNamespace=false
       - PrunePropagationPolicy=foreground
-      - PruneLast=false
+      - PruneLast=true
       {{- end }}
   {{- if $app.ignoreDifferences }}
   ignoreDifferences:
