@@ -52,6 +52,10 @@ spec:
       targetRevision: {{ $srTargetRevision }}
       helm:
         releaseName: {{ $app.name }}
+        {{- if $.Values.argocdApiVersions }}
+        apiVersions:
+          {{- toYaml $.Values.argocdApiVersions | nindent 10 }}
+        {{- end }}
         valueFiles:
           - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/global.yaml
           - $values/{{ $.Values.env }}/{{ $.Values.logicalEnvName }}/{{ $app.name }}.yaml
