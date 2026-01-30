@@ -59,6 +59,10 @@ spec:
           repoURL: {{ $values.repoURL }}
           managementNamespace: {{ $values.managementNamespace }}
           logicalEnvName: {{ $logicalEnvName }}
+          {{- if $values.argocdApiVersions }}
+          argocdApiVersions:
+            {{- toYaml $values.argocdApiVersions | nindent 12 }}
+          {{- end }}
     - repoURL: {{ $values.repoURL }}
       targetRevision: {{ $values.targetRevision }}
       ref: values
