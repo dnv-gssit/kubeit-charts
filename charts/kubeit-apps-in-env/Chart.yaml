@@ -2,4 +2,4 @@ apiVersion: v2
 name: kubeit-apps-in-env
 description: Deployment applications in one logical environment
 type: application
-version: 1.0.6
+version: 1.0.7

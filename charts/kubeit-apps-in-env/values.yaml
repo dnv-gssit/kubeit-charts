@@ -42,6 +42,9 @@
 # teamName
 # teamName: "team1"
 
+# ArgoCD apiVersions forced for rendering helm templates
+# argocdApiVersions: []
+
 # List of ArgoCD applications to deploy
 # ArgoCD application represents service (or helm chart) deployed into Kubernetes
 
