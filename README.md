@@ -51,6 +51,12 @@ More tests could be selected by using the `--tests` option. You can specify mult
 
 If many charts and tests are selected, the script will run selected tests for each selected chart. If test would not be found in the chart, it will be skipped.
 
+# Upgrading charts
+
+When `kubeit-apps-in-env` chart is updated,
+please update values.yaml of `kubeit-logical-envs` chart to refer to new version of it.
+When `kubeit-logical-envs` chart is updated, please update global-services source code to force new version across all tenant's self-repos.
+
 ## Contributing
 
 If you want to contribute to the charts, please follow these steps:
