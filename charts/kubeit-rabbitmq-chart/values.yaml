@@ -90,7 +90,7 @@ persistentVolume:
 
   # Static PV configuration for Terraform-created Azure File Share
   # All replicas will share the same file share (ReadWriteMany)
-  # 
+  #
   # Usage for static provisioning:
   #   1. Set persistentVolume.external: true
   #   2. Set persistentVolume.static.enabled: true
