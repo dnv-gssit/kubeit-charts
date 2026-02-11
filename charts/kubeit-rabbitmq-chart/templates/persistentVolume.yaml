@@ -1,0 +1,51 @@
+{{- if .Values.persistentVolume.static.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "kubeit-rabbit-chart.storageClassName" . }}-pv
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.persistentVolume.capacity.storage }}
+  accessModes:
+  {{- range .Values.persistentVolume.accessModes }}
+    - {{ . }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: {{ .Values.persistentVolume.persistentVolumeReclaimPolicy }}
+  storageClassName: {{ include "kubeit-rabbit-chart.storageClassName" . }}
+  mountOptions:
+  {{- range .Values.persistentVolume.mountOptions }}
+    - {{ . }}
+  {{- end }}
+  csi:
+    driver: {{ .Values.persistentVolume.csi.driver }}
+    volumeHandle: {{ .Values.persistentVolume.static.volumeHandle }}
+    volumeAttributes:
+      resourceGroup: {{ .Values.persistentVolume.static.resourceGroup }}
+      storageAccount: {{ .Values.persistentVolume.static.storageAccount }}
+      shareName: {{ .Values.persistentVolume.static.shareName }}
+    nodeStageSecretRef:
+      name: {{ .Values.persistentVolume.storageAccountSecret.name }}
+      namespace: {{ default .Release.Namespace .Values.persistentVolume.storageAccountSecret.namespace }}
+{{- range $i := until (int .Values.rabbitmqCluster.spec.replicas) }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-%s-%s-server-%d" $.Values.rabbitmqCluster.spec.containers.volumeMount.name $.Release.Name $.Values.tenantName $i | trunc 63 | trimSuffix "-" }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
+spec:
+  accessModes:
+  {{- range $.Values.persistentVolume.accessModes }}
+    - {{ . }}
+  {{- end }}
+  storageClassName: {{ include "kubeit-rabbit-chart.storageClassName" $ }}
+  resources:
+    requests:
+      storage: {{ $.Values.persistentVolume.capacity.storage }}
+  volumeName: {{ include "kubeit-rabbit-chart.storageClassName" $ }}-pv
+{{- end }}
+{{- end }}

@@ -21,10 +21,10 @@ rabbitmqCluster:
         cpu: 800m
     containers:
       volumeMount:
-        name: persistence-testmq
+        name: persistence
     initContainers:
       volumeMount:
-        name: persistence-testmq
+        name: persistence
 
   additionalConfig: |
     log.console.level = info
@@ -88,6 +88,15 @@ persistentVolume:
       # name of Azure File Share
       shareName: rabbitmq
 
+  # Static PV configuration for Terraform-created Azure File Share
+  # All replicas will share the same file share (ReadWriteMany)
+  # Set persistentVolume.external to true to use static PVs, and set storageClass.create to false to avoid creating a StorageClass
+  static:
+    enabled: false
+    resourceGroup: ""       # e.g., "rg-rabbitmq-we-dev"
+    storageAccount: ""      # e.g., "strabbitdev"
+    shareName: ""           # e.g., "rabbitmq-tenant2"
+    volumeHandle: ""        # e.g., "sub-123#strabbitdev#rabbitmq-tenant2"
 
 
 # Create rabbitmq queue via RabbitMQ CRD
