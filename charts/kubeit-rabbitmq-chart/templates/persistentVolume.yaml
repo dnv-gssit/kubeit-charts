@@ -6,6 +6,8 @@ metadata:
   name: {{ include "kubeit-rabbit-chart.storageClassName" . }}-pv
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   capacity:
     storage: {{ .Values.persistentVolume.capacity.storage }}
@@ -35,6 +37,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ printf "%s-%s-%s-server-%d" $.Values.rabbitmqCluster.spec.containers.volumeMount.name $.Release.Name $.Values.tenantName $i | trunc 63 | trimSuffix "-" }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
   labels:
     {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
 spec:

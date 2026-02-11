@@ -90,7 +90,7 @@ spec:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
-              name: persistence-testmq
+              name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
 {{- end }}
   rabbitmq:
     additionalConfig: |

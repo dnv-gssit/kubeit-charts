@@ -90,13 +90,18 @@ persistentVolume:
 
   # Static PV configuration for Terraform-created Azure File Share
   # All replicas will share the same file share (ReadWriteMany)
-  # Set persistentVolume.external to true to use static PVs, and set storageClass.create to false to avoid creating a StorageClass
+  # 
+  # Usage for static provisioning:
+  #   1. Set persistentVolume.external: true
+  #   2. Set persistentVolume.static.enabled: true
+  #   3. Set persistentVolume.storageClass.create: false
+  #   4. Provide resourceGroup, storageAccount, shareName, and volumeHandle
   static:
     enabled: false
     resourceGroup: ""       # e.g., "rg-rabbitmq-we-dev"
     storageAccount: ""      # e.g., "strabbitdev"
     shareName: ""           # e.g., "rabbitmq-tenant2"
-    volumeHandle: ""        # e.g., "sub-123#strabbitdev#rabbitmq-tenant2"
+    volumeHandle: ""        # e.g., "sub-abc123#strabbitdev#rabbitmq-tenant2"
 
 
 # Create rabbitmq queue via RabbitMQ CRD
