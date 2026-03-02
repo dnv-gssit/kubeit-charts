@@ -46,6 +46,9 @@ spec:
       {{- end }}
       {{- end }}
     spec:
+      {{- if semverCompare ">=1.35.0" .Capabilities.KubeVersion.Version }}
+      hostUsers: false
+      {{- end }}
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "services-chart.serviceAccountName" . }}
       {{- end }}
