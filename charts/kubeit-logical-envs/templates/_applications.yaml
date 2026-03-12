@@ -95,6 +95,13 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=true
+  ignoreDifferences:
+    - kind: Application
+      group: argoproj.io
+      jqPathExpressions:
+        - '.spec.sources[]?.helm.parameters[]'
+        - .operation
+        - .spec.syncPolicy.automated.enabled
 ---
 {{- end }}
 {{- end }}
