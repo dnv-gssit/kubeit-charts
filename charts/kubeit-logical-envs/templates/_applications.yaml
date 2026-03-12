@@ -99,7 +99,7 @@ spec:
     - kind: Application
       group: argoproj.io
       jqPathExpressions:
-        - '.spec.sources[]?.helm.parameters[]'
+        - '.spec.sources[]?.helm'
         - .operation
         - .spec.syncPolicy.automated.enabled
 ---
