@@ -3,6 +3,8 @@ defaultRouting:
   enabled: true
   hosts: [auto]
   internalHosts: [auto]
+  annotations:
+    f5xc/no_dns: "true"
   corsPolicy:
     allowOrigins:
       - http://localhost:4200
