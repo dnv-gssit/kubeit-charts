@@ -12,6 +12,10 @@ metadata:
   name: {{ $vsName }}-ext
   labels:
     {{- include "services-chart.labels" $ | nindent 4 }}
+  {{- with $.Values.defaultRouting.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   hosts:
     - {{ $host }}

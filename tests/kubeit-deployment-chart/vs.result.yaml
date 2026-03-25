@@ -82,6 +82,8 @@ metadata:
     app.kubernetes.io/instance: release-name
     app.kubernetes.io/managed-by: Helm
     tenant: tenant
+  annotations:
+    f5xc/no_dns: "true"
 spec:
   hosts:
     - release-name.green.we.nonprod.kubeit.dnv.com

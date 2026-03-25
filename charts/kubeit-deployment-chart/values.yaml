@@ -221,6 +221,9 @@ defaultRouting:
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#Headers
   headers: {}
 
+  # Annotations for virtualservice
+  annotations: {}
+
 # Destination rule config
 # https://istio.io/latest/docs/reference/config/networking/destination-rule/
 destinationRule:
