@@ -95,6 +95,7 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=true
+    - ServerSideApply=true
   ignoreDifferences:
     - kind: Application
       group: argoproj.io
