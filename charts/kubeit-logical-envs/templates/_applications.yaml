@@ -95,6 +95,8 @@ spec:
     - CreateNamespace=false
     - PrunePropagationPolicy=foreground
     - PruneLast=true
+    - ServerSideApply=true
+    {{- if eq $type "manifest" }}
   ignoreDifferences:
     - kind: Application
       group: argoproj.io
