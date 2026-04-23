@@ -104,6 +104,7 @@ spec:
       - CreateNamespace=false
       - PrunePropagationPolicy=foreground
       - PruneLast=true
+      - ServerSideApply=true
       {{- end }}
   {{- if $app.ignoreDifferences }}
   ignoreDifferences:
