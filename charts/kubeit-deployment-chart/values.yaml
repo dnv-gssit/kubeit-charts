@@ -141,13 +141,13 @@ configMap:
 
 # K8S serviceaccount config
 serviceAccount:
-  enabled: false
+  enabled: true
   # If not set and create is true, a name is generated from the helm chart
-  name: ""
+  name: "satest"
   # Annotations for service account
-  annotations: {}
-  # azure.workload.identity/client-id: 11111111-2222-3333-4444-555555555555
-  # azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+  annotations:
+    azure.workload.identity/client-id: f4129480-cfc2-41de-80cd-817d7666cbf6
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
 
 # K8S service config
 service:
