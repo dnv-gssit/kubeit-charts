@@ -146,7 +146,7 @@ serviceAccount:
   name: "satest"
   # Annotations for service account
   annotations:
-    azure.workload.identity/client-id: f4129480-cfc2-41de-80cd-817d7666cbf6
+    azure.workload.identity/client-id: c4321b50-c440-4afb-bea8-9d229c737b6a
     azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
 
 # K8S service config
