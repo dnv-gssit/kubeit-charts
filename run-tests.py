@@ -29,6 +29,7 @@ def findfiles(path, pattern):
 
 def cmd(command):
     """Function to call shell command."""
+    print(f"Running command: {command}")
     process = subprocess.run([command],capture_output=True,shell=True)
     return process.stdout, process.stderr
 
@@ -113,16 +114,16 @@ def main():
         if not(test_name in tests) and tests != ["all"]:
             print(f"Skipping test [{test_name}] for chart [{chart_to_test}] it is not in the specified tests...")
             continue
-        print(f"Running test [{test_name}] for chart [{chart_to_test}]...", end='')
+        print(f"Running test [{test_name}] for chart [{chart_to_test}]...\n", end='')
         result_test, error_test = run_test(chart_to_test, test_name)
         if result_test:
-            print("passed")
+            print("passed\n")
         else:
-            print("failed")
-            print(f"Error: \n{error_test}")
+            print("failed\n")
+            print(f"Error: {error_test}\n")
             final_exit = 1
 
-    print("...done")
+    print("...done\n")
     sys.exit(final_exit)
 if __name__ == "__main__":
     main()

@@ -66,7 +66,11 @@ spec:
           image: {{ .Values.image.name }}:{{ default "latest" .Values.image.tag }}
           imagePullPolicy: {{ .Values.image.imagePullPolicy }}
           ports:
+          {{- if .Values.defaultRouting.tcp }}
+            - name: tcp
+          {{- else }}
             - name: http
+          {{- end }}
               containerPort: {{ .Values.service.containerPort }}
               protocol: TCP
           {{- if .Values.securityContext }}

@@ -1,0 +1,26 @@
+---
+service:
+  containerPort: 10010
+  port: 10010
+defaultRouting:
+  enabled: true
+  hosts: [auto]
+  internalHosts: [auto]
+  tcp:
+    - match:
+        - port: 10001
+kubeit:
+  env: nonprod
+  region: we
+  dnsDomain: kubeit.dnv.com
+  internalDnsDomain: kubeit-int.dnv.com
+  clusterSubdomain: nonprod004
+  clusterColour: green
+  ingressType: default
+  shortRegion: we
+  tenantName: tenant
+  targetRevision: main
+  repoURL: https://github.com/example.git
+  networkPlugin: azure
+  tenantMultiRegion: false
+  managementNamespace: management-tenant

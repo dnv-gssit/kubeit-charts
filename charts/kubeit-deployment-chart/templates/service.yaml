@@ -16,10 +16,17 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
+{{- if not .Values.defaultRouting.tcp }}
     - port: {{ .Values.service.port }}
       targetPort: http
       protocol: TCP
       name: http
+{{- else }}
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+      name: tcp
+{{- end }}
   selector:
     {{- include "services-chart.selectorLabels" . | nindent 4 }}
 {{- end }}

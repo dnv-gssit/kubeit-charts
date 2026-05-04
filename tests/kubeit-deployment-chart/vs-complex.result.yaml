@@ -127,9 +127,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443
@@ -191,9 +188,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443
@@ -255,9 +249,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443
@@ -320,9 +311,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443
@@ -384,9 +372,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443
@@ -448,9 +433,6 @@ spec:
         - Content-Type
         - X-Custom-Header
         maxAge: 24h
-  tcp:
-    - match:
-      - port: 443
   tls:
     - match:
       - port: 443

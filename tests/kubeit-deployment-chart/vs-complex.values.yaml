@@ -23,9 +23,6 @@ defaultRouting:
     - match:
         - uri:
             prefix: /v1
-  tcp:
-    - match:
-        - port: 443
   tls:
     - match:
         - port: 443
