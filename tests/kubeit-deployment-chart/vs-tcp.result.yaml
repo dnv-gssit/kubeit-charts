@@ -87,7 +87,7 @@ spec:
     - release-name.green.we.nonprod.kubeit.dnv.com
   gateways:
     - istio-system/global-https-internal-default-gateway
-  
+
   tcp:
     - match:
       - port: 10001
@@ -113,7 +113,7 @@ spec:
     - release-name.green.we.nonprod.kubeit-int.dnv.com
   gateways:
     - istio-system/global-internaluse-gateway
-  
+
   tcp:
     - match:
       - port: 10001
