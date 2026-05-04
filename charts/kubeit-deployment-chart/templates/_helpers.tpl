@@ -172,7 +172,7 @@ http:
       {{- toYaml .Values.defaultRouting.corsPolicy | nindent 6 }}
 {{- end }}
 {{- end }}
-{{- if $.Values.defaultRouting.tcp }}
+{{- if $.Values.defaultRouting.tcp -}}
 tcp:
 {{- with $.Values.defaultRouting.tcp }}
 {{- toYaml . | nindent 2 }}
