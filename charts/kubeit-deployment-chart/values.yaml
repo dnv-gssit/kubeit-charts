@@ -202,6 +202,7 @@ defaultRouting:
   # tcp traffic config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService-tls
   # Possible to set all except `route`
+  # Use exclusively with http, cannot set both http and tcp in microservice
   tcp: []
 
   # tsl traffic config

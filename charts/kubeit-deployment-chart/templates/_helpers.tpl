@@ -149,7 +149,7 @@ http:
     corsPolicy:
       {{- toYaml $.Values.defaultRouting.corsPolicy | nindent 6 }}
 {{- end }}
-{{- else -}}
+{{- else if not $.Values.defaultRouting.tcp -}}
 http:
   - match:
     - uri:
@@ -170,13 +170,18 @@ http:
 {{- if $.Values.defaultRouting.corsPolicy }}
     corsPolicy:
       {{- toYaml .Values.defaultRouting.corsPolicy | nindent 6 }}
-  {{- end }}
 {{- end }}
-{{- if $.Values.defaultRouting.tcp }}
+{{- end }}
+{{- if $.Values.defaultRouting.tcp -}}
 tcp:
 {{- with $.Values.defaultRouting.tcp }}
 {{- toYaml . | nindent 2 }}
 {{- end }}
+    route:
+      - destination:
+          host: {{ include "services-chart.fullFQDN" $ }}
+          port:
+            number: {{ $.Values.service.port }}
 {{- end }}
 {{- if $.Values.defaultRouting.tls }}
 tls:
