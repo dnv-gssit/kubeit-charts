@@ -46,7 +46,7 @@ spec:
       {{- end }}
       {{- end }}
     spec:
-      {{- if semverCompare ">=1.35.0" .Capabilities.KubeVersion.Version }}
+      {{- if and (semverCompare ">=1.35.0" .Capabilities.KubeVersion.Version) (not .Values.blobStorage.enabled) }}
       hostUsers: false
       {{- end }}
       {{- if .Values.serviceAccount.enabled }}
@@ -112,9 +112,18 @@ spec:
           startupProbe:
             {{- toYaml .Values.health.startupProbe | nindent 12 }}
           {{- end }}
-          {{- if .Values.volumeMounts }}
+          {{- if or (.Values.volumeMounts) (.Values.blobStorage.enabled) }}
           volumeMounts:
+            {{- if .Values.volumeMounts }}
             {{- toYaml .Values.volumeMounts | nindent 12 }}
+            {{- end }}
+            {{- if .Values.blobStorage.enabled }}
+            {{- range .Values.blobStorage.containers }}
+            - name: {{ printf "blob-%s" .name }}
+              mountPath: {{ .mountPath }}
+              readOnly: {{ default false .readOnly }}
+            {{- end }}
+            {{- end }}
           {{- end }}
           {{- if and (.Values.resizePolicy) (semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version) }}
           resizePolicy:
@@ -135,7 +144,16 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.volumes }}
+      {{- if or (.Values.volumes) (.Values.blobStorage.enabled) }}
       volumes:
+        {{- if .Values.volumes }}
         {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
+        {{- if .Values.blobStorage.enabled }}
+        {{- range .Values.blobStorage.containers }}
+        - name: {{ printf "blob-%s" .name }}
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-%s-pvc" (include "services-chart.fullname" $) .name | trunc 63 | trimSuffix "-" | lower }}
+        {{- end }}
+        {{- end }}
       {{- end }}
