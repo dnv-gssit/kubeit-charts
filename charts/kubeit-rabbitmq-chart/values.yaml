@@ -43,13 +43,17 @@ rabbitmqCluster:
 
 # supports both: AKS build-in storage class and Azure File Share
 persistentVolume:
-
+  env: []
+  # for environment variables in rabbitmq container
+  # - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
+  #   value: "+Q 65536 +P 1048576"
   skuName: Standard_LRS
   # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
   # Set to false to use AKS built-in storage classes
   external: false
   # StorageClass is cluster-scoped. If you deploy multiple RabbitMQ releases (e.g. dev + test)
   # in the same cluster, enable unique StorageClass names or manage a shared StorageClass outside this chart.
+  storageClass:
   storageClass:
     # Set to false if a StorageClass already exists and you only want to reference it.
     create: true

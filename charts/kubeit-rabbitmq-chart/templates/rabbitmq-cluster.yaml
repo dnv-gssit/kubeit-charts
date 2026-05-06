@@ -55,6 +55,13 @@ spec:
                 volumeMounts:
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+                {{- if .Values.persistentVolume.env }}
+                env:
+                  {{- range .Values.persistentVolume.env }}
+                  - name: {{ .name }}
+                    value: {{ .value }}
+                  {{- end }}
+                {{- end }}
             initContainers:
               - name: setup-container
                 securityContext:
@@ -91,6 +98,18 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+{{- else if .Values.persistentVolume.env }}
+    statefulSet:
+      spec:
+        template:
+          spec:
+            containers:
+              - name: rabbitmq
+                env:
+                  {{- range .Values.persistentVolume.env }}
+                  - name: {{ .name }}
+                    value: {{ .value | quote }}
+                  {{- end }}
 {{- end }}
   rabbitmq:
     additionalConfig: |
