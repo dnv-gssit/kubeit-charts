@@ -54,7 +54,6 @@ persistentVolume:
   # StorageClass is cluster-scoped. If you deploy multiple RabbitMQ releases (e.g. dev + test)
   # in the same cluster, enable unique StorageClass names or manage a shared StorageClass outside this chart.
   storageClass:
-  storageClass:
     # Set to false if a StorageClass already exists and you only want to reference it.
     create: true
     # Backwards compatible default: a single per-tenant StorageClass name (cluster-scoped).
