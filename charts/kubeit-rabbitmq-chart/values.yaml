@@ -153,6 +153,15 @@ virtualService:
   useCors: false
   allowOrigins: []
 
+destinationRule:
+  create: true
+  # LEAST_CONN sends new connections to the node with fewest active connections.
+  # Recommended for long-lived AMQP connections to distribute load across RabbitMQ nodes.
+  # Other options: ROUND_ROBIN, RANDOM, PASSTHROUGH
+  loadBalancerAlgorithm: LEAST_CONN
+  # Maximum number of TCP connections to the RabbitMQ service
+  maxConnections: 1000
+
 # KubeIT passed variables
 dnsDomain: "kubeit.dnv.com"
 internalDnsDomain: "kubeit-int.dnv.com"

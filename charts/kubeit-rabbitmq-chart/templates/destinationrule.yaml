@@ -1,0 +1,19 @@
+{{- if .Values.destinationRule.create }}
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ include "kubeit-rabbit-chart.fullname" . }}
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: {{ .Values.destinationRule.loadBalancerAlgorithm }}
+    connectionPool:
+      tcp:
+        maxConnections: {{ .Values.destinationRule.maxConnections }}
+{{- end }}
