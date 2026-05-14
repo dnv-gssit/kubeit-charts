@@ -1,0 +1,40 @@
+{{- if .Values.blobStorage.enabled }}
+{{- range .Values.blobStorage.containers }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ printf "%s-%s-pv" (include "services-chart.fullname" $) .name | trunc 63 | trimSuffix "-" | lower }}
+  labels:
+    {{- include "services-chart.labels" $ | nindent 4 }}
+  annotations:
+    pv.kubernetes.io/provisioned-by: blob.csi.azure.com
+spec:
+  capacity:
+    storage: {{ default "10Gi" .capacity }}
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ default "azureblob-fuse-premium" .storageClass }}
+  {{- if .mountOptions }}
+  mountOptions:
+    {{- toYaml .mountOptions | nindent 4 }}
+  {{- else }}
+  mountOptions:
+    - -o allow_other
+    - --file-cache-timeout-in-seconds=120
+  {{- end }}
+  csi:
+    driver: blob.csi.azure.com
+    volumeHandle: {{ .resourceGroup }}#{{ .storageAccount }}#{{ .containerName }}{{ if .subscriptionID }}#{{ .subscriptionID }}{{ end }}
+    volumeAttributes:
+      storageaccount: {{ .storageAccount }}
+      containerName: {{ .containerName }}
+      clientID: {{ .clientID }}
+      resourcegroup: {{ .resourceGroup }}
+      {{- if .subscriptionID }}
+      subscriptionID: {{ .subscriptionID }}
+      {{- end }}
+      mountWithWorkloadIdentityToken: "true"
+{{- end }}
+{{- end }}

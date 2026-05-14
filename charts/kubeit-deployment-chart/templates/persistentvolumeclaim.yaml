@@ -1,0 +1,19 @@
+{{- if .Values.blobStorage.enabled }}
+{{- range .Values.blobStorage.containers }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-%s-pvc" (include "services-chart.fullname" $) .name | trunc 63 | trimSuffix "-" | lower }}
+  labels:
+    {{- include "services-chart.labels" $ | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ default "azureblob-fuse-premium" .storageClass }}
+  resources:
+    requests:
+      storage: {{ default "10Gi" .capacity }}
+  volumeName: {{ printf "%s-%s-pv" (include "services-chart.fullname" $) .name | trunc 63 | trimSuffix "-" | lower }}
+{{- end }}
+{{- end }}
