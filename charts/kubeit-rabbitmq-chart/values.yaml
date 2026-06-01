@@ -12,6 +12,9 @@ rabbitmqCluster:
     name: testmq-tenant
   spec:
     replicas: 1
+    nofile:
+      # Optional soft nofile limit applied at container startup (default 65536).
+      soft: 65536
     resources:
       requests:
         cpu: 500m

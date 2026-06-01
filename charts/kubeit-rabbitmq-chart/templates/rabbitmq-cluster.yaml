@@ -62,6 +62,13 @@ spec:
                     value: {{ .value }}
                   {{- end }}
                 {{- end }}
+                {{- if .Values.rabbitmqCluster.spec.nofile.soft }}
+                command: ["/bin/sh", "-ec"]
+                args:
+                  - |
+                    ulimit -n {{ .Values.rabbitmqCluster.spec.nofile.soft }}
+                    exec rabbitmq-server
+                {{- end }}
             initContainers:
               - name: setup-container
                 securityContext:
@@ -110,6 +117,13 @@ spec:
                   - name: {{ .name }}
                     value: {{ .value | quote }}
                   {{- end }}
+                {{- if .Values.rabbitmqCluster.spec.nofile.soft }}
+                command: ["/bin/sh", "-ec"]
+                args:
+                  - |
+                    ulimit -n {{ .Values.rabbitmqCluster.spec.nofile.soft }}
+                    exec rabbitmq-server
+                {{- end }}
 {{- end }}
   rabbitmq:
     additionalConfig: |
