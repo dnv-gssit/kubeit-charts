@@ -59,7 +59,7 @@ spec:
                 env:
                   {{- range .Values.persistentVolume.env }}
                   - name: {{ .name }}
-                    value: {{ .value }}
+                    value: {{ .value | quote }}
                   {{- end }}
                 {{- end }}
                 {{- if .Values.rabbitmqCluster.spec.nofile.soft }}
