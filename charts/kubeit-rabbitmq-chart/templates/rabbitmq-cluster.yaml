@@ -36,6 +36,7 @@ spec:
       spec:
         template:
           spec:
+            serviceAccountName: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}
             securityContext:
               runAsUser: 1001
               runAsNonRoot: true
