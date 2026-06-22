@@ -1,0 +1,36 @@
+---
+tenantName: tenant2
+
+persistentVolume:
+  # Use an external Azure File Share (file.csi.azure.com)
+  external: true
+
+  # Static provisioning: reference a pre-created share, do not create a StorageClass
+  storageClass:
+    create: false
+
+  static:
+    enabled: true
+    resourceGroup: rg-rabbitmq-we-dev
+    storageAccount: strabbitdev
+    shareName: rabbitmq-tenant2
+    # Must be unique per identical share in the cluster: <resourceGroup>#<account>#<share>
+    volumeHandle: rg-rabbitmq-we-dev#strabbitdev#rabbitmq-tenant2
+
+  workloadIdentity:
+    enabled: true
+    # Client ID of the managed identity that holds the role on the storage account
+    clientID: 00000000-0000-0000-0000-000000000000
+    # Token-only mount (no account key). Requires the SMB MI Admin role + SMBOauth.
+    mountWithWorkloadIdentityToken: true
+
+# The RabbitMQ pods run under this service account; the federated identity
+# credential subject must be system:serviceaccount:<namespace>:rabbitmq-sa
+serviceAccount:
+  create: true
+  name: rabbitmq-sa
+  annotations:
+    # Used for app-level workload identity (e.g. Key Vault). Point at the SAME
+    # managed identity as persistentVolume.workloadIdentity.clientID.
+    azure.workload.identity/client-id: 00000000-0000-0000-0000-000000000000
+    azure.workload.identity/tenant-id: 00000000-0000-0000-0000-000000000000
