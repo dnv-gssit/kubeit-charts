@@ -107,6 +107,8 @@ persistentVolume:
     enabled: false
     # Client ID of the managed identity with access to the storage account
     clientID: ""
+    # Applied to both the dynamically provisioned StorageClass and the static PersistentVolume.
+    mountWithWorkloadIdentityToken: false
 
 
   # Static PV configuration for Terraform-created Azure File Share
@@ -200,6 +202,12 @@ serviceAccount:
     azure.workload.identity/client-id: <CLIENT_ID>
     azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
   name: "rabbitmq-sa"
+  # When persistentVolume.external is true, the RabbitMQ pods run under this service
+  # account instead of the operator-created "<cluster>-server" account. The operator's
+  # peer-discovery RBAC is bound to that operator account, so it does not cover this one.
+  # Set to true to create a Role/RoleBinding granting this service account the
+  # permissions required by rabbit_peer_discovery_k8s (needed for multi-node clusters).
+  peerDiscoveryRBAC: true
 
 # SecretStore is definition how to access Azure Key Vault
 # serviceAccount must be created to use SecretStore with annotations for Workload Identity
@@ -218,15 +226,9 @@ secretStore:
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
   - data:
-    - azureSecretName: tst-azurestorageaccountname
-      key: azurestorageaccountname
-    - azureSecretName: tst-azurestorageaccountkey
-      key: azurestorageaccountkey
-    name: rabbitmq-storageaccount-secret
-  - data:
-    - azureSecretName: rabbitmq-user-nonprod-green
+    - azureSecretName: rabbitmq-user-nonprod
       key: username
-    - azureSecretName: rabbitmq-passwd-nonprod-green
+    - azureSecretName: rabbitmq-passwd-nonprod
       key: password
     - azureSecretName: default-test-user-creds
       key: default_user.conf

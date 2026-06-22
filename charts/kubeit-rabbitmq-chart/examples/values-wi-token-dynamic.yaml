@@ -1,0 +1,42 @@
+---
+tenantName: tenant2
+
+persistentVolume:
+  # Use an external Azure File Share (file.csi.azure.com)
+  external: true
+
+  # Storage account the CSI driver provisions shares in (required for WI dynamic provisioning)
+  storageAccount: strabbitdev
+
+  # Let the chart create the StorageClass; static must stay disabled for dynamic provisioning
+  storageClass:
+    create: true
+  static:
+    enabled: false
+
+  # Share naming for the dynamically provisioned share:
+  #   - Keep shareName set to use a fixed share name (all PVCs share it; needs ReadWriteMany).
+  #   - Blank it out to let the driver generate a unique share via shareNamePrefix.
+  csi:
+    driver: file.csi.azure.com
+    volumeAttributes:
+      shareName: rabbitmq
+
+  workloadIdentity:
+    enabled: true
+    # Client ID of the managed identity with access to the storage account
+    clientID: 00000000-0000-0000-0000-000000000000
+    # false = account-key flow (Storage Account Contributor)
+    # true  = token-only flow (Storage File Data SMB MI Admin + SMBOauth)
+    mountWithWorkloadIdentityToken: false
+
+# The RabbitMQ pods run under this service account; the federated identity
+# credential subject must be system:serviceaccount:<namespace>:rabbitmq-sa
+serviceAccount:
+  create: true
+  name: rabbitmq-sa
+  annotations:
+    # Used for app-level workload identity (e.g. Key Vault). Point at the SAME
+    # managed identity as persistentVolume.workloadIdentity.clientID.
+    azure.workload.identity/client-id: 00000000-0000-0000-0000-000000000000
+    azure.workload.identity/tenant-id: 00000000-0000-0000-0000-000000000000
