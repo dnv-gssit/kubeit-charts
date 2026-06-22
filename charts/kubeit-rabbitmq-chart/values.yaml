@@ -51,6 +51,9 @@ persistentVolume:
   # - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
   #   value: "+Q 65536 +P 1048576"
   skuName: Standard_LRS
+  # Storage account name used by the CSI driver for dynamic provisioning with workload identity.
+  # For static provisioning, set persistentVolume.static.storageAccount instead.
+  storageAccount: ""
   # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
   # Set to false to use AKS built-in storage classes
   external: false
@@ -80,19 +83,31 @@ persistentVolume:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Delete
   mountOptions:
-    - dir_mode=0770
-    - file_mode=0660
+    - dir_mode=0777 # modify for enhanced security
+    - file_mode=0777
     - uid=1001
     - gid=999
     - mfsymlinks
     - cache=strict
-    - nosharesock
-    - nobrl
+    - nosharesock # reduce probability of reconnect race
+    - nobrl       # disable byte range lock requests to the server
+    - actimeo=30  # reduce latency for metadata-heavy workloads
   csi:
     driver: file.csi.azure.com
     volumeAttributes:
       # name of Azure File Share
       shareName: rabbitmq
+
+  # Workload Identity support
+  # Uses federated identity credentials instead of storage account keys.
+  # Prerequisites:
+  #   - Managed identity with "Storage Account Contributor" role on the storage account
+  #   - Federated identity credential linking the managed identity to the K8s service account
+  workloadIdentity:
+    enabled: false
+    # Client ID of the managed identity with access to the storage account
+    clientID: ""
+
 
   # Static PV configuration for Terraform-created Azure File Share
   # All replicas will share the same file share (ReadWriteMany)
@@ -102,6 +117,11 @@ persistentVolume:
   #   2. Set persistentVolume.static.enabled: true
   #   3. Set persistentVolume.storageClass.create: false
   #   4. Provide resourceGroup, storageAccount, shareName, and volumeHandle
+  #
+  # Usage for static provisioning with workload identity:
+  #   1. All steps above
+  #   2. Set persistentVolume.workloadIdentity.enabled: true
+  #   3. Set persistentVolume.workloadIdentity.clientID to the managed identity client ID
   static:
     enabled: false
     resourceGroup: ""       # e.g., "rg-rabbitmq-we-dev"

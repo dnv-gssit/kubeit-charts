@@ -28,9 +28,14 @@ spec:
       resourceGroup: {{ .Values.persistentVolume.static.resourceGroup }}
       storageAccount: {{ .Values.persistentVolume.static.storageAccount }}
       shareName: {{ .Values.persistentVolume.static.shareName }}
+      {{- if .Values.persistentVolume.workloadIdentity.enabled }}
+      clientID: {{ required "persistentVolume.workloadIdentity.clientID is required when workloadIdentity is enabled" .Values.persistentVolume.workloadIdentity.clientID }}
+      {{- end }}
+    {{- if not .Values.persistentVolume.workloadIdentity.enabled }}
     nodeStageSecretRef:
       name: {{ .Values.persistentVolume.storageAccountSecret.name }}
       namespace: {{ default .Release.Namespace .Values.persistentVolume.storageAccountSecret.namespace }}
+    {{- end }}
 {{- range $i := until (int .Values.rabbitmqCluster.spec.replicas) }}
 ---
 apiVersion: v1

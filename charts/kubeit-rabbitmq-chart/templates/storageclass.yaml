@@ -7,8 +7,16 @@ metadata:
 provisioner: file.csi.azure.com
 parameters:
   skuName: {{ .Values.persistentVolume.skuName }}
+  {{- if .Values.persistentVolume.workloadIdentity.enabled }}
+  storageAccount: {{ required "persistentVolume.storageAccount is required for dynamic provisioning with workload identity" .Values.persistentVolume.storageAccount }}
+  clientID: {{ required "persistentVolume.workloadIdentity.clientID is required when workloadIdentity is enabled" .Values.persistentVolume.workloadIdentity.clientID }}
+  {{- if .Values.persistentVolume.workloadIdentity.mountWithWorkloadIdentityToken }}
+  mountWithWorkloadIdentityToken: "true"
+  {{- end }}
+  {{- else }}
   secretName: {{ required "persistentVolume.storageAccountSecret.name is required when persistentVolume.external=true" .Values.persistentVolume.storageAccountSecret.name }}
   secretNamespace: {{ default .Release.Namespace .Values.persistentVolume.storageAccountSecret.namespace }}
+  {{- end }}
   {{- if .Values.persistentVolume.csi.volumeAttributes.shareName }}
   shareName: {{ .Values.persistentVolume.csi.volumeAttributes.shareName }}
   {{- else }}
