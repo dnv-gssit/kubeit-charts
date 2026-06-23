@@ -101,11 +101,16 @@ health:
 
 # List of volume mounts for the main container
 # names must match the volumes below
-volumeMounts: []
+volumeMounts:
+  - name: blob-manual
+    mountPath: /mnt/blob
 
 # List of volumes to mount in the pod
 # https://kubernetes.io/docs/concepts/storage/volumes/
-volumes: []
+volumes:
+  - name: blob-manual
+    persistentVolumeClaim:
+      claimName: pvc-blob-wi-manual
 
 # Node selectors for the pod
 # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
@@ -141,13 +146,13 @@ configMap:
 
 # K8S serviceaccount config
 serviceAccount:
-  enabled: false
+  enabled: true
   # If not set and create is true, a name is generated from the helm chart
-  name: ""
+  name: "satest"
   # Annotations for service account
-  annotations: {}
-  # azure.workload.identity/client-id: 11111111-2222-3333-4444-555555555555
-  # azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+  annotations:
+    azure.workload.identity/client-id: c4321b50-c440-4afb-bea8-9d229c737b6a
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
 
 # K8S service config
 service:
@@ -277,6 +282,30 @@ externalSecrets: []
 #   refs: # list of references from Azure Keyvaults secrets as keys in K8S secret
 #     - keyName: k8s-secret-key
 #       kvSecretName: name-of-secret-in-azure-key-vault
+
+# Azure Blob Storage CSI volume config (static provisioning with Workload Identity)
+# Mounts Azure Blob container as a FUSE volume in the pod using blob.csi.azure.com driver
+# Prerequisites:
+#   - serviceAccount.enabled=true with Workload Identity annotations
+#   - Managed Identity with federated credential linked to the service account
+#   - Storage Blob Data Contributor role assigned to the managed identity on the storage account
+# https://github.com/kubernetes-sigs/blob-csi-driver/blob/master/docs/workload-identity-static-pv-mount.md
+blobStorage:
+  enabled: false
+  containers: []
+  # - name: my-data                          # logical name, used for PV/PVC naming and volume mount
+  #   storageAccount: mystorageaccount        # Azure Storage Account name
+  #   containerName: my-blob-container        # Azure Blob Container name
+  #   clientID: ""                            # Managed Identity client ID for Workload Identity
+  #   resourceGroup: ""                       # Resource group of the storage account
+  #   subscriptionID: ""                      # Azure subscription ID (required if storage account is in a different subscription than AKS)
+  #   storageClass: azureblob-fuse-premium    # StorageClass name
+  #   capacity: 10Gi                          # PV capacity
+  #   mountPath: /mnt/blob-data               # mount path in the main container
+  #   readOnly: false                         # mount as read-only
+  #   mountOptions:                           # blobfuse2 mount options
+  #     - -o allow_other
+  #     - --file-cache-timeout-in-seconds=120
 
 # Tracing using istio and grafana-tempo
 # https://docs.kubeit-int.dnv.com/documentation/components/monitoring/#traces-via-opentelemetry-collector-and-grafana-tempo
