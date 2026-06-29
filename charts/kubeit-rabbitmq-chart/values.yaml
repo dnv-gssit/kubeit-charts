@@ -130,6 +130,7 @@ persistentVolume:
     storageAccount: ""      # e.g., "strabbitdev"
     shareName: ""           # e.g., "rabbitmq-tenant2"
     volumeHandle: ""        # e.g., "sub-abc123#strabbitdev#rabbitmq-tenant2"
+    subscriptionID: ""      # e.g., "ecc5958f-c223-4e29-b41b-e40dfaa40e5d"
 
 
 # Create rabbitmq queue via RabbitMQ CRD
