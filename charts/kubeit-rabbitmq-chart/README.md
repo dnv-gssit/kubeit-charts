@@ -5,6 +5,8 @@ A Helm chart for deploying RabbitMQ in Kubernetes, customized for KubeIT environ
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
+- [External Secrets](#external-secrets)
+- [Storage](#storage)
 - [Workload Identity](#workload-identity)
 - [Requirements](#requirements)
 - [Installation](#installation)
@@ -32,26 +34,109 @@ The Helm chart creates external secrets pulled down from tenant's Azure Key Vaul
 
 ## Storage
 
-Tenants have the option (recommended) to attach external Storage Account to RabbitMQ cluster. To reference the external account use `nodeStageSecretRef ` in PersistenceVolume with credentials of the Storage Account `azurestorageaccountname` and `azurestorageaccountkey`. When attaching a FileShare the share must pre-exist and define the name in `Values.peristentVolume.csi.volumeAttributes.shareName`
+RabbitMQ persists its data (the Mnesia database) to an Azure File Share. The chart attaches that share using **static provisioning**: you (or Terraform) pre-create the storage account and file share, and the chart renders a `PersistentVolume` (plus a bound PVC that the RabbitMQ StatefulSet adopts) that references it directly.
 
-Using an in-built Storage Class to provision a volume will auto-create the Storage Account and for e.g. FileShare in the same subscription as KubeIT cluster (this approach is not recommnended since tenant's will not have visibility on the FileShare)
+Because the share is referenced — not auto-created — this works against a storage account in **any** subscription or resource group and gives tenants full ownership of the share. There is no dependency on the AKS cluster's own subscription.
 
-## Workload Identity
+### Static provisioning
 
-Instead of mounting the Azure File Share with a storage account key (the default `nodeStageSecretRef` flow), the chart can use [Azure Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) so the RabbitMQ pods authenticate to the file share with a federated token. This removes the need to store the storage account key as a Kubernetes secret and is the recommended approach when the AKS cluster has the OIDC issuer and workload identity enabled.
+You provide the storage account and file share; the chart creates a `PersistentVolume` referencing it directly. **No share is auto-created.**
 
-Workload Identity is **opt-in and backwards compatible** — when `persistentVolume.workloadIdentity.enabled` is `false` (the default) the chart keeps using the account-key flow. It works for both static provisioning (`persistentVolume.static.enabled: true`) and dynamic provisioning via the StorageClass.
+```yaml
+persistentVolume:
+  external: true
+  static:
+    enabled: true                           # render the static PV + PVC (default)
+    resourceGroup: <RG_OF_STORAGE_ACCOUNT>
+    storageAccount: <STORAGE_ACCOUNT_NAME>
+    shareName: <FILE_SHARE_NAME>
+    volumeHandle: "<RG>#<STORAGE_ACCOUNT>#<FILE_SHARE_NAME>"   # must be unique in the cluster
+    subscriptionID: ""                      # set ONLY if the account is in a different subscription
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+```
 
-### How it works
+Important notes:
 
-When `persistentVolume.workloadIdentity.enabled` is `true`:
+- The static fields live under **`persistentVolume.static.*`** — `resourceGroup`, `storageAccount`, `shareName`, `volumeHandle`, `subscriptionID`. Do **not** put them under `csi.*` or top-level `persistentVolume.storageAccount`; those keys are ignored and the PV will render empty.
+- `volumeHandle` must be **globally unique** within the cluster. The common form is `<resourceGroup>#<storageAccount>#<shareName>`.
+- For a **cross-subscription** account, set `static.subscriptionID` to the storage account's subscription.
 
-- The chart adds `clientID` to the CSI `volumeAttributes` (static PV) or StorageClass `parameters` (dynamic) and omits the `nodeStageSecretRef`.
-- The RabbitMQ service account (`serviceAccount.name`, default `rabbitmq-sa`) is annotated with the managed identity `client-id` and `tenant-id`, and the RabbitMQ pods run under it.
-- Optionally, setting `persistentVolume.workloadIdentity.mountWithWorkloadIdentityToken: true` mounts the share with a workload identity token only — no storage account key is retrieved at all (requires Azure File CSI driver **v1.35.0+** and SMB OAuth enabled on the storage account).
+  ```yaml
+  # in the ArgoCD AppProject
+  spec:
+    clusterResourceWhitelist:
+      - group: ""
+        kind: PersistentVolume
+  ```
 
-### Configuration
+### Workload Identity
 
+The share can be **authenticated** use workload identity, no need to keep storage accountkey secret in Key Vault:
+
+- **Workload Identity** (default) — the pod's federated token authenticates to the share; no key is stored. See the next section.
+
+Instead of mounting the Azure File Share with a storage account key, the chart can use [Azure Workload Identity](https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview) so the mount authenticates with a federated token. This removes the long-lived storage account key from the cluster and is the recommended approach when the AKS cluster has the OIDC issuer and workload identity enabled.
+
+Workload Identity is **enabled by default** (`persistentVolume.workloadIdentity.enabled: true`).
+
+### Two authentication flows
+
+`workloadIdentity.enabled: true` supports two flows, selected by `mountWithWorkloadIdentityToken`:
+
+| | **Account-key via WI** (`mountWithWorkloadIdentityToken: false`/unset) | **Token-only / keyless** (`mountWithWorkloadIdentityToken: true`) |
+| --- | --- | --- |
+| How the mount authenticates | Driver uses the WI token to call ARM, fetches the account **key**, mounts with it | Driver mounts with the WI token directly over **SMB OAuth** — no key is ever retrieved |
+| Storage account key in cluster | No (fetched just-in-time, not stored) | No (never used) |
+| Required storage **role** on the account | `Storage Account Contributor` (to list keys) | `Storage File Data SMB MI Admin` |
+| Extra storage account setting | `allowSharedKeyAccess: true` | **SMB OAuth must be enabled** |
+| CSI driver version | any WI-capable version | **v1.35.0+** |
+
+> The fully keyless **token-only** flow is the most secure. It is what the cross-subscription example below uses.
+
+### Step-by-step setup (token-only flow)
+
+This is the end-to-end setup, matching the order things must exist.
+
+**1. Enable workload identity on the AKS cluster** (OIDC issuer + workload identity add-on). Note the OIDC issuer URL:
+```bash
+az aks show -g <CLUSTER_RG> -n <CLUSTER_NAME> --query oidcIssuerProfile.issuerUrl -o tsv
+```
+
+**2. Create a user-assigned managed identity** and note its `clientId`:
+```bash
+az identity create -g <MI_RG> -n <MI_NAME>
+az identity show -g <MI_RG> -n <MI_NAME> --query clientId -o tsv
+```
+
+**3. Create a federated identity credential** linking the cluster OIDC issuer to the RabbitMQ service account. The subject must match the namespace and service account name **exactly**:
+```bash
+az identity federated-credential create \
+  --identity-name <MI_NAME> -g <MI_RG> \
+  --name rabbitmq-fic \
+  --issuer "<OIDC_ISSUER_URL>" \
+  --subject "system:serviceaccount:<NAMESPACE>:rabbitmq-sa" \
+  --audience api://AzureADTokenExchange
+```
+
+**4. Enable SMB OAuth on the storage account** (required for the token-only Kerberos mount):
+```bash
+az storage account update -n <STORAGE_ACCOUNT> -g <STORAGE_RG> \
+  --subscription <STORAGE_SUBSCRIPTION_ID> \
+  --enable-smb-oauth true
+```
+
+**5. Assign the data-plane role** to the managed identity on the storage account:
+```bash
+az role assignment create \
+  --assignee <MANAGED_IDENTITY_CLIENT_ID> \
+  --role "Storage File Data SMB MI Admin" \
+  --scope "/subscriptions/<STORAGE_SUBSCRIPTION_ID>/resourceGroups/<STORAGE_RG>/providers/Microsoft.Storage/storageAccounts/<STORAGE_ACCOUNT>"
+```
+
+**6. Configure the chart values:**
 ```yaml
 serviceAccount:
   create: true
@@ -62,41 +147,34 @@ serviceAccount:
 
 persistentVolume:
   external: true
-  storageAccount: <STORAGE_ACCOUNT_NAME>   # required for dynamic provisioning with WI
+  static:
+    enabled: true
+    resourceGroup: <STORAGE_RG>
+    storageAccount: <STORAGE_ACCOUNT>
+    shareName: <FILE_SHARE_NAME>
+    volumeHandle: "<STORAGE_RG>#<STORAGE_ACCOUNT>#<FILE_SHARE_NAME>"
+    subscriptionID: <STORAGE_SUBSCRIPTION_ID>   # only if cross-subscription
   workloadIdentity:
     enabled: true
     clientID: <MANAGED_IDENTITY_CLIENT_ID>
-    mountWithWorkloadIdentityToken: true    # optional token-only mount (no account key)
+    mountWithWorkloadIdentityToken: true
 ```
 
-See [`examples/values-wi-token-static.yaml`](examples/values-wi-token-static.yaml) and [`examples/values-wi-token-dynamic.yaml`](examples/values-wi-token-dynamic.yaml) for complete examples.
-
-### Azure prerequisites
-
-1. **Enable the OIDC issuer and workload identity** on the AKS cluster.
-2. **Create a user-assigned managed identity** and note its `clientId`.
-3. **Create a federated identity credential** linking the cluster OIDC issuer and the service account subject:
-   - Issuer: the cluster OIDC issuer URL (`az aks show ... --query oidcIssuerProfile.issuerUrl`)
-   - Subject: `system:serviceaccount:<NAMESPACE>:<SERVICE_ACCOUNT_NAME>` (e.g. `system:serviceaccount:tenant2-standard-test:rabbitmq-sa`)
-   - Audience: `api://AzureADTokenExchange`
-4. **Assign the storage role** to the managed identity, depending on the flow:
-
-   | Flow | Required role |
-   | --- | --- |
-   | Account-key (default, `mountWithWorkloadIdentityToken` unset/false) | `Storage Account Contributor` |
-   | Token-only (`mountWithWorkloadIdentityToken: true`) | `Storage File Data SMB MI Admin` |
-
-   > For the token-only flow, `Storage File Data SMB Share Contributor` / `Elevated Contributor` are **not** sufficient — the managed identity mount requires `Storage File Data SMB MI Admin`.
-
-5. **For the token-only flow, enable SMB OAuth** on the storage account (required for Kerberos ticket acquisition):
-   ```bash
-   az storage account update \
-     --name <STORAGE_ACCOUNT_NAME> \
-     --resource-group <RESOURCE_GROUP> \
-     --enable-smb-oauth true
-   ```
+See [`examples/values-wi-token-static.yaml`](examples/values-wi-token-static.yaml) for a complete example.
 
 > The managed identity that owns the federated credential, the `client-id` service account annotation, and the storage role assignment must all be the **same** identity.
+
+### Troubleshooting
+
+Mount errors surface on the RabbitMQ pod (`kubectl describe pod <pod> -n <ns>`). The table below maps the common errors to their cause and fix.
+
+| Symptom | Cause | Fix |
+| --- | --- | --- |
+| `storageclass.storage.k8s.io "<name>" not found`, or PVC stuck `Pending` and never binds | Static fields were placed under the wrong keys, so the PV rendered empty/invalid and the PVC could not bind to it | Put the values under `persistentVolume.static.*`; ensure `static.enabled: true` and `volumeHandle`/`resourceGroup`/`storageAccount`/`shareName` are all set |
+| `resource :PersistentVolume is not permitted in project <name>` (ArgoCD `SyncFailed`) | The ArgoCD `AppProject` doesn't allow the cluster-scoped `PersistentVolume` | Whitelist `PersistentVolume` in the project's `clusterResourceWhitelist` |
+| `mount error(126): Required key not available` / `Error getting Kerberos service ticket` | Token-only mount: **SMB OAuth not enabled** on the storage account | `az storage account update ... --enable-smb-oauth true` |
+| `mount error(13): Permission denied` (after Kerberos succeeds) | Identity authenticated but is **not authorized** — missing/insufficient data-plane role | Assign **`Storage File Data SMB MI Admin`** to the managed identity on the storage account; wait for RBAC to propagate, then delete the pod to retry |
+| `Failed to perform 'write' on resource(s) of type 'storageAccounts/fileServices'` | Managed identity authenticates but lacks permission on the file service | Same as above — `Storage File Data SMB MI Admin`; confirm SMB OAuth and that the role, federated credential, and SA annotation all use the **same** identity |
 
 ## Requirements
 

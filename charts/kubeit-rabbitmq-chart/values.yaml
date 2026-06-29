@@ -50,25 +50,19 @@ persistentVolume:
   # for environment variables in rabbitmq container
   # - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
   #   value: "+Q 65536 +P 1048576"
-  skuName: Standard_LRS
-  # Storage account name used by the CSI driver for dynamic provisioning with workload identity.
-  # For static provisioning, set persistentVolume.static.storageAccount instead.
-  storageAccount: ""
-  # Note: if external is set to true, and want to use External Azure File Share it must be set to file.csi.azure.com
-  # Set to false to use AKS built-in storage classes
-  external: false
-  # StorageClass is cluster-scoped. If you deploy multiple RabbitMQ releases (e.g. dev + test)
-  # in the same cluster, enable unique StorageClass names or manage a shared StorageClass outside this chart.
+  # Note: if external is set to true the chart uses an external Azure File Share
+  # via the file.csi.azure.com CSI driver (static provisioning).
+  # Set to false to use AKS built-in storage classes.
+  external: true
+  # Naming for the StorageClass used to bind the static PersistentVolume to its PVC.
+  # No StorageClass object is created — this name is only a binding label between PV and PVC.
   storageClass:
-    # Set to false if a StorageClass already exists and you only want to reference it.
-    create: true
-    # Backwards compatible default: a single per-tenant StorageClass name (cluster-scoped).
-    # Set to true to generate a per-release/per-RabbitMQ-instance StorageClass name so multiple
-    # RabbitMQ installs (dev/test/per environment in the same cluster) can coexist without StorageClass name collisions.
+    # Set to true to generate a per-release name so multiple RabbitMQ installs
+    # (dev/test/per environment) can coexist in the same cluster without name collisions.
     perRelease: false
-    # Optional: override the StorageClass name (e.g. a single per-tenant name).
+    # Optional: override the StorageClass name used for binding.
     name: ""
-  # Storage account secret referenced by the StorageClass (required when external=true).
+  # Storage account secret used by the static PersistentVolume when workload identity
   # This secret must exist in the namespace specified by `namespace`.
   storageAccountSecret:
     name: rabbitmq-storageaccount-secret
@@ -94,38 +88,32 @@ persistentVolume:
     - actimeo=30  # reduce latency for metadata-heavy workloads
   csi:
     driver: file.csi.azure.com
-    volumeAttributes:
-      # name of Azure File Share
-      shareName: rabbitmq
 
   # Workload Identity support
   # Uses federated identity credentials instead of storage account keys.
   # Prerequisites:
-  #   - Managed identity with "Storage Account Contributor" role on the storage account
+  #   - Managed identity with a storage role on the storage account
+  #     (token-only: "Storage File Data SMB MI Admin"; account-key: "Storage Account Contributor")
   #   - Federated identity credential linking the managed identity to the K8s service account
   workloadIdentity:
-    enabled: false
+    # Mounts the share with a federated token instead of a storage account key.
+    enabled: true
     # Client ID of the managed identity with access to the storage account
     clientID: ""
-    # Applied to both the dynamically provisioned StorageClass and the static PersistentVolume.
-    mountWithWorkloadIdentityToken: false
+    # Default: true (keyless token-only mount).
+    # SMB OAuth enabled on the storage account, and the "Storage File Data SMB MI Admin" role.
+    mountWithWorkloadIdentityToken: true
 
 
-  # Static PV configuration for Terraform-created Azure File Share
-  # All replicas will share the same file share (ReadWriteMany)
+  # All replicas share the same file share (ReadWriteMany).
   #
-  # Usage for static provisioning:
-  #   1. Set persistentVolume.external: true
-  #   2. Set persistentVolume.static.enabled: true
-  #   3. Set persistentVolume.storageClass.create: false
-  #   4. Provide resourceGroup, storageAccount, shareName, and volumeHandle
-  #
-  # Usage for static provisioning with workload identity:
-  #   1. All steps above
-  #   2. Set persistentVolume.workloadIdentity.enabled: true
-  #   3. Set persistentVolume.workloadIdentity.clientID to the managed identity client ID
+  # Required when static.enabled is true:
+  #   - resourceGroup, storageAccount, shareName, volumeHandle
+  #   - subscriptionID only if the storage account is in a different subscription
+  #   - workloadIdentity.clientID when workloadIdentity.enabled is true
   static:
-    enabled: false
+    # Default: true. The chart provisions storage by referencing a pre-existing share.
+    enabled: true
     resourceGroup: ""       # e.g., "rg-rabbitmq-we-dev"
     storageAccount: ""      # e.g., "strabbitdev"
     shareName: ""           # e.g., "rabbitmq-tenant2"

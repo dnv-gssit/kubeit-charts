@@ -5,10 +5,7 @@ persistentVolume:
   # Use an external Azure File Share (file.csi.azure.com)
   external: true
 
-  # Static provisioning: reference a pre-created share, do not create a StorageClass
-  storageClass:
-    create: false
-
+  # Static provisioning: reference a pre-created share
   static:
     enabled: true
     resourceGroup: rg-rabbitmq-we-dev
