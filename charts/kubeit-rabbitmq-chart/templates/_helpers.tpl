@@ -86,8 +86,9 @@ Virtual Service Host
 {{/*
 StorageClass name
 
-StorageClass is cluster-scoped, so its name must be unique across namespaces.
-Allow overriding to support a single per-tenant StorageClass managed outside this chart.
+Used only to bind the static PersistentVolume to its PVC (no StorageClass object is created).
+Must be unique across releases in the cluster when perRelease is enabled.
+Allow overriding via storageClass.name.
 */}}
 {{- define "kubeit-rabbit-chart.storageClassName" -}}
 {{- if .Values.persistentVolume.storageClass.name }}
@@ -98,19 +99,4 @@ Allow overriding to support a single per-tenant StorageClass managed outside thi
 {{- /* Backwards compatible default (legacy): per-tenant StorageClass name */ -}}
 {{- printf "azurefile-csi-%s-rmq" .Values.tenantName | trunc 63 | trimSuffix "-" | lower }}
 {{- end }}
-{{- end }}
-
-{{/*
-Azure File shareNamePrefix must be lowercase and should be stable + unique per release.
-Keep it short to avoid Azure name length limits.
-*/}}
-{{- define "kubeit-rabbit-chart.shareNamePrefix" -}}
-{{- $raw := printf "rmq-%s-%s" .Values.tenantName .Release.Name -}}
-{{- $sanitized := $raw | lower | replace "_" "-" | replace "." "-" -}}
-{{- $trimmed := $sanitized | trunc 48 | trimPrefix "-" | trimSuffix "-" -}}
-{{- if lt (len $trimmed) 3 -}}
-rmq
-{{- else -}}
-{{- $trimmed -}}
-{{- end -}}
 {{- end }}

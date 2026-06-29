@@ -28,7 +28,9 @@ spec:
       resourceGroup: {{ .Values.persistentVolume.static.resourceGroup }}
       storageAccount: {{ .Values.persistentVolume.static.storageAccount }}
       shareName: {{ .Values.persistentVolume.static.shareName }}
+      {{- if .Values.persistentVolume.static.subscriptionID }}
       subscriptionID: {{ .Values.persistentVolume.static.subscriptionID }}
+      {{- end }}
       {{- if .Values.persistentVolume.workloadIdentity.enabled }}
       clientID: {{ required "persistentVolume.workloadIdentity.clientID is required when workloadIdentity is enabled" .Values.persistentVolume.workloadIdentity.clientID }}
       {{- if .Values.persistentVolume.workloadIdentity.mountWithWorkloadIdentityToken }}
