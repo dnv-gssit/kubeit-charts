@@ -31,7 +31,10 @@ spec:
       metadata:
         labels:
           {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
-{{- if .Values.persistentVolume.external }}
+    # StatefulSet override is always applied so the container securityContext
+    # (incl. readOnlyRootFilesystem) is enforced on every PV path. The operator
+    # mounts writable emptyDirs at /var/lib/rabbitmq, /etc/rabbitmq and /operator;
+    # we add a writable /tmp for Erlang/RabbitMQ scratch so read-only rootfs works.
     statefulSet:
       spec:
         template:
@@ -45,6 +48,7 @@ spec:
                 securityContext:
                   allowPrivilegeEscalation: false
                   privileged: false
+                  readOnlyRootFilesystem: true
                   capabilities:
                     drop:
                     - ALL
@@ -53,8 +57,12 @@ spec:
                     - SETGID
                     - SETUID
                 volumeMounts:
+                  - mountPath: /tmp
+                    name: rabbitmq-tmp
+                {{- if .Values.persistentVolume.external }}
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
+                {{- end }}
                 {{- if .Values.persistentVolume.env }}
                 env:
                   {{- range .Values.persistentVolume.env }}
@@ -75,6 +83,7 @@ spec:
                   allowPrivilegeEscalation: false
                   privileged: false
                   runAsNonRoot: true
+                  readOnlyRootFilesystem: true
                   capabilities:
                     drop:
                     - ALL
@@ -89,8 +98,16 @@ spec:
                   limits:
                     memory: 50Mi
                 volumeMounts:
+                  - mountPath: /tmp
+                    name: rabbitmq-tmp
+                {{- if .Values.persistentVolume.external }}
                   - mountPath: /var/lib/rabbitmq/mnesia/
                     name: {{ .Values.rabbitmqCluster.spec.initContainers.volumeMount.name }}
+                {{- end }}
+            volumes:
+              - name: rabbitmq-tmp
+                emptyDir: {}
+        {{- if .Values.persistentVolume.external }}
         volumeClaimTemplates:
           - apiVersion: v1
             kind: PersistentVolumeClaim
@@ -105,26 +122,7 @@ spec:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
             metadata:
               name: {{ .Values.rabbitmqCluster.spec.containers.volumeMount.name }}
-{{- else if .Values.persistentVolume.env }}
-    statefulSet:
-      spec:
-        template:
-          spec:
-            containers:
-              - name: rabbitmq
-                env:
-                  {{- range .Values.persistentVolume.env }}
-                  - name: {{ .name }}
-                    value: {{ .value | quote }}
-                  {{- end }}
-                {{- if .Values.rabbitmqCluster.spec.nofile.soft }}
-                command: ["/bin/sh", "-ec"]
-                args:
-                  - |
-                    ulimit -n {{ .Values.rabbitmqCluster.spec.nofile.soft }}
-                    exec rabbitmq-server
-                {{- end }}
-{{- end }}
+        {{- end }}
   rabbitmq:
     additionalConfig: |
       {{ .Values.rabbitmqCluster.additionalConfig | nindent 6 }}
