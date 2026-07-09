@@ -18,7 +18,8 @@ spec:
     - {{ . }}
   {{- end }}
   persistentVolumeReclaimPolicy: {{ $.Values.persistentVolume.persistentVolumeReclaimPolicy }}
-  storageClassName: {{ $scName }}
+  # Empty string = static binding; no StorageClass object is required.
+  storageClassName: ""
   mountOptions:
   {{- range $.Values.persistentVolume.mountOptions }}
     - {{ . }}
@@ -60,7 +61,7 @@ spec:
   {{- range $.Values.persistentVolume.accessModes }}
     - {{ . }}
   {{- end }}
-  storageClassName: {{ $scName }}
+  storageClassName: ""
   resources:
     requests:
       storage: {{ $.Values.persistentVolume.capacity.storage }}
