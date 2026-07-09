@@ -182,6 +182,8 @@ Mount errors surface on the RabbitMQ pod (`kubectl describe pod <pod> -n <ns>`).
 - Helm 3.0+
 - Azure Key Vault (for secrets management)
 - Azure CSI Driver (if using Azure File Share for persistent storage or in built storage classes)
+- Azure CSI Driver (if using Azure File Share for persistent storage or in built storage classes)
+
 
 ## Installation
 
