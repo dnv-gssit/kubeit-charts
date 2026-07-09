@@ -90,7 +90,7 @@ Workload Identity is **enabled by default** (`persistentVolume.workloadIdentity.
 | --- | --- | --- |
 | How the mount authenticates | Driver uses the WI token to call ARM, fetches the account **key**, mounts with it | Driver mounts with the WI token directly over **SMB OAuth** — no key is ever retrieved |
 | Storage account key in cluster | No (fetched just-in-time, not stored) | No (never used) |
-| Required storage **role** on the account | `Storage Account Contributor` (to list keys) | `Storage File Data SMB MI Admin` |
+| Required storage **role** on the account | `Storage Account Contributor` (to list keys) | `Storage File Data Privileged Contributor` (or `Storage File Data SMB MI Admin`) |
 | Extra storage account setting | `allowSharedKeyAccess: true` | **SMB OAuth must be enabled** |
 | CSI driver version | any WI-capable version | **v1.35.0+** |
 
@@ -128,11 +128,11 @@ az storage account update -n <STORAGE_ACCOUNT> -g <STORAGE_RG> \
   --enable-smb-oauth true
 ```
 
-**5. Assign the data-plane role** to the managed identity on the storage account:
+**5. Assign the data-plane role** to the managed identity on the storage account. `Storage File Data Privileged Contributor` grants the identity full data-plane access to the file shares (bypassing share-level ACLs), which is what the keyless CSI mount needs:
 ```bash
 az role assignment create \
   --assignee <MANAGED_IDENTITY_CLIENT_ID> \
-  --role "Storage File Data SMB MI Admin" \
+  --role "Storage File Data Privileged Contributor" \
   --scope "/subscriptions/<STORAGE_SUBSCRIPTION_ID>/resourceGroups/<STORAGE_RG>/providers/Microsoft.Storage/storageAccounts/<STORAGE_ACCOUNT>"
 ```
 
@@ -173,8 +173,8 @@ Mount errors surface on the RabbitMQ pod (`kubectl describe pod <pod> -n <ns>`).
 | `storageclass.storage.k8s.io "<name>" not found`, or PVC stuck `Pending` and never binds | Static fields were placed under the wrong keys, so the PV rendered empty/invalid and the PVC could not bind to it | Put the values under `persistentVolume.static.*`; ensure `static.enabled: true` and `volumeHandle`/`resourceGroup`/`storageAccount`/`shareName` are all set |
 | `resource :PersistentVolume is not permitted in project <name>` (ArgoCD `SyncFailed`) | The ArgoCD `AppProject` doesn't allow the cluster-scoped `PersistentVolume` | Whitelist `PersistentVolume` in the project's `clusterResourceWhitelist` |
 | `mount error(126): Required key not available` / `Error getting Kerberos service ticket` | Token-only mount: **SMB OAuth not enabled** on the storage account | `az storage account update ... --enable-smb-oauth true` |
-| `mount error(13): Permission denied` (after Kerberos succeeds) | Identity authenticated but is **not authorized** — missing/insufficient data-plane role | Assign **`Storage File Data SMB MI Admin`** to the managed identity on the storage account; wait for RBAC to propagate, then delete the pod to retry |
-| `Failed to perform 'write' on resource(s) of type 'storageAccounts/fileServices'` | Managed identity authenticates but lacks permission on the file service | Same as above — `Storage File Data SMB MI Admin`; confirm SMB OAuth and that the role, federated credential, and SA annotation all use the **same** identity |
+| `mount error(13): Permission denied` (after Kerberos succeeds) | Identity authenticated but is **not authorized** — missing/insufficient data-plane role | Assign **`Storage File Data Privileged Contributor`** (or `Storage File Data SMB MI Admin`) to the managed identity on the storage account; wait for RBAC to propagate, then delete the pod to retry |
+| `Failed to perform 'write' on resource(s) of type 'storageAccounts/fileServices'` | Managed identity authenticates but lacks permission on the file service | Same as above — **`Storage File Data Privileged Contributor`**; confirm SMB OAuth and that the role, federated credential, and SA annotation all use the **same** identity |
 
 ## Requirements
 
