@@ -117,7 +117,7 @@ persistentVolume:
     resourceGroup: ""       # e.g., "rg-rabbitmq-we-dev"
     storageAccount: ""      # e.g., "strabbitdev"
     shareName: ""           # e.g., "rabbitmq-tenant2"
-    volumeHandle: ""        # e.g., "sub-abc123#strabbitdev#rabbitmq-tenant2"
+    volumeHandle: ""        # e.g., "{resource-group-name}#{account-name}#{file-share-name}#{subscription-id}
     subscriptionID: ""      # e.g., "ecc5958f-c223-4e29-b41b-e40dfaa40e5d"
 
 

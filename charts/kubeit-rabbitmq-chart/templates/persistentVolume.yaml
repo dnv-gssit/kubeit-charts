@@ -1,48 +1,51 @@
 {{- if .Values.persistentVolume.static.enabled }}
+{{- $scName := include "kubeit-rabbit-chart.storageClassName" . }}
+{{- range $i := until (int .Values.rabbitmqCluster.spec.replicas) }}
 ---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ include "kubeit-rabbit-chart.storageClassName" . }}-pv
+  name: {{ printf "%s-pv-%d" $scName $i | trunc 63 | trimSuffix "-" }}
   labels:
-    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+    {{- include "kubeit-rabbit-chart.labels" $ | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
   capacity:
-    storage: {{ .Values.persistentVolume.capacity.storage }}
+    storage: {{ $.Values.persistentVolume.capacity.storage }}
   accessModes:
-  {{- range .Values.persistentVolume.accessModes }}
+  {{- range $.Values.persistentVolume.accessModes }}
     - {{ . }}
   {{- end }}
-  persistentVolumeReclaimPolicy: {{ .Values.persistentVolume.persistentVolumeReclaimPolicy }}
-  storageClassName: {{ include "kubeit-rabbit-chart.storageClassName" . }}
+  persistentVolumeReclaimPolicy: {{ $.Values.persistentVolume.persistentVolumeReclaimPolicy }}
+  storageClassName: {{ $scName }}
   mountOptions:
-  {{- range .Values.persistentVolume.mountOptions }}
+  {{- range $.Values.persistentVolume.mountOptions }}
     - {{ . }}
   {{- end }}
   csi:
-    driver: {{ .Values.persistentVolume.csi.driver }}
-    volumeHandle: {{ .Values.persistentVolume.static.volumeHandle }}
+    driver: {{ $.Values.persistentVolume.csi.driver }}
+    # volumeHandle must be unique per PV in the cluster; the trailing ordinal keeps
+    # each replica's handle distinct while still pointing at the same Azure File share.
+    volumeHandle: {{ printf "%s#server-%d" $.Values.persistentVolume.static.volumeHandle $i }}
     volumeAttributes:
-      resourceGroup: {{ .Values.persistentVolume.static.resourceGroup }}
-      storageAccount: {{ .Values.persistentVolume.static.storageAccount }}
-      shareName: {{ .Values.persistentVolume.static.shareName }}
-      {{- if .Values.persistentVolume.static.subscriptionID }}
-      subscriptionID: {{ .Values.persistentVolume.static.subscriptionID }}
+      resourceGroup: {{ $.Values.persistentVolume.static.resourceGroup }}
+      storageAccount: {{ $.Values.persistentVolume.static.storageAccount }}
+      shareName: {{ $.Values.persistentVolume.static.shareName }}
+      {{- if $.Values.persistentVolume.static.subscriptionID }}
+      subscriptionID: {{ $.Values.persistentVolume.static.subscriptionID }}
       {{- end }}
-      {{- if .Values.persistentVolume.workloadIdentity.enabled }}
-      clientID: {{ required "persistentVolume.workloadIdentity.clientID is required when workloadIdentity is enabled" .Values.persistentVolume.workloadIdentity.clientID }}
-      {{- if .Values.persistentVolume.workloadIdentity.mountWithWorkloadIdentityToken }}
+      {{- if $.Values.persistentVolume.workloadIdentity.enabled }}
+      clientID: {{ required "persistentVolume.workloadIdentity.clientID is required when workloadIdentity is enabled" $.Values.persistentVolume.workloadIdentity.clientID }}
+      {{- if $.Values.persistentVolume.workloadIdentity.mountWithWorkloadIdentityToken }}
       mountWithWorkloadIdentityToken: "true"
       {{- end }}
       {{- end }}
-    {{- if not .Values.persistentVolume.workloadIdentity.enabled }}
+    {{- if not $.Values.persistentVolume.workloadIdentity.enabled }}
     nodeStageSecretRef:
-      name: {{ .Values.persistentVolume.storageAccountSecret.name }}
-      namespace: {{ default .Release.Namespace .Values.persistentVolume.storageAccountSecret.namespace }}
+      name: {{ $.Values.persistentVolume.storageAccountSecret.name }}
+      namespace: {{ default $.Release.Namespace $.Values.persistentVolume.storageAccountSecret.namespace }}
     {{- end }}
-{{- range $i := until (int .Values.rabbitmqCluster.spec.replicas) }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -57,10 +60,10 @@ spec:
   {{- range $.Values.persistentVolume.accessModes }}
     - {{ . }}
   {{- end }}
-  storageClassName: {{ include "kubeit-rabbit-chart.storageClassName" $ }}
+  storageClassName: {{ $scName }}
   resources:
     requests:
       storage: {{ $.Values.persistentVolume.capacity.storage }}
-  volumeName: {{ include "kubeit-rabbit-chart.storageClassName" $ }}-pv
+  volumeName: {{ printf "%s-pv-%d" $scName $i | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
