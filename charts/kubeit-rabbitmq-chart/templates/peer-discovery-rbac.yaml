@@ -1,0 +1,31 @@
+{{- if and .Values.persistentVolume.external (or (not (hasKey .Values.serviceAccount "peerDiscoveryRBAC")) .Values.serviceAccount.peerDiscoveryRBAC) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}-peer-discovery
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}-peer-discovery
+  labels:
+    {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}-peer-discovery
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}

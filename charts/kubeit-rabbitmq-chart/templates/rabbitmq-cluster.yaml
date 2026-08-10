@@ -39,6 +39,7 @@ spec:
       spec:
         template:
           spec:
+            serviceAccountName: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}
             securityContext:
               runAsUser: 1001
               runAsNonRoot: true
@@ -116,7 +117,9 @@ spec:
                 {{- range .Values.persistentVolume.accessModes }}
                 - {{ . }}
                 {{- end }}
-              storageClassName: {{ required "A storage class name is required" $externalScName }}
+              # Empty string = static binding: no dynamic provisioning, bind to a
+              # pre-created static PersistentVolume instead of a StorageClass.
+              storageClassName: ""
               resources:
                 requests:
                   storage: {{ .Values.persistentVolume.capacity.storage }}
@@ -146,7 +149,8 @@ spec:
   persistence:
     storage: {{ .Values.persistentVolume.capacity.storage }}
     {{- if .Values.persistentVolume.external }}
-    storageClassName: {{ required "A storage class name is required" $externalScName }}
+    # Empty string = static binding to the pre-created PersistentVolume(s).
+    storageClassName: ""
     {{- else }}
     storageClassName: {{ required "A storage class name is required" .Values.persistentVolume.storageClassName }}
     {{- end }}
