@@ -51,6 +51,7 @@ spec:
       {{- end }}
       targetRevision: {{ $srTargetRevision }}
       helm:
+        skipCrds: true
         releaseName: {{ $app.name }}
         {{- if $.Values.argocdApiVersions }}
         apiVersions:
