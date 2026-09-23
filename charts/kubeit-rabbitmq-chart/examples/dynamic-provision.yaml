@@ -1,0 +1,24 @@
+tenantName: tenant2
+
+persistentVolume:
+  external: false
+  storageClassName: azurefile-csi
+
+  static:
+    enabled: false
+
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteMany
+
+serviceAccount:
+  create: true
+  name: rabbitmq-sa
+  annotations:
+    azure.workload.identity/client-id: 5512dad8-0704-439c-9f5b-78da63c15875
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+
+secretStore:
+  create: true
+  vaultUrl: https://kubeit-dev-kv-sh-we.vault.azure.net/
