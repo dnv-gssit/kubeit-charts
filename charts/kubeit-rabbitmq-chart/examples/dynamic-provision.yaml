@@ -22,3 +22,9 @@ serviceAccount:
 secretStore:
   create: true
   vaultUrl: https://kubeit-dev-kv-sh-we.vault.azure.net/
+
+externalSecrets:
+  - data:
+    - azureSecretName: rabbitmq-test-default-user
+      key: default_user.conf
+    name: rabbitmq-test-default-user
