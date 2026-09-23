@@ -1,5 +1,11 @@
 {{- if .Values.persistentVolume.static.enabled }}
 {{- $scName := include "kubeit-rabbit-chart.storageClassName" . }}
+{{- $shareName := .Values.persistentVolume.static.shareName }}
+{{- $handleBase := .Values.persistentVolume.static.volumeHandle }}
+{{- if .Values.persistentVolume.static.perClusterSubDir }}
+{{- $shareName = printf "%s/%s" $shareName .Values.clusterColour }}
+{{- $handleBase = printf "%s#%s" $handleBase .Values.clusterColour }}
+{{- end }}
 {{- range $i := until (int .Values.rabbitmqCluster.spec.replicas) }}
 ---
 apiVersion: v1
@@ -28,11 +34,12 @@ spec:
     driver: {{ $.Values.persistentVolume.csi.driver }}
     # volumeHandle must be unique per PV in the cluster; the trailing ordinal keeps
     # each replica's handle distinct while still pointing at the same Azure File share.
-    volumeHandle: {{ printf "%s#server-%d" $.Values.persistentVolume.static.volumeHandle $i }}
+    volumeHandle: {{ printf "%s#server-%d" $handleBase $i }}
     volumeAttributes:
       resourceGroup: {{ $.Values.persistentVolume.static.resourceGroup }}
       storageAccount: {{ $.Values.persistentVolume.static.storageAccount }}
-      shareName: {{ $.Values.persistentVolume.static.shareName }}
+      # May include a sub-path ("share/subdir"); the CSI driver mounts that directory.
+      shareName: {{ $shareName }}
       {{- if $.Values.persistentVolume.static.subscriptionID }}
       subscriptionID: {{ $.Values.persistentVolume.static.subscriptionID }}
       {{- end }}

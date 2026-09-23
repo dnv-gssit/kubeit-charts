@@ -31,15 +31,12 @@ spec:
       metadata:
         labels:
           {{- include "kubeit-rabbit-chart.selectorLabels" . | nindent 10 }}
-    # StatefulSet override is always applied so the container securityContext
-    # (incl. readOnlyRootFilesystem) is enforced on every PV path. The operator
-    # mounts writable emptyDirs at /var/lib/rabbitmq, /etc/rabbitmq and /operator;
-    # we add a writable /tmp for Erlang/RabbitMQ scratch so read-only rootfs works.
+    # The operator manages the service account and capabilities; only override
+    # pod and container settings accepted by the RabbitMQ CRD webhook.
     statefulSet:
       spec:
         template:
           spec:
-            serviceAccountName: {{ include "kubeit-rabbit-chart.serviceAccountName" . }}
             securityContext:
               runAsUser: 1001
               runAsNonRoot: true
@@ -50,13 +47,6 @@ spec:
                   allowPrivilegeEscalation: false
                   privileged: false
                   readOnlyRootFilesystem: true
-                  capabilities:
-                    drop:
-                    - ALL
-                    add:
-                    - CHOWN
-                    - SETGID
-                    - SETUID
                 volumeMounts:
                   - mountPath: /tmp
                     name: rabbitmq-tmp
@@ -85,13 +75,6 @@ spec:
                   privileged: false
                   runAsNonRoot: true
                   readOnlyRootFilesystem: true
-                  capabilities:
-                    drop:
-                    - ALL
-                    add:
-                    - CHOWN
-                    - SETGID
-                    - SETUID
                 resources:
                   requests:
                     cpu: 20m
