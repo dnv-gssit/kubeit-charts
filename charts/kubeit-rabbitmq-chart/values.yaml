@@ -119,6 +119,12 @@ persistentVolume:
     shareName: ""           # e.g., "rabbitmq-tenant2"
     volumeHandle: ""        # e.g., "{resource-group-name}#{account-name}#{file-share-name}#{subscription-id}
     subscriptionID: ""      # e.g., "ecc5958f-c223-4e29-b41b-e40dfaa40e5d"
+    # Mount "<shareName>/<clusterColour>" instead of the share root so each cluster
+    # (blue/green) gets an isolated RabbitMQ data directory. REQUIRED when two clusters
+    # reference the same share: two nodes sharing one data dir corrupt each other's
+    # Ra WAL and crash with {badmatch,{error,enoent}}.
+    # NOTE: the sub-directory must already exist on the share (SMB mount fails otherwise).
+    perClusterSubDir: false
 
 
 # Create rabbitmq queue via RabbitMQ CRD
@@ -215,10 +221,6 @@ secretStore:
 # SecretStore must be created to use ExternalSecrets
 externalSecrets:
   - data:
-    - azureSecretName: rabbitmq-user-nonprod
-      key: username
-    - azureSecretName: rabbitmq-passwd-nonprod
-      key: password
     - azureSecretName: default-test-user-creds
       key: default_user.conf
     name: rabbitmq-test-default-user
