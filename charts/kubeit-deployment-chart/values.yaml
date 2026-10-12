@@ -214,6 +214,7 @@ defaultRouting:
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#CorsPolicy
   corsPolicy: {}
 
+
   # Retry for http config
   # https://istio.io/latest/docs/reference/config/networking/virtual-service/#HTTPRetry
   retries: {}
