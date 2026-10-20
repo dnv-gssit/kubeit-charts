@@ -1,0 +1,66 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-windows
+  labels:
+    app.kubernetes.io/name: test-windows
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: test-windows
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-windows
+  labels:
+    app.kubernetes.io/name: test-windows
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test-windows
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test-windows
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      os:
+        name: windows
+      securityContext:
+        runAsNonRoot: true
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: test-windows
+          image: nginxinc/nginx-unprivileged:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            runAsNonRoot: true
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+      nodeSelector:
+        kubernetes.io/os: windows

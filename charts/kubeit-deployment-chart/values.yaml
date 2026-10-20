@@ -73,6 +73,15 @@ securityContext:
     drop:
       - ALL
 
+# Operating system of the Pod.
+# For a Windows workload set `windows: true` this sets `spec.os.name: windows`
+# automatically and omits the Linux-only securityContext fields the API server
+# rejects for Windows Pods. For Windows scheduling also set nodeSelector
+# (kubernetes.io/os: windows) and any required tolerations below.
+# https://kubernetes.io/docs/concepts/workloads/pods/#pod-os
+os:
+  windows: false
+
 # Entrypoint command for the main container
 # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#container-v1-core
 command: []
