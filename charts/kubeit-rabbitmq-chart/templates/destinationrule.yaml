@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   host: {{ printf "%s-%s" .Release.Name .Values.tenantName }}.{{ .Release.Namespace }}.svc.cluster.local
   trafficPolicy:

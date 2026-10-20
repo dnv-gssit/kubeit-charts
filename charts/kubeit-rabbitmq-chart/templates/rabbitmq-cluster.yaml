@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "kubeit-rabbit-chart.labels" . | nindent 4 }}
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "3"
 spec:
   image: {{ .Values.rabbitmqCluster.image }}
   replicas: {{ .Values.rabbitmqCluster.spec.replicas }}
