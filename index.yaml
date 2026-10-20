@@ -505,6 +505,15 @@ entries:
     version: 0.0.1
   kubeit-deployment-chart:
   - apiVersion: v2
+    created: "2026-10-20T18:36:53.547482839Z"
+    description: KubeIT service deployment chart
+    digest: 7701101de4080565b286ff909a728c6dfeb7e5348643df75edec594287915bae
+    name: kubeit-deployment-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-deployment-chart-2.2.7/kubeit-deployment-chart-2.2.7.tgz
+    version: 2.2.7
+  - apiVersion: v2
     created: "2026-06-26T08:34:02.222838948Z"
     description: KubeIT service deployment chart
     digest: 89d8a3f38d567a1c0db1fe36195030392c781191d0b4836ece9689b2067bc08e
@@ -1848,4 +1857,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
     version: 0.0.1
-generated: "2026-10-20T14:59:52.969177891Z"
+generated: "2026-10-20T18:36:53.547851026Z"
