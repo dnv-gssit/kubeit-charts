@@ -972,6 +972,16 @@ entries:
   kubeit-rabbitmq-chart:
   - apiVersion: v2
     appVersion: 0.2.0
+    created: "2026-10-20T14:59:52.968829436Z"
+    description: KubeIT RabbitMQ chart
+    digest: 253de311c638181c99df1fb1c95f0d2dcbec6eabbb4267efccefe7315956e628
+    name: kubeit-rabbitmq-chart
+    type: application
+    urls:
+    - https://github.com/dnv-gssit/kubeit-charts/releases/download/kubeit-rabbitmq-chart-0.2.61/kubeit-rabbitmq-chart-0.2.61.tgz
+    version: 0.2.61
+  - apiVersion: v2
+    appVersion: 0.2.0
     created: "2026-10-12T16:56:20.921516238Z"
     description: KubeIT RabbitMQ chart
     digest: 80b567e98a56bb527f1b15d28ee154e3541ccc4c5e096337c2fd58b5faa4d9a9
@@ -1838,4 +1848,4 @@ entries:
     urls:
     - https://github.com/dnv-gssit/kubeit-charts/releases/download/session-manager-0.0.1/session-manager-0.0.1.tgz
     version: 0.0.1
-generated: "2026-10-12T16:56:20.921893156Z"
+generated: "2026-10-20T14:59:52.969177891Z"
