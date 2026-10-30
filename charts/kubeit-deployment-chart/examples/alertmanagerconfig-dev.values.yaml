@@ -1,0 +1,39 @@
+---
+# Example values for deploying the chart with a tenant AlertmanagerConfig to a dev cluster
+# helm upgrade --install my-app ./charts/kubeit-deployment-chart -n <namespace> -f charts/kubeit-deployment-chart/examples/alertmanagerconfig-dev.values.yaml
+#
+# The secret must exist in kubeit.managementNamespace before the alerts are sent:
+# kubectl create secret generic giadm-webhook -n management-tenant2 --from-file=url=./url.txt
+
+# KubeIT normally injects these values
+kubeit:
+  tenantName: tenant2
+  managementNamespace: management-tenant2
+
+alertmanagerConfig:
+  enabled: true
+  # namespace defaults to kubeit.managementNamespace
+  webhooks:
+    - urlSecret:
+        name: giadm-webhook
+        key: url
+      maxAlerts: 1
+
+# Required by the Kyverno policy require-secure-context-settings
+securityContext:
+  runAsUser: 101
+  runAsGroup: 101
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# nginx-unprivileged writes its pid and temp files to /tmp
+volumes:
+  - name: tmp
+    emptyDir: {}
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp

@@ -1,0 +1,43 @@
+{{- if .Values.alertmanagerConfig.enabled -}}
+{{- $cfg := .Values.alertmanagerConfig -}}
+{{- $kubeit := .Values.kubeit | default dict -}}
+---
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: {{ include "services-chart.fullname" . }}-alertmanager
+  namespace: {{ required "kubeit.managementNamespace is required when alertmanagerConfig.enabled=true" $kubeit.managementNamespace }}
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  route:
+    groupBy: {{ toJson $cfg.groupBy }}
+    groupWait: {{ $cfg.groupWait }}
+    groupInterval: {{ $cfg.groupInterval }}
+    repeatInterval: {{ $cfg.repeatInterval }}
+    continue: {{ $cfg.continue }}
+    matchers:
+      - name: namespace
+        matchType: "="
+        value: {{ default $kubeit.managementNamespace $cfg.namespace | quote }}
+      # required to react on tenant's alerts
+      - name: tenant
+        matchType: "="
+        value: {{ required "kubeit.tenantName is required when alertmanagerConfig.enabled=true" $kubeit.tenantName | quote }}
+      - name: severity
+        matchType: "=~"
+        value: {{ $cfg.severity | quote }}
+    receiver: {{ $cfg.receiverName }}
+  receivers:
+    - name: {{ $cfg.receiverName }}
+      webhookConfigs:
+        {{- if not $cfg.webhooks }}
+        {{- fail "alertmanagerConfig.webhooks must contain at least one webhook" }}
+        {{- end }}
+        {{- range $cfg.webhooks }}
+        - urlSecret:
+            name: {{ required "alertmanagerConfig.webhooks[].urlSecret.name is required" (.urlSecret).name | quote }}
+            key: {{ required "alertmanagerConfig.webhooks[].urlSecret.key is required" (.urlSecret).key | quote }}
+          maxAlerts: {{ default 1 .maxAlerts }}
+        {{- end }}
+{{- end }}

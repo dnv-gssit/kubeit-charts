@@ -294,6 +294,30 @@ tracing:
   enabled: false
   sampling: 10
 
+# Tenant-based Prometheus AlertmanagerConfig, created in kubeit.managementNamespace
+# https://docs.kubeit-int.dnv.com/documentation/components/monitoring/#example-alert-manager-configuration
+alertmanagerConfig:
+  enabled: false
+  # name of the receiver
+  receiverName: gssit-alert-manager
+  # namespace to match alerts from, defaults to kubeit.managementNamespace (management-<tenant>)
+  namespace: ""
+  # regular expression for severity label of alerts
+  severity: "warning|critical"
+  groupBy: ["alertname"]
+  groupWait: 30s
+  groupInterval: 5m
+  repeatInterval: 12h
+  continue: true
+  # list of webhooks, at least one is required
+  # urlSecret refers to a K8s secret in kubeit.managementNamespace with the GIADM URL (created by external-secrets or sealed-secrets)
+  # maxAlerts defaults to 1 to keep payload small (MS Teams Workflow limit is 28KB)
+  webhooks: []
+  # - urlSecret:
+  #     name: giadm-webhook
+  #     key: url
+  #   maxAlerts: 1
+
 # DNV Veracity integration using Session Manager
 # https://docs.kubeit-int.dnv.com/onboarding/veracity-registration/
 # https://enable.dnv.com/guidelines/cdog/deploying-to-the-cloud/kubernetes-security/session_manager

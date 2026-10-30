@@ -1,0 +1,14 @@
+---
+kubeit:
+  managementNamespace: management-tenant
+  tenantName: tenant
+alertmanagerConfig:
+  enabled: true
+  webhooks:
+    - urlSecret:
+        name: giadm-webhook
+        key: url
+    - urlSecret:
+        name: other-webhook
+        key: url
+      maxAlerts: 5
