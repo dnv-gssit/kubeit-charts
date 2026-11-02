@@ -1,4 +1,18 @@
 ---
+# Source: kubeit-deployment-chart/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-sa
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+  annotations:
+    azure.workload.identity/client-id: 11111111-2222-3333-4444-555555555555
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+---
 # Source: kubeit-deployment-chart/templates/service.yaml
 apiVersion: v1
 kind: Service
@@ -44,6 +58,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         tenant: tenant
     spec:
+      serviceAccountName: test-sa
       securityContext:
         runAsGroup: 101
         runAsNonRoot: true
@@ -113,3 +128,67 @@ spec:
             name: "other-webhook"
             key: "url"
           maxAlerts: 5
+---
+# Source: kubeit-deployment-chart/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: release-name-giadm-webhook
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: release-name-kubeit-deployment-chart
+    kind: SecretStore
+  target:
+    name: giadm-webhook
+    creationPolicy: Owner
+  data:
+    - secretKey: url
+      remoteRef:
+        key: giadm-webhook-url
+---
+# Source: kubeit-deployment-chart/templates/externalsecret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: release-name-other-webhook
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: release-name-kubeit-deployment-chart
+    kind: SecretStore
+  target:
+    name: other-webhook
+    creationPolicy: Owner
+  data:
+    - secretKey: url
+      remoteRef:
+        key: other-webhook-url
+---
+# Source: kubeit-deployment-chart/templates/secretstore.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: release-name-kubeit-deployment-chart
+  labels:
+    app.kubernetes.io/name: kubeit-deployment-chart
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/managed-by: Helm
+    tenant: tenant
+spec:
+  provider:
+    azurekv:
+      authType: WorkloadIdentity
+      vaultUrl: https://mykv.azurekv.com
+      serviceAccountRef:
+        name: test-sa

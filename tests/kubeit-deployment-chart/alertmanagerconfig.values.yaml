@@ -2,6 +2,28 @@
 kubeit:
   managementNamespace: management-tenant
   tenantName: tenant
+
+serviceAccount:
+  enabled: true
+  name: test-sa
+  annotations:
+    azure.workload.identity/client-id: 11111111-2222-3333-4444-555555555555
+    azure.workload.identity/tenant-id: adf10e2b-b6e9-41d6-be2f-c12bb566019c
+
+secretStore:
+  enabled: true
+  vaultUrl: "https://mykv.azurekv.com"
+
+externalSecrets:
+  - name: giadm-webhook
+    refs:
+      - keyName: url
+        kvSecretName: giadm-webhook-url
+  - name: other-webhook
+    refs:
+      - keyName: url
+        kvSecretName: other-webhook-url
+
 alertmanagerConfig:
   enabled: true
   webhooks:
