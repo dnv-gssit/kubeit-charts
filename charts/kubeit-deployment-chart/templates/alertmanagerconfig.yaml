@@ -36,6 +36,6 @@ spec:
         - urlSecret:
             name: {{ required "alertmanagerConfig.webhooks[].urlSecret.name is required" (.urlSecret).name | quote }}
             key: {{ required "alertmanagerConfig.webhooks[].urlSecret.key is required" (.urlSecret).key | quote }}
-          maxAlerts: {{ default 1 .maxAlerts }}
+          maxAlerts: {{ if hasKey . "maxAlerts" }}{{ .maxAlerts }}{{ else }}1{{ end }}
         {{- end }}
 {{- end }}
