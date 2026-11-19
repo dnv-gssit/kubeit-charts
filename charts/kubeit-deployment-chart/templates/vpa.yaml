@@ -1,0 +1,33 @@
+{{- if .Values.vpa.enabled }}
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ include "services-chart.fullname" . }}
+  labels:
+    {{- include "services-chart.labels" . | nindent 4 }}
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "services-chart.fullname" . }}
+  updatePolicy:
+    updateMode: {{ .Values.vpa.updateMode | quote }}
+    {{- with .Values.vpa.minReplicas }}
+    minReplicas: {{ . }}
+    {{- end }}
+  {{- with .Values.vpa.startupBoost }}
+  startupBoost:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.vpa.containerPolicies }}
+  resourcePolicy:
+    containerPolicies:
+      {{- range $name, $policy := . }}
+      {{- if $policy }}
+      - containerName: {{ ternary (include "services-chart.name" $) $name (eq $name "mainContainer") | quote }}
+        {{- toYaml $policy | nindent 8 }}
+      {{- end }}
+      {{- end }}
+  {{- end }}
+{{- end }}
