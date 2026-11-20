@@ -1,0 +1,126 @@
+---
+# Source: kubeit-deployment-chart/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: 1.1.1
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+---
+# Source: kubeit-deployment-chart/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: 1.1.1
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: test
+      app.kubernetes.io/instance: release-name
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: test
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: 1.1.1
+        app.kubernetes.io/managed-by: Helm
+    spec:
+      securityContext:
+        runAsGroup: 101
+        runAsNonRoot: true
+        runAsUser: 101
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: test
+          image: nginxinc/nginx-unprivileged:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            runAsGroup: 101
+            runAsNonRoot: true
+            runAsUser: 101
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+---
+# Source: kubeit-deployment-chart/templates/vpa.yaml
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: test
+  labels:
+    app.kubernetes.io/name: test
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: 1.1.1
+    app.kubernetes.io/managed-by: Helm
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: test
+  updatePolicy:
+    updateMode: "Off"
+    minReplicas: 2
+  startupBoost:
+    cpu:
+      durationSeconds: 10
+      factor: 3
+      type: Factor
+  resourcePolicy:
+    containerPolicies:
+      - containerName: "*"
+        controlledValues: RequestsOnly
+        maxAllowed:
+          cpu: 500m
+          memory: 512Mi
+      - containerName: "log-shipper"
+        maxAllowed:
+          cpu: 1
+          memory: 1Gi
+      - containerName: "test"
+        controlledResources:
+        - cpu
+        - memory
+        controlledValues: RequestsAndLimits
+        maxAllowed:
+          cpu: 1
+          memory: 1Gi
+        minAllowed:
+          cpu: 100m
+          memory: 128Mi
+        oomBumpUpRatio: "1.5"
+        oomMinBumpUp: 200Mi
+        startupBoost:
+          cpu:
+            durationSeconds: 30
+            quantity: "2"
+            type: Quantity

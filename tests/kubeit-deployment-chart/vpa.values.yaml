@@ -1,0 +1,33 @@
+---
+app: test
+appVersion: 1.1.1
+vpa:
+  enabled: true
+  updateMode: "Off"
+  minReplicas: 2
+  startupBoost:
+    cpu:
+      type: Factor
+      factor: 3
+      durationSeconds: 10
+  containerPolicies:
+    mainContainer:
+      maxAllowed:
+        cpu: 1
+        memory: 1Gi
+      oomBumpUpRatio: "1.5"
+      oomMinBumpUp: 200Mi
+      startupBoost:
+        cpu:
+          type: Quantity
+          quantity: "2"
+          durationSeconds: 30
+    log-shipper:
+      maxAllowed:
+        cpu: 1
+        memory: 1Gi
+    "*":
+      maxAllowed:
+        cpu: 500m
+        memory: 512Mi
+      controlledValues: RequestsOnly
